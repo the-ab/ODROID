@@ -1,0 +1,143 @@
+#!/usr/bin/python3
+"""Set dedicated kernel fan-temperature trips; CPU protection stays separate."""
+import argparse
+import fcntl
+import json
+from pathlib import Path
+import sys
+
+
+def validate(values):
+    if len(values) != 3 or not all(isinstance(value, int) for value in values):
+        raise ValueError("Three whole Celsius temperatures are required")
+    low, medium, high = values
+    if not (30 <= low and low + 5 <= medium and medium + 5 <= high <= 85):
+        raise ValueError("Require 30 <= LOW, gaps >= 5 C, HIGH <= 85 C")
+    return values
+
+
+def load_config(root):
+    entries = {}
+    for line in (root / "etc/default/odroid-fan").read_text().splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line:
+            continue
+        key, separator, value = line.partition("=")
+        if not separator or key.strip() not in ("FAN_LOW", "FAN_MEDIUM", "FAN_HIGH"):
+            raise ValueError("Invalid fan configuration line")
+        if key.strip() in entries:
+            raise ValueError("Duplicate fan configuration key")
+        entries[key.strip()] = int(value.strip())
+    return validate([entries[key] for key in ("FAN_LOW", "FAN_MEDIUM", "FAN_HIGH")])
+
+
+def thermal(root):
+    for zone in sorted((root / "sys/class/thermal").glob("thermal_zone*")):
+        if (zone / "type").read_text().strip() == "cpu-thermal":
+            return zone
+    raise ValueError("cpu-thermal zone is unavailable")
+
+
+def layout(root, zone):
+    data = json.loads((root / "usr/share/odroid-u3/fan-layout.json").read_text())
+    fan_ids = data["fan_trip_ids"]
+    protected_ids = data["cpu_protection_trip_ids"]
+    if len(fan_ids) != 3 or set(fan_ids) & set(protected_ids):
+        raise ValueError("Unsafe fan-trip layout")
+    for number in fan_ids:
+        if (zone / f"trip_point_{number}_type").read_text().strip() != "active":
+            raise ValueError("Dedicated fan trip is absent; require the Test4 kernel/device tree")
+    return data
+
+
+def write_trips(paths, values):
+    old = [int(path.read_text()) for path in paths]
+    # Raise high trips first, lower low trips first: keep ordering during updates.
+    order = [index for index in reversed(range(3)) if values[index] > old[index]]
+    order += [index for index in range(3) if values[index] < old[index]]
+    for index in order:
+        paths[index].write_text(str(values[index]) + "\n")
+
+
+def apply(root, values, persist=False):
+    values = validate(values)
+    zone = thermal(root)
+    data = layout(root, zone)
+    paths = [zone / f"trip_point_{number}_temp" for number in data["fan_trip_ids"]]
+    lock = root / "run/lock/odroid-fan.lock"
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    with lock.open("a") as handle:
+        fcntl.flock(handle, fcntl.LOCK_EX)
+        protected = {number: (zone / f"trip_point_{number}_temp").read_text()
+                     for number in data["cpu_protection_trip_ids"]}
+        before = [int(path.read_text()) for path in paths]
+        try:
+            write_trips(paths, [value * 1000 for value in values])
+            if [int(path.read_text()) for path in paths] != [value * 1000 for value in values]:
+                raise ValueError("Fan trip readback differs")
+            for number, value in protected.items():
+                if (zone / f"trip_point_{number}_temp").read_text() != value:
+                    raise ValueError("CPU protection changed unexpectedly")
+            if persist:
+                path = root / "etc/default/odroid-fan"
+                temporary = path.with_suffix(".tmp")
+                temporary.write_text(
+                    "# Celsius; only dedicated fan trips are changed.\n"
+                    f"FAN_LOW={values[0]}\nFAN_MEDIUM={values[1]}\nFAN_HIGH={values[2]}\n")
+                temporary.chmod(0o644)
+                temporary.replace(path)
+        except (OSError, ValueError):
+            write_trips(paths, before)
+            raise
+    return {"fan_thresholds_celsius": values, "hysteresis_celsius": 3,
+            "control": "Linux thermal governor / pwm-fan", "saved": persist}
+
+
+def status(root):
+    zone = thermal(root)
+    data = layout(root, zone)
+    result = {"cpu_temperature_celsius": int((zone / "temp").read_text()) / 1000,
+              "fan_thresholds_celsius": [int((zone / f"trip_point_{number}_temp").read_text()) / 1000
+                                         for number in data["fan_trip_ids"]],
+              "configured_thresholds_celsius": load_config(root),
+              "control": "kernel thermal governor", "rpm": "not exposed by this hardware configuration"}
+    for device in (root / "sys/class/thermal").glob("cooling_device*"):
+        if (device / "type").read_text().strip() == "pwm-fan":
+            result["fan_state"] = int((device / "cur_state").read_text())
+            result["fan_max_state"] = int((device / "max_state").read_text())
+    for device in (root / "sys/class/hwmon").glob("hwmon*"):
+        name = device / "name"
+        if name.is_file() and name.read_text().strip() == "pwmfan":
+            result["pwm_0_to_255"] = int((device / "pwm1").read_text())
+            rpm = device / "fan1_input"
+            if rpm.is_file():
+                result["rpm"] = int(rpm.read_text())
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("action", choices=("status", "apply", "set"))
+    parser.add_argument("temperatures", type=int, nargs="*")
+    parser.add_argument("--root", type=Path, default=Path("/"), help="alternate root for offline verification")
+    args = parser.parse_args()
+    try:
+        if args.action == "status":
+            if args.temperatures:
+                raise ValueError("status takes no temperatures")
+            result = status(args.root)
+        elif args.action == "apply":
+            if args.temperatures:
+                raise ValueError("apply reads /etc/default/odroid-fan")
+            result = apply(args.root, load_config(args.root))
+        else:
+            result = apply(args.root, args.temperatures, persist=True)
+        print(json.dumps(result, indent=2))
+    except (OSError, ValueError, KeyError) as error:
+        print(f"odroid-fan: {error}", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

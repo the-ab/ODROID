@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "sources": [
+    {
+      "id": "kernel",
+      "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.114.tar.xz",
+      "sha256": "7a8589912bd7a8adb07fed074283652cf482a35facef8954554654f0154b4af3",
+      "bytes": 148721296,
+      "filename": "linux-6.12.114.tar.xz"
+    },
+    {
+      "id": "ubuntu-base",
+      "url": "https://cdimage.ubuntu.com/ubuntu-base/releases/26.04/release/ubuntu-base-26.04.1-base-armhf.tar.gz",
+      "sha256": "a40848e9c4ed72c22bdcb6a7bc9832e1ca8a30e5a3e2a0543dc56ed14e2e38b7",
+      "bytes": 33351763,
+      "filename": "ubuntu-base-26.04.1-base-armhf.tar.gz"
+    },
+    {
+      "id": "u-boot",
+      "url": "https://github.com/u-boot/u-boot/archive/refs/tags/v2026.10.tar.gz",
+      "sha256": "f943a88389c8fd70a6b0d061a88267465e143c7ca6ea2b75837ab20f5b60c739",
+      "bytes": 46699547,
+      "filename": "u-boot-v2026.10.tar.gz"
+    },
+    {
+      "id": "samsung-mfc",
+      "url": "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/20260916/s5p-mfc.fw",
+      "sha256": "d4994caeae4b76002a9fc566dbebd5f42906f9c9b97c60b007e2474acfa15e10",
+      "bytes": 352652,
+      "filename": "s5p-mfc.fw"
+    },
+    {
+      "id": "samsung-mfc-license",
+      "url": "https://gitlab.com/kernel-firmware/linux-firmware/-/raw/20260916/LICENSES/LICENSE.s5p-mfc",
+      "sha256": "78f9d7042f96a85be7b3a7237ccf3b287ba5c4c0770bd07f5a968724c5c4f7dd",
+      "bytes": 475,
+      "filename": "LICENSE.s5p-mfc"
+    }
+  ],
+  "ubuntu_base_signing_fingerprint": "843938DF228D22F7B3742BC0D94AA3F0EFE21092",
+  "boot_reference": {
+    "archive_filename": "odroid_u3-armv7l-ubuntu20.04minimal-1601403301.zip",
+    "sha256": "0bb5ce94fa282ecdae702a35d7411e12fa2b1d0f7f2e0dea81f0378c0f523db6",
+    "component_layout": [
+      {
+        "name": "bl1",
+        "sd_sector": 1,
+        "emmc_boot0_sector": 0,
+        "sectors": 30,
+        "sha256": "0fcf68a3ff3e47af7c6d91103d5797e4aefbefd32b1d267daff69eb6e69d2a84",
+        "nonzero_bytes": 15151
+      },
+      {
+        "name": "bl2",
+        "sd_sector": 31,
+        "emmc_boot0_sector": 30,
+        "sectors": 29,
+        "sha256": "7b1bab8c9ee7d495ab75b2e0a7a0c6295c13f06c86320c25ba379f47d0ec3b57",
+        "nonzero_bytes": 13125
+      },
+      {
+        "name": "u-boot",
+        "sd_sector": 63,
+        "emmc_boot0_sector": 62,
+        "sectors": 2048,
+        "sha256": "649654c566cdd4eb00bd8893e53190dd02b9b6ee7751f01a0a1d0070e830e6e0",
+        "nonzero_bytes": 392905
+      },
+      {
+        "name": "tzsw",
+        "sd_sector": 2111,
+        "emmc_boot0_sector": 2110,
+        "sectors": 312,
+        "sha256": "777e0efdd626863b2a6e83cd24b42ae028158aecbfec7843dad00f1b458958c3",
+        "nonzero_bytes": 18930
+      }
+    ],
+    "distribution_status": "Boot firmware redistribution/source coverage must be resolved before public binary releases. No vendor boot blobs are stored in this repository.",
+    "image_sha256": "d199d45dee528623961c276e3be1d572229e7c1e95c66e36b9844fb91b14c292"
+  }
+}

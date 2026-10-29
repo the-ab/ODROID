@@ -1,0 +1,39 @@
+{
+  "board": "ODROID-U3",
+  "architecture": "armhf",
+  "ubuntu": "26.04.1",
+  "suite": "resolute",
+  "image_version": "1.0.0",
+  "kernel_release": "6.12.114-odroidu3-v1",
+  "uboot": "2026.10",
+  "fan_celsius": [
+    35,
+    45,
+    55
+  ],
+  "human_user": "odroid",
+  "variants": {
+    "minimized": {
+      "description": "Reduced Ubuntu Base with SSH, sudo and board support",
+      "extra_packages": [
+        "unminimize"
+      ]
+    },
+    "minimal": {
+      "description": "Interactive system with Ubuntu minimal/standard metapackages and documentation",
+      "extra_packages": [
+        "systemd-timesyncd",
+        "ubuntu-minimal",
+        "ubuntu-standard",
+        "bash-completion",
+        "manpages",
+        "curl",
+        "htop",
+        "ethtool",
+        "tcpdump",
+        "unminimize"
+      ]
+    }
+  },
+  "binary_release_status": "preparation; no release accepted yet"
+}
