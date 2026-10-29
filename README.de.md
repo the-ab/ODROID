@@ -13,7 +13,7 @@ Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme
 
 Beide Varianten starten mit Konsole und SSH. Einziges menschliches Konto: **`odroid` / `odroid`**, mit passwortgeschütztem sudo. Root-Passwort und Root-SSH sind gesperrt. Es werden keine Wartungsschlüssel, festen SSH-Hostschlüssel oder geklonten Maschinenidentitäten eingebaut. Nach der ersten Anmeldung mit `passwd` ein eigenes Passwort setzen.
 
-Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern der Treiber keine permanente Adresse liefert. Root wächst beim ersten Start auf die Mediengröße. SD und eMMC-Benutzerbereich verwenden dasselbe Imageformat; für natives eMMC kann die separate boot0-Reparatur erforderlich sein.
+Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern der Treiber keine permanente Adresse liefert. Beide Varianten aktivieren die automatische Netzwerk-Zeitsynchronisierung. Root wächst beim ersten Start auf die Mediengröße. SD und eMMC-Benutzerbereich verwenden dasselbe Imageformat; für natives eMMC kann die separate boot0-Reparatur erforderlich sein.
 
 - [Installation und erste Anmeldung](docs/INSTALL.de.md)
 - [eMMC-boot0 mit Backup und Wiederherstellung reparieren](docs/EMMC-RECOVERY.de.md)

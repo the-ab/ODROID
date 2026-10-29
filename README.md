@@ -13,7 +13,7 @@ Community Ubuntu images, build recipes and board support for ODROID systems. The
 
 Both variants boot to a console and SSH. There is one human account: **`odroid` / `odroid`**, with password-protected sudo. Root's password is locked and root SSH is disabled. No maintenance authorized keys, fixed SSH host keys or cloned machine identity are included. Set your own password after the first login with `passwd`.
 
-Ethernet uses DHCP and a stable MAC derived from the board's hardware identity when the driver has no permanent address. The root partition expands on first boot. SD and eMMC user-area layouts use the same image format; native eMMC may need the separate boot0 repair described below.
+Ethernet uses DHCP and a stable MAC derived from the board's hardware identity when the driver has no permanent address. Both variants enable automatic network time synchronization. The root partition expands on first boot. SD and eMMC user-area layouts use the same image format; native eMMC may need the separate boot0 repair described below.
 
 - [Install and first login](docs/INSTALL.md)
 - [Native eMMC boot0 repair, backup and restore](docs/EMMC-RECOVERY.md)

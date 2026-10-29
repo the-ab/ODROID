@@ -11,6 +11,7 @@ out=a.output;manifest=json.loads((out/'BUILD-MANIFEST.json').read_text());image=
 qa=a.qa_log.read_text()
 assert 'Fresh ARM rootfs access/configuration validation passed' in qa
 assert 'Default odroid password matches Unix hash; wrong password rejected' in qa
+assert 'Network time synchronization enabled' in qa
 for service in ['login','sshd','sudo']:assert service+' ARM PAM authentication and account checks passed' in qa
 assert 'ordering cycle' not in qa.lower()
 with image.open('rb') as f:
@@ -52,6 +53,7 @@ assert not read('/etc/machine-id')
 for path in ['/root','/home/odroid']:assert '/.ssh/' not in listing(path)
 assert 'ssh_host_' not in listing('/etc/ssh')
 assert 'random-seed' not in listing('/var/lib/systemd')
+assert 'systemd-timesyncd.service' in listing('/etc/systemd/system/sysinit.target.wants')
 for path in ['/','/etc','/etc/hosts','/etc/passwd','/etc/default/odroid-fan','/usr/share/odroid-u3/fan-layout.json','/usr/lib/modules']:
     attrs=subprocess.run(['debugfs','-R','ea_list '+path,str(root)],check=True,capture_output=True,text=True).stdout
     assert 'system.posix_acl' not in attrs,path

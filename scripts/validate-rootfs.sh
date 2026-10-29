@@ -74,11 +74,12 @@ chroot "$root" /usr/bin/systemd-analyze verify --man=no default.target ssh.socke
 cat "$root/run/boot-verify.log"
 if grep -Ei 'ordering cycle|Job .* deleted' "$root/run/boot-verify.log"; then exit 1; fi
 test -z "$(chroot "$root" dpkg --audit)"
-systemctl --root="$root" is-enabled ssh.service systemd-networkd.service systemd-resolved.service \
+systemctl --root="$root" is-enabled ssh.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service \
     serial-getty@ttySAC1.service odroid-host-keys.service odroid-grow-root.service odroid-network-identity.service odroid-fan.service
 if [[ $variant == minimal ]]; then
     chroot "$root" dpkg-query -W ubuntu-minimal ubuntu-standard
     chroot "$root" man -w ls
     chroot "$root" /usr/sbin/runuser -u odroid -- man -w ls
 fi
+echo 'Network time synchronization enabled'
 echo 'Fresh ARM rootfs access/configuration validation passed; physical image boot remains separate'

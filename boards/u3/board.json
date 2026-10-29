@@ -12,6 +12,7 @@
     55
   ],
   "human_user": "odroid",
+  "time_synchronization": "systemd-timesyncd in both variants",
   "variants": {
     "minimized": {
       "description": "Reduced Ubuntu Base with SSH, sudo and board support",
@@ -22,7 +23,6 @@
     "minimal": {
       "description": "Interactive system with Ubuntu minimal/standard metapackages and documentation",
       "extra_packages": [
-        "systemd-timesyncd",
         "ubuntu-minimal",
         "ubuntu-standard",
         "bash-completion",

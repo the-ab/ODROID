@@ -36,12 +36,12 @@ APT
 chroot "$root" /usr/bin/env DEBIAN_FRONTEND=noninteractive SYSTEMD_OFFLINE=1 IMAGE_VARIANT="$variant" /bin/bash -eux <<'CHROOT'
 apt-get update
 apt-get dist-upgrade -y --no-install-recommends
-apt-get install -y --no-install-recommends systemd-sysv udev dbus openssh-server sudo \
+apt-get install -y --no-install-recommends systemd-sysv systemd-timesyncd udev dbus openssh-server sudo \
     systemd-resolved netplan.io iproute2 iputils-ping ca-certificates kmod \
     e2fsprogs dosfstools less nano tzdata locales netbase cloud-guest-utils \
     wireless-regdb mmc-utils unminimize
 if [[ $IMAGE_VARIANT == minimal ]]; then
-    apt-get install -y --no-install-recommends systemd-timesyncd ubuntu-minimal ubuntu-standard \
+    apt-get install -y --no-install-recommends ubuntu-minimal ubuntu-standard \
         bash-completion manpages curl htop ethtool tcpdump
     python3 -c 'import subprocess; subprocess.run(["unminimize"],input="y\ny\n",text=True,check=True)'
     test ! -e /etc/dpkg/dpkg.cfg.d/excludes
@@ -84,7 +84,7 @@ network:
       optional: true
 NETPLAN
 chmod 600 /etc/netplan/10-ethernet.yaml
-systemctl enable systemd-networkd systemd-resolved ssh serial-getty@ttySAC1.service
+systemctl enable systemd-networkd systemd-resolved systemd-timesyncd ssh serial-getty@ttySAC1.service
 cat > /etc/systemd/system/odroid-host-keys.service <<'UNIT'
 [Unit]
 Description=Generate unique SSH host keys on first boot
