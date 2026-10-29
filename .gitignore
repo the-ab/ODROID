@@ -1,0 +1,12 @@
+build/
+cache/
+artifacts/
+*.img
+*.bin
+*.zip
+*.tar*
+__pycache__/
+*.pyc
+.env
+*.key
+*.pem
