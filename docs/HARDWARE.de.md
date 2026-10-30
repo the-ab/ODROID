@@ -2,11 +2,11 @@
 
 [English](HARDWARE.md)
 
-Quell-/Konfigurationsunterstützung, Betrieb des Prototyps und Abnahme eines neuen Images sind getrennte Aussagen. Am 30.10.2026 startete **minimal v1.0.0** nativ von einer 16-GB-eMMC mit **6.12.114-odroidu3-v1**. Defaultlogin odroid und sudo, Root-Vergrößerung, stabile Ethernetidentität, Netzwerkzeit, Lüfterstufen, Bootdatei-Prüfsummen und exakte Paketstände wurden geprüft. Keine Journalfehler oder fehlgeschlagenen Dienste. Minimized und SD-Start der neuen Images bleiben getrennt offen.
+Quell-/Konfigurationsunterstützung, Betrieb des Prototyps und Abnahme eines neuen Images sind getrennte Aussagen. Am 30.10.2026 startete **minimal v1.0.0 und v1.0.1** nativ von einer 16-GB-eMMC mit **6.12.114-odroidu3-v1**. Defaultlogin odroid und sudo, Root-Vergrößerung, stabile Ethernetidentität, Netzwerkzeit, Lüfterstufen, Bootdatei-Prüfsummen und exakte Paketstände wurden geprüft. Keine Journalfehler oder fehlgeschlagenen Dienste. Minimized und SD-Start der neuen Images bleiben getrennt offen.
 
 | Komponente | Nachweis / Grenze |
 |---|---|
-| SD und natives eMMC | Minimal v1.0.0 hat nativen eMMC-Erststart und Basisprüfung bestanden. Frühere Prototypen starteten von SD/eMMC; boot0-Reparatur auf zwei 16-GB-SDW16G-Modulen abgenommen. Normales Leser-Schreiben erfasst nur den Benutzerbereich. |
+| SD und natives eMMC | Minimal v1.0.0 und v1.0.1 haben nativen eMMC-Erststart und Basisprüfung bestanden. Frühere Prototypen starteten von SD/eMMC; boot0-Reparatur auf zwei 16-GB-SDW16G-Modulen abgenommen. Normales Leser-Schreiben erfasst nur den Benutzerbereich. |
 | CPU/RAM/Speicher/Netzwerk | Frühere Prototyp-Stabilitätsprüfung mit CPU-/Speicherlast, Speichermustern, Datei-Schreib-/Direktlese-Prüfsummen und Netztransfer bestanden. Grafiktests ersetzen diese Prüfung nicht. |
 | Ethernetidentität | Hardware-MAC blieb über SD/eMMC stabil. Eine vom Treiber gelieferte permanente Adresse hat Vorrang. |
 | Lüfter/Thermik/Taster | Alle vier Lüfterstufen beobachtet; einstellbare eigene Trips 35/45/55 °C, CPU-Schutz erhalten; sauberes Herunterfahren per Taster bestätigt. |
@@ -21,3 +21,5 @@ Lokale Kerneländerungen sind keine als upstream-übernommen bezeichneten Fixes:
 Images enthalten keine persönliche feste MAC, Hostschlüssel oder Wartungs-Authorized-Keys. Dasselbe Image leitet auf einem anderen U3 dessen Identität ab. Die MAC-Ableitung ist ein deterministischer Ersatzweg, keine Behauptung einer programmierten Werksadresse im LAN-EEPROM.
 
 Der minimal-Erststart protokollierte bekannte Plattform-/Lockdep- und fehlende optionale Kamerasensor-Meldungen sowie die nicht gesetzte optionale Cron-Variable `EXTRA_OPTS`. Cron lief mit Resultat success; der Pincontroller-Device-Link-Fehler trat nicht erneut auf. Der Cron-Hinweis ist für eine spätere Rezeptkorrektur erfasst.
+
+Die native eMMC-Nachprüfung von Minimal 1.0.1 bestand ebenfalls: eigener Root-Public-Key vom Nutzer hinterlegt, Login bestätigt und mit SSH-Journal abgeglichen; die ausgelieferte Schlüsselregel wirkte ohne lokalen Override, das Root-Passwort blieb gesperrt. Kernel-/Meta-/Werkzeug-/Keyringpakete, sämtliche Modul-/Payload-/Bootdatei-Prüfsummen und das vollständige Image-Paketmanifest stimmten überein. Board-/Medien-/Payload-Zulässigkeitsprüfungen bestanden ohne Aktivierung. Die konfigurierte APT-Adresse war vom Board erreichbar; ihre geladene Signatur wurde gegen den bytegleichen installierten Archivschlüssel geprüft. Listen derzeit leer. Keine Live-Cacheaktualisierung, Paketaktualisierung oder Konfigurationsänderung vorgenommen; ein echter Kernelwechsel mit Neustart bleibt offen.

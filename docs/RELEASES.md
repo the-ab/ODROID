@@ -17,4 +17,4 @@ Before stable publication:
 
 Connected-HDMI Xorg/Weston output on the prototype was accepted separately. Minimal v1 native eMMC first boot and basic runtime checks subsequently passed; minimized/SD, any additional claimed scope and firmware provenance remain open. Downloads must describe remaining limitations accurately.
 
-Image candidate 1.0.1 adds owner-installed root SSH keys and locally installed APT kernel packages. Its physical boot and a different-kernel package upgrade remain pending; 1.0.0 acceptance does not cover those changes.
+Image candidate 1.0.1 adds owner-installed root SSH keys and locally installed APT kernel packages. Minimal 1.0.1 has passed native-eMMC basic checks, including owner root-key login, installed kernel packages and APT source/signature. Minimized/SD and a different-kernel package upgrade followed by boot remain pending.

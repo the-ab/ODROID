@@ -2,7 +2,7 @@
 
 [Deutsch](HARDWARE.de.md)
 
-Source/configuration support, prototype operation and acceptance of a new image are separate claims. On 2026-10-30, the **minimal v1.0.0** image booted from native 16 GB eMMC with **6.12.114-odroidu3-v1**. Stock odroid password login and sudo, root expansion, stable Ethernet identity, network time, fan thresholds, matching boot-file hashes and exact package versions passed. No journal errors or failed units occurred. Minimized and new-image SD boot remain separate open checks.
+Source/configuration support, prototype operation and acceptance of a new image are separate claims. On 2026-10-30, the **minimal v1.0.0 and v1.0.1** image booted from native 16 GB eMMC with **6.12.114-odroidu3-v1**. Stock odroid password login and sudo, root expansion, stable Ethernet identity, network time, fan thresholds, matching boot-file hashes and exact package versions passed. No journal errors or failed units occurred. Minimized and new-image SD boot remain separate open checks.
 
 | Component | Evidence / limit |
 |---|---|
@@ -21,3 +21,5 @@ Kernel patches are local changes, not claimed as upstream-accepted fixes: hardwa
 The image contains no personal fixed MAC, host key or maintenance authorized key. The same image can be written to another U3 and derives that board's identity. MAC derivation is a deterministic fallback, not a claim that the LAN chip has a programmed factory EEPROM address.
 
 The minimal first boot logged known platform/lockdep and absent optional-camera messages, plus an unset optional cron `EXTRA_OPTS` variable. Cron remained active with result success; no pin-controller device-link error recurred. The cron warning is tracked for a later recipe cleanup.
+
+Minimal 1.0.1 native-eMMC follow-up passed: the owner added a root public key and confirmed login; SSH journal evidence matched, the shipped key-only policy was effective without a local override and root remained password-locked. Kernel/meta/tools/keyring packages, all module/payload/boot hashes and the complete image package manifest matched. Board/media/payload admission checks passed without activation. The configured APT endpoint was reachable from the board and its downloaded signature verified against key bytes identical to the installed archive key. Lists are currently empty. No live cache refresh, package upgrade or configuration change was performed; an actual different-kernel upgrade/boot remains pending.

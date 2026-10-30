@@ -17,4 +17,4 @@ Vor stabiler Veröffentlichung:
 
 Die Xorg-/Weston-Ausgabe am angeschlossenen HDMI des Prototyps wurde gesondert abgenommen. Minimal v1 bestand anschließend nativen eMMC-Erststart und Basisprüfung; minimized/SD, zusätzliche zugesagte Prüfumfänge und Firmware-Herkunft bleiben offen. Downloads weisen verbliebene Grenzen zutreffend aus.
 
-Imagekandidat 1.0.1 ergänzt selbst hinterlegte Root-SSH-Schlüssel und lokal installierte APT-Kernelpakete. Physischer Start und Paketupdate auf einen anderen Kernel bleiben offen; die Abnahme von 1.0.0 deckt diese Änderungen nicht ab.
+Imagekandidat 1.0.1 ergänzt selbst hinterlegte Root-SSH-Schlüssel und lokal installierte APT-Kernelpakete. Minimal 1.0.1 hat native eMMC-Basisprüfungen einschließlich eigenem Root-Key-Login, installierten Kernelpaketen und APT-Quelle/Signatur bestanden. Minimized/SD und Paketupdate auf einen anderen Kernel mit anschließendem Start bleiben offen.
