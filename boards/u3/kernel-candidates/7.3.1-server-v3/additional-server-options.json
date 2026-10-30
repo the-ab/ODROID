@@ -160,8 +160,8 @@
     "resolved": "m"
   },
   "IP_VS_NFCT": {
-    "requested": "m",
-    "resolved": "not_enabled_or_removed"
+    "requested": "y",
+    "resolved": "y"
   },
   "NF_CONNTRACK_FTP": {
     "requested": "m",
