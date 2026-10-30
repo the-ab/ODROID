@@ -35,7 +35,7 @@ cp "$config" "$build/.config"
 export ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 export KBUILD_BUILD_USER=builder KBUILD_BUILD_HOST=odroid KBUILD_BUILD_VERSION=1
 export SOURCE_DATE_EPOCH=$build_epoch
-KBUILD_BUILD_TIMESTAMP=$(date -u -d "@$build_epoch" "+%a %b %d %H:%M:%S UTC %Y")
+KBUILD_BUILD_TIMESTAMP=${KBUILD_BUILD_TIMESTAMP:-$(date -u -d "@$build_epoch" "+%a %b %d %H:%M:%S UTC %Y")}
 export KBUILD_BUILD_TIMESTAMP
 make -C "$build" olddefconfig
 make -C "$build" -j"${JOBS:-4}" zImage modules dtbs

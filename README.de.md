@@ -25,3 +25,5 @@ Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern 
 Kernel und Skripte werden mit Quellen und Lizenzen bereitgestellt. Hersteller-Bootfirmware liegt nicht in diesem Git-Repository; genaue Weitergabe-/Quellbedingungen müssen vor öffentlichen Binärreleases dokumentiert sein. Ubuntu-Pakete und Firmware behalten ihre eigenen Lizenzen. Siehe [Releaseanforderungen](docs/RELEASES.de.md).
 
 Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
+
+Ein separater [Linux 7.3.1-Kandidat](boards/u3/kernel-candidates/7.3.1/README.de.md) hat native APT-/Rückfall-/Rückkehr- und Kopfhörertests bestanden. Vorhandene1.0.1-Imageartefakte bleiben unverändert. Siehe [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md) und [Audio](docs/AUDIO.de.md).

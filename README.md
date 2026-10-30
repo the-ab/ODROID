@@ -25,3 +25,5 @@ Ethernet uses DHCP and a stable MAC derived from the board's hardware identity w
 The kernel and scripts are provided with their source and licenses. Vendor boot firmware is not stored in this Git repository; its exact distribution/source coverage must be documented before public binary releases. Ubuntu packages and firmware retain their own licenses. See [release requirements](docs/RELEASES.md).
 
 Kernel packages and signed APT updates: [guide](docs/KERNEL-UPDATES.md).
+
+A separate [Linux 7.3.1 candidate](boards/u3/kernel-candidates/7.3.1/README.md) has passed native APT/rollback/return and headphone tests. The existing1.0.1 image artifacts remain unchanged. See [security review](docs/SECURITY-REVIEW.md) and [audio](docs/AUDIO.md).

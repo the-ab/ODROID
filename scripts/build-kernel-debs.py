@@ -7,7 +7,11 @@ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--kernel',type=Pa
 assert not subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'status','--porcelain'],text=True).strip(),'Commit the packaging recipe before building'
 profile=a.profile.resolve() if a.profile else None
 source_spec=json.loads((profile/'source.json').read_text()) if profile else next(x for x in json.loads((repo/'sources.lock.json').read_text())['sources'] if x['id']=='kernel')
-if profile:assert release==source_spec['kernel_release']
+if profile:
+ assert release==source_spec['kernel_release']
+ assert hashlib.sha256((kernel/'config').read_bytes()).digest()==hashlib.sha256((profile/'kernel.config').read_bytes()).digest(),'Artifact configuration differs from the pinned profile'
+else:
+ assert release.split('-odroidu3-v')[0]==board['kernel_release'].split('-odroidu3-v')[0],'A different upstream kernel requires --profile'
 source_commit=subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'rev-parse','HEAD'],text=True).strip();tools_version=board['image_version'];epoch=int(os.environ.get('SOURCE_DATE_EPOCH',str(int(time.time()))));results=[]
 def sha(p):
  with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
