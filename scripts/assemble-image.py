@@ -11,6 +11,8 @@ p.add_argument('--variant',choices=['minimized','minimal'],required=True)
 a=p.parse_args();repo=Path(__file__).resolve().parent.parent
 board=json.loads((repo/'boards/u3/board.json').read_text());lock=json.loads((repo/'sources.lock.json').read_text())
 root=a.root.resolve();kernel=a.kernel.resolve();out=a.output.resolve()
+assert not subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'status','--porcelain'],text=True).strip(),'Commit image recipes before assembly'
+recipe_commit=subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'rev-parse','HEAD'],text=True).strip()
 assert os.geteuid()==0 and root.name=='rootfs-'+a.variant and (root.parent/'.odroid-workspace').is_file()
 subprocess.run(['python3',str(repo/'scripts/normalize-rootfs.py'),'--root',str(root)],check=True)
 assert not out.exists();out.mkdir(parents=True);stage=out/'stage';stage.mkdir();boot=stage/'boot';boot.mkdir();(boot/'extlinux').mkdir()
@@ -51,7 +53,7 @@ for name in ['config','System.map']:
     shutil.copy2(kernel/name,boot/(name+'-'+release))
 shutil.copy2(kernel/'config',root/'boot'/('config-'+release))
 (root/'boot'/('config-'+release)).chmod(0o644)
-arguments=f'console=ttySAC1,115200n8 console=tty1 mem=2047M root=PARTUUID={disk_id:08x}-02 rootfstype=ext4 rootwait ro net.ifnames=0 fsck.repair=yes loglevel=4 audit=1 audit_backlog_limit=8192'
+arguments=f'console=ttySAC1,115200n8 console=tty1 mem=2047M root=PARTUUID={disk_id:08x}-02 rootfstype=ext4 rootwait ro net.ifnames=0 fsck.repair=yes loglevel=4 audit=1 audit_backlog_limit=8192 psi=1'
 (boot/'extlinux/extlinux.conf').write_text(f'TIMEOUT 30\nDEFAULT ubuntu26\nMENU TITLE ODROID-U3 Ubuntu {board["ubuntu"]}\n\nLABEL ubuntu26\n  MENU LABEL Ubuntu {board["ubuntu"]} / {release}\n  LINUX /vmlinuz-{release}\n  FDT /exynos4412-odroidu3-{release}.dtb\n  APPEND {arguments}\n')
 appended=stage/'zImage-appended-dtb';appended.write_bytes((boot/('vmlinuz-'+release)).read_bytes()+(boot/('exynos4412-odroidu3-'+release+'.dtb')).read_bytes())
 shutil.copy2(root/'usr/lib/odroid-u3/kernels'/release/'uImage',boot/'uImage')
@@ -96,7 +98,7 @@ image=out/(image_id+'.img');newfile(image,disk_sectors*512)
 with image.open('r+b') as f:
     f.write(head);sparse_copy(boot_fs,f,boot_start*512);sparse_copy(root_fs,f,root_start*512)
 payload=out/'u3-boot0-prefix.bin';payload.write_bytes(prefix)
-manifest={'schema':1,'image':image.name,'image_sha256':sha(image),'image_bytes':image.stat().st_size,'ubuntu':board['ubuntu'],'variant':a.variant,'image_version':board['image_version'],'kernel':release,'disk_id':f'{disk_id:08x}','root_uuid':root_uuid,'built_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'partitions':[{'number':1,'start_sector':boot_start,'sectors':boot_sectors,'filesystem':'FAT16'},{'number':2,'start_sector':root_start,'sectors':root_sectors,'filesystem':'ext4'}],'firmware_components':components,'emmc_boot0_payload':{'file':payload.name,'bytes':len(prefix),'sha256':sha(payload),'separate_hardware_boot_partition':True},'access':{'human_users':['odroid'],'default_password':'odroid','sudo':'password required','root_password':'locked','root_ssh':True,'root_ssh_authentication':'public key only','root_password_ssh':False,'authorized_keys_included':False,'ssh_host_keys':'generated on first boot'},'hardware_acceptance':'this new image not yet physically boot-tested','boot_firmware_distribution':lock['boot_reference']['distribution_status']}
+manifest={'schema':1,'recipe_commit':recipe_commit,'kernel_packaging_commit':package_manifest['packaging_source_commit'],'image':image.name,'image_sha256':sha(image),'image_bytes':image.stat().st_size,'ubuntu':board['ubuntu'],'variant':a.variant,'image_version':board['image_version'],'kernel':release,'disk_id':f'{disk_id:08x}','root_uuid':root_uuid,'built_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'partitions':[{'number':1,'start_sector':boot_start,'sectors':boot_sectors,'filesystem':'FAT16'},{'number':2,'start_sector':root_start,'sectors':root_sectors,'filesystem':'ext4'}],'firmware_components':components,'emmc_boot0_payload':{'file':payload.name,'bytes':len(prefix),'sha256':sha(payload),'separate_hardware_boot_partition':True},'access':{'human_users':['odroid'],'default_password':'odroid','sudo':'password required','root_password':'locked','root_ssh':True,'root_ssh_authentication':'public key only','root_password_ssh':False,'authorized_keys_included':False,'ssh_host_keys':'generated on first boot'},'hardware_acceptance':'this new image not yet physically boot-tested','boot_firmware_distribution':lock['boot_reference']['distribution_status']}
 (out/'BUILD-MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
 shutil.copy2(root.parent/('packages-'+a.variant+'.tsv'),out/'PACKAGES.tsv')
 (out/(image.name+'.sha256')).write_text(manifest['image_sha256']+'  '+image.name+'\n')

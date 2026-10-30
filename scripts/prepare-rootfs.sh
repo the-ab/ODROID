@@ -93,6 +93,7 @@ if p.exists():
  s=p.read_text()
  s=s.replace('kernel.apparmor_restrict_unprivileged_userns =', '-kernel.apparmor_restrict_unprivileged_userns =').replace('kernel.apparmor_restrict_unprivileged_userns=', '-kernel.apparmor_restrict_unprivileged_userns=')
  Path('/etc/sysctl.d/10-apparmor.conf').write_text(s)
+ Path('/etc/sysctl.d/10-apparmor.conf').chmod(0o644)
 p=Path('/etc/default/cron')
 if p.exists() and 'EXTRA_OPTS=' not in p.read_text():
  with p.open('a') as f:f.write('\nEXTRA_OPTS=""\n')

@@ -2,7 +2,7 @@
 
 [Deutsch](RELEASES.de.md)
 
-Image version: SemVer, first candidate `1.0.0`. Kernel: upstream version plus board revision, currently `6.12.114-odroidu3-v1`. U3 and XU4 releases have separate hardware evidence.
+Image version: SemVer, first candidate `1.0.0`. Kernel: upstream version plus board revision, currently `7.3.1-odroidu3-v3`. U3 and XU4 releases have separate hardware evidence.
 
 A release must identify the source commit, exact package manifest, IMG/ZIP checksums, kernel/modules/DTB and boot0 payload. ZIP CRC and complete decompressed IMG hash are checked. Matching kernel/U-Boot sources, configuration, local patches and build instructions accompany binary distribution; package and firmware licenses remain available.
 

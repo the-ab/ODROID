@@ -24,7 +24,7 @@ python3 scripts/fetch-sources.py --cache "$work/cache" \
 Auch das passende bereits entpackte Referenz-IMG wird angenommen. Davon werden ausschließlich hashgeprüfte BL1-/BL2-/TrustZone-Blöcke gelesen, niemals Betriebssystem, Benutzer oder Schlüssel. Bootblobs liegen nicht in Git; Weitergabebedingungen bleiben eine Releaseanforderung. Alle Upstream-/Base-/Firmwareeingänge stehen mit Prüfsummen in `sources.lock.json`. Das Ubuntu-Base-Archiv wurde gegen das signierte Manifest mit Ubuntu-CD-Image-Schlüssel `843938DF228D22F7B3742BC0D94AA3F0EFE21092` geprüft.
 
 ```sh
-bash scripts/build-kernel.sh "$work/cache/linux-6.12.114.tar.xz" "$work/linux-v1"
+bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v1"
 sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v1" "$work/kernel-v1"
 
 mkdir "$work/u-boot"

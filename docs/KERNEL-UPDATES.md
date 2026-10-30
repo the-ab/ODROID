@@ -2,9 +2,9 @@
 
 [Deutsch](KERNEL-UPDATES.de.md)
 
-The shared repository is [the-ab/deb](https://github.com/the-ab/deb), served at **https://the-ab.github.io/deb/**. It can host separate components for other projects. `main` contains shared packages; `u3` is reserved for ODROID-U3. XU4 requires its own packages and acceptance. Tested kernels **7.3.1-1** and **6.12.114-1** are published. The metapackage selects 7.3.1; 6.12.114 remains separately available for fallback. [Package/source manifest](https://github.com/the-ab/deb/blob/main/publications/u3-2026-10-30.json) · [Matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-kernels-2026.10.30).
+The signed repository is [the-ab/deb](https://the-ab.github.io/deb/), with shared `main` and board-specific `u3` components. The current server kernel is **7.3.1-odroidu3-v3**, package **7.3.1-3**, with activation tools **1.0.2**. Earlier kernel/metapackage versions were retired from the current APT pool at the owner's request after testing their replacement. Installed fallback kernels and local backups remain available; they are not automatically removed. Historical sources/Git history are preserved. [Package manifest](https://github.com/the-ab/deb/blob/main/publications/u3-server-2026-10-30.json) · [Complete matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-server-kernel-7.3.1-3).
 
-Images from 1.0.1 install these packages locally: `the-ab-archive-keyring`, `odroid-u3-kernel-tools`, `linux-image-6.12.114-odroidu3-v1`, and the tracking metapackage `linux-image-odroid-u3`. They also install `/etc/apt/sources.list.d/the-ab-odroid-u3.sources`:
+Images from1.0.1 include the public key and source below. Image1.0.1 originally shipped6.12.114-v1; fresh1.0.2 uses7.3.1-v3. The image version describes the original installation; use `uname -r` for the running kernel.
 
 ```text
 Types: deb
@@ -15,25 +15,24 @@ Architectures: armhf
 Signed-By: /usr/share/keyrings/the-ab-archive-keyring.gpg
 ```
 
-Archive signing fingerprint: `E85346CA2461E1FA45AC7C7CD85BC090497CE8B9`. This public archive key verifies packages; it is unrelated to SSH login keys. No trust bypass is needed. A newer approved metapackage pulls the corresponding versioned kernel:
+Archive fingerprint: `E85346CA2461E1FA45AC7C7CD85BC090497CE8B9`. It is independent of SSH login keys. No trust bypass is required.
 
 ```sh
 sudo apt update
 apt-cache policy linux-image-odroid-u3
 sudo apt install linux-image-odroid-u3
 odroid-kernel status
-# Reboot when convenient, after a successful update:
+# After successful installation, reboot deliberately:
 sudo reboot
 uname -r
-odroid-kernel status
 sudo journalctl -b -p err --no-pager
 ```
 
-The tools check the U3/Exynos4412 identity, root on SD/eMMC partition 2, and the matching FAT partition 1 mounted at `/boot`. They verify kernel, DTB, modules and uImage hashes/CRCs before switching versioned extlinux files and the legacy `uImage`. Existing boot arguments and a backup of the previous boot files are retained. Ordinary write/readback failures restore the prior files. Installation fails rather than activating on a different board or unmounted boot partition. Boot0, U-Boot, BL1/BL2 and TrustZone are not updated. There is no automatic reboot.
+The tracking metapackage pulls a versioned kernel. Installation verifies U3/Exynos4412 identity, root partition2, the matching FAT partition1 mounted at `/boot`, module/payload hashes and uImage CRCs. It writes immutable versioned files directly under `/boot`: `vmlinuz-<release>`, `uImage-<release>`, `config-<release>`, `System.map-<release>` and `exynos4412-odroidu3-<release>.dtb`. Extlinux selects them and `/boot/uImage` remains the active legacy copy. Existing valid arguments and old boot copies are retained. No initramfs is needed for the shipped unencrypted ext4 root. Older installations' `/boot/odroid-kernels/` paths remain usable for existing recovery snapshots; new activations use the flat layout.
 
-Do not remove the running kernel or the next-boot/rollback kernel. Versioned kernels are excluded from APT autoremove. Older packages and managed boot copies are retained; check free space before updates. A changed compiled payload requires a new kernel release suffix, so it cannot overwrite a previous fallback under the same directory name.
+The tools verify all new files before switching the selectors. Ordinary write/readback failures restore the previous selectors. Boot0/U-Boot/BL1/BL2/TrustZone are never changed and installation never reboots automatically. Keep sufficient boot-partition space. Removal of the running, next-boot or saved rollback kernel is refused; versioned kernels are excluded from autoremove. A changed compiled payload always receives a new board suffix.
 
-While the machine is still accessible, restore the previous boot files with:
+For the last saved selection:
 
 ```sh
 sudo odroid-kernel rollback
@@ -41,25 +40,20 @@ odroid-kernel status
 sudo reboot
 ```
 
-Rollback is a local recovery action, not an automatic rescue from a kernel that cannot boot. If SSH and the console are unavailable, power down and mount the medium on another Linux system. Inspect `/var/lib/odroid-kernel/state.json` on its root partition; the `previous_snapshot` directory contains `uImage`, `extlinux/extlinux.conf` and a SHA256 `BACKUP.json`. Verify the named snapshot belongs to this root PARTUUID, restore those two files to its boot partition, sync and unmount. Retain the corresponding `/usr/lib/modules/<release>` on the root partition. Power loss during filesystem writes still requires recovery; ordinary error rollback cannot guarantee survival of media corruption.
-
-## Build and publication
-
-Build committed recipes only. The Linux artifact directory must match the board release and include `zImage`, DTB, config, System.map and modules. Build locally with:
+For an already installed specific fallback:
 
 ```sh
-python3 scripts/build-kernel-debs.py --kernel /path/to/kernel-artifacts \
-  --keyring /path/to/deb/the-ab-archive-keyring.gpg --output /new/package-output
+sudo odroid-kernel activate 7.3.1-odroidu3-v2
+odroid-kernel status
+# Reboot only after checking the result.
 ```
 
-For fresh marked image roots, use `sudo unshare --mount --pid --fork bash scripts/install-kernel-packages.sh ROOTFS PACKAGE_OUTPUT` before assembly. This explicitly defers activation on the build host. Do not use that build-only bypass on installed devices.
+That example requires v2 to be installed locally; it is not a download promise. Fresh images contain only their shipped kernel, so prepare a tested fallback/backup before a future update. Rollback is a local recovery operation, not an automatic rescue from an unbootable kernel. If SSH/console are unavailable, power off and mount the medium on another Linux system. Read `/var/lib/odroid-kernel/state.json` on root. Its `previous_snapshot` contains `uImage`, `extlinux/extlinux.conf` and `BACKUP.json`; verify hashes and matching root PARTUUID, restore the two named files to boot, sync and unmount. Keep the matching modules. Power-loss/media corruption can still require external recovery.
 
-For an approved kernel release, provide the exact upstream Linux archive, complete local patch/configuration and packaging source commit with checksums in the product's source release. Kernel DEBs contain no vendor boot firmware. Copy reviewed shared DEBs to `deb/pool/main/` and U3 DEBs to `deb/pool/u3/`, preserving previous versions. Run `scripts/build-apt-repository.py --root /path/to/deb --gpg-home /private/signing/home --signing-key FINGERPRINT`, review all signed index changes and then publish. The private signing key must stay outside both repositories. Images and large source archives belong in product Releases, not the Pages site. The index builder limits individual DEBs to 95 MiB; respect the overall GitHub Pages size limits as additional projects grow.
+Signed native APT tests passed6.12.114→7.3.1-v1→6.12.114→7.3.1-v1, then the fresh reset baseline→server-v2→server-v3. v2/v3 retained fallback files and modules. v3 passed Docker, VPN, firewall, file-service and security tests; see [scope and limits](SERVER-KERNEL.md). Fresh image first boots are separate acceptance steps.
 
-Local package installation, signature checks and file rollback tests have passed. A real signed APT update to Linux 7.3.1, a native boot, rollback to 6.12.114 and return to 7.3.1 have passed on the test eMMC. A candidate build is never automatically published into `stable`.
+## Build and publish
 
-Minimal image 1.0.1 has now booted natively from eMMC. The installed package versions/files, running v1 kernel, update-tool board/media/payload checks and APT source/key/signature were verified. This accepts the preinstalled image packages; the subsequent signed APT update/rollback/return test has also passed, as documented below.
+Use committed recipes and matching artifact configuration. Build with `scripts/build-kernel-debs.py --kernel ARTIFACTS --keyring PUBLIC_KEY --output NEW_OUTPUT --tools-version 1.0.2`. Explicit pinned candidate profiles use `--profile`, `--release` and `--version`. Shared packages already published under a version must retain their exact bytes. Kernel DEBs contain no vendor boot firmware.
 
-On 2026-10-30, signed private APT packages performed 6.12.114 → 7.3.1 → 6.12.114 → 7.3.1 with real native eMMC boots. Final runtime: 7.3.1-odroidu3-v1. Boot0/boot1, SSH keys and existing source configuration were unchanged. 6.12.114 and its modules remain as fallback. The test was private; both tested versions were subsequently published to stable on 30 October 2026 following explicit approval. Versioned files live in `/boot/odroid-kernels/<release>/`; extlinux selects them, while `/boot/uImage` also serves the legacy path. Image-release metadata describes the original image; use `uname -r` and `odroid-kernel status` for the active kernel.
-
-Published on 30 October 2026 after explicit approval: tested 7.3.1-1 and 6.12.114-1 packages, byte-identical to the native tests. The metapackage tracks 7.3.1. Install `linux-image-6.12.114-odroidu3-v1` for the separate fallback; its first installation activates it for next boot. If already installed, explicitly select it with `sudo odroid-kernel activate 6.12.114-odroidu3-v1` and inspect status before rebooting. Use `odroid-kernel rollback` for the last saved boot files. Matching full sources are in [the kernel source release](https://github.com/the-ab/ODROID/releases/tag/u3-kernels-2026.10.30). Existing 1.0.1 images are unchanged. Board tools require Python 3.11 or newer; supported/tested target is Ubuntu 26.04 armhf.
+Fresh marked image roots use `sudo unshare --mount --pid --fork bash scripts/install-kernel-packages.sh ROOTFS DEBS`; activation is deferred only during image assembly. Never use that image-build bypass on an installed device. Publish exact complete Linux source, patch/configuration and packaging recipes/licenses/checksums alongside packages. Copy approved DEBs into the correct component, rebuild signed SHA256/SHA512 by-hash indices with `scripts/build-apt-repository.py`, verify downloads/signatures and deploy. Keep private signing material outside Git. Preserve old versions by default; removal needs the owner's explicit scope and a verified replacement. Other projects' components remain independent. Large sources/images belong in product Releases; individual DEBs here are limited to95MiB and overall Pages limits still apply.

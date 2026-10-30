@@ -24,7 +24,7 @@ python3 scripts/fetch-sources.py --cache "$work/cache" \
 The matching extracted reference IMG is also accepted. The reference is used only for hash-checked BL1/BL2/TrustZone blocks; its OS, users and access keys are never copied. Vendor boot blobs are not in Git, and binary redistribution coverage remains a release requirement. All upstream source/base/firmware downloads are pinned in `sources.lock.json`. The Ubuntu Base input was checked against its signed manifest using Ubuntu CD Image key `843938DF228D22F7B3742BC0D94AA3F0EFE21092`.
 
 ```sh
-bash scripts/build-kernel.sh "$work/cache/linux-6.12.114.tar.xz" "$work/linux-v1"
+bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v1"
 sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v1" "$work/kernel-v1"
 
 mkdir "$work/u-boot"

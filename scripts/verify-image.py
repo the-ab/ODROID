@@ -79,7 +79,7 @@ boot=out/'stage/boot'
 assert (boot/('vmlinuz-'+version)).is_file() and (boot/('uImage-'+version)).is_file()
 assert (boot/('exynos4412-odroidu3-'+version+'.dtb')).is_file()
 boot_text=(boot/'extlinux/extlinux.conf').read_text()
-assert 'LINUX /vmlinuz-'+version in boot_text and 'audit=1 audit_backlog_limit=8192' in boot_text
+assert 'LINUX /vmlinuz-'+version in boot_text and 'audit=1 audit_backlog_limit=8192 psi=1' in boot_text
 payload=json.loads(read('/usr/lib/odroid-u3/kernels/'+version+'/MANIFEST.json'))
 assert hashlib.sha256((boot/('uImage-'+version)).read_bytes()).hexdigest()==payload['files']['uImage']
 assert (boot/'uImage').read_bytes()==(boot/('uImage-'+version)).read_bytes()
