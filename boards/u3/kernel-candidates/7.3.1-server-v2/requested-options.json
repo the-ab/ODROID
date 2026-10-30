@@ -105,7 +105,7 @@
   },
   "IP_MULTIPLE_TABLES": {
     "requested": "y",
-    "resolved": "absent"
+    "resolved": "y"
   },
   "IPV6_MULTIPLE_TABLES": {
     "requested": "y",
@@ -133,7 +133,7 @@
   },
   "NET_SCH_INGRESS": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "NET_CLS_U32": {
     "requested": "m",
@@ -149,15 +149,15 @@
   },
   "NET_ACT_MIRRED": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "NET_ACT_POLICE": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IFB": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "BRIDGE": {
     "requested": "m",
@@ -225,11 +225,11 @@
   },
   "L2TP_ETH": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "L2TP_IP": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "NET_IPIP": {
     "requested": "m",
@@ -237,7 +237,7 @@
   },
   "NET_IPGRE": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IPV6_TUNNEL": {
     "requested": "m",
@@ -437,7 +437,7 @@
   },
   "NETFILTER_XT_MATCH_SET": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "NETFILTER_XT_TARGET_CHECKSUM": {
     "requested": "m",
@@ -477,19 +477,19 @@
   },
   "IP_NF_FILTER": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP_NF_NAT": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP_NF_MANGLE": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP_NF_RAW": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP_NF_TARGET_REJECT": {
     "requested": "m",
@@ -501,19 +501,19 @@
   },
   "IP6_NF_FILTER": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP6_NF_NAT": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP6_NF_MANGLE": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP6_NF_RAW": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "m"
   },
   "IP6_NF_TARGET_REJECT": {
     "requested": "m",
@@ -581,7 +581,7 @@
   },
   "NFS_V4_1": {
     "requested": "y",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "NFS_V4_2": {
     "requested": "y",
@@ -589,7 +589,7 @@
   },
   "NFSD_V3": {
     "requested": "y",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "NFSD_V4": {
     "requested": "y",
@@ -633,7 +633,7 @@
   },
   "OVERLAY_FS_XINO_AUTO": {
     "requested": "y",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "MD": {
     "requested": "y",
@@ -773,7 +773,7 @@
   },
   "RANDOMIZE_KSTACK_OFFSET_DEFAULT": {
     "requested": "y",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "CRYPTO_CHACHA20": {
     "requested": "m",
@@ -781,7 +781,7 @@
   },
   "CRYPTO_POLY1305": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
   },
   "CRYPTO_USER_API_HASH": {
     "requested": "m",
@@ -809,6 +809,50 @@
   },
   "CRYPTO_AES_ARM": {
     "requested": "m",
-    "resolved": "absent"
+    "resolved": "not_enabled_or_removed"
+  },
+  "NETFILTER_XTABLES_LEGACY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IP_ADVANCED_ROUTER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NET_CLS_ACT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "L2TP_V3": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V3_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V4_POSIX_ACLS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IP_NF_IPTABLES_LEGACY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_IPTABLES_LEGACY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_IPGRE_DEMUX": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_BPF": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_BPF": {
+    "requested": "m",
+    "resolved": "m"
   }
 }
