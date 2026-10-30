@@ -5,7 +5,7 @@ kernel=$(realpath -- "${1:?kernel build required}")
 output=${2:?new artifact directory required}
 [[ ! -e "$output" && -f "$kernel/include/config/kernel.release" ]]
 release=$(cat "$kernel/include/config/kernel.release")
-[[ $release =~ ^6\.12\.114-odroidu3-v[0-9]+$ ]]
+[[ $release =~ ^[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+$ ]]
 mkdir -p "$output"
 output=$(realpath "$output")
 make -C "$kernel" ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- INSTALL_MOD_PATH="$output" INSTALL_MOD_STRIP=1 modules_install
