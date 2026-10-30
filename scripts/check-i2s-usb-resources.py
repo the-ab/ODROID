@@ -113,3 +113,10 @@ assert ('Microphone','Mic Jack') in widgets,'Capture needs a real microphone sou
 assert {('Mic Jack','MICBIAS'),('IN12','Mic Jack'),('Mixer DAI RX','HiFi Capture')} <= routes,'Capture path is incomplete'
 assert ('IN1','Headphone Jack') not in routes,'A headphone sink cannot supply capture'
 print('Compiled U3 capture graph: microphone source, bias, actual IN12 preamp and I2S backend are connected')
+
+# Exynos HDMI is a transmitter. Advertising capture causes hdmi-codec's
+# single-stream reservation to reject otherwise valid MAX98090 full duplex.
+source=(tree/'drivers/gpu/drm/exynos/exynos_hdmi.c').read_text()
+initializer=source.split('struct hdmi_codec_pdata codec_data = {',1)[1].split('};',1)[0]
+assert '.no_i2s_capture = 1,' in initializer,'HDMI TX must not advertise an RX stream'
+print('Exynos HDMI advertises playback only; MAX98090 capture remains independent')
