@@ -11,7 +11,7 @@ Community Ubuntu images, build recipes and board support for ODROID systems. The
 | `minimized` | Reduced Ubuntu Base, SSH, sudo, networking and board support; documentation remains minimized. Includes the real `unminimize` command. |
 | `minimal` | `ubuntu-minimal`, `ubuntu-standard`, usual administration tools, restored documentation/man pages and shell completion. |
 
-Both variants boot to a console and SSH. There is one human account: **`odroid` / `odroid`**, with password-protected sudo. Root's password is locked and root SSH is disabled. No maintenance authorized keys, fixed SSH host keys or cloned machine identity are included. Set your own password after the first login with `passwd`.
+Both variants boot to a console and SSH. There is one human account: **`odroid` / `odroid`**, with password-protected sudo. Root's password is locked; SSH accepts a public key that the owner installs in `/root/.ssh/authorized_keys` (since image 1.0.1). No maintenance authorized keys, fixed SSH host keys or cloned machine identity are included. Set your own password after the first login with `passwd`.
 
 Ethernet uses DHCP and a stable MAC derived from the board's hardware identity when the driver has no permanent address. Both variants enable automatic network time synchronization. The root partition expands on first boot. SD and eMMC user-area layouts use the same image format; native eMMC may need the separate boot0 repair described below.
 
@@ -23,3 +23,5 @@ Ethernet uses DHCP and a stable MAC derived from the board's hardware identity w
 - [Hardware verification and release requirements](docs/HARDWARE.md)
 
 The kernel and scripts are provided with their source and licenses. Vendor boot firmware is not stored in this Git repository; its exact distribution/source coverage must be documented before public binary releases. Ubuntu packages and firmware retain their own licenses. See [release requirements](docs/RELEASES.md).
+
+Kernel packages and signed APT updates: [guide](docs/KERNEL-UPDATES.md).

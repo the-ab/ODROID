@@ -3,7 +3,7 @@
   "architecture": "armhf",
   "ubuntu": "26.04.1",
   "suite": "resolute",
-  "image_version": "1.0.0",
+  "image_version": "1.0.1",
   "kernel_release": "6.12.114-odroidu3-v1",
   "uboot": "2026.10",
   "fan_celsius": [
@@ -35,5 +35,14 @@
       ]
     }
   },
-  "binary_release_status": "preparation; no release accepted yet"
+  "binary_release_status": "preparation; no release accepted yet",
+  "apt_repository": {
+    "uri": "https://the-ab.github.io/deb/",
+    "suite": "stable",
+    "components": [
+      "main",
+      "u3"
+    ],
+    "fingerprint": "E85346CA2461E1FA45AC7C7CD85BC090497CE8B9"
+  }
 }

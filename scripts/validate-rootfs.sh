@@ -50,13 +50,34 @@ if variant=='minimal':
 else:
     assert (r/'etc/dpkg/dpkg.cfg.d/excludes').exists()
     assert (r/'etc/update-motd.d/60-unminimize').exists()
+
+import hashlib,subprocess,tempfile
+source=(r/'etc/apt/sources.list.d/the-ab-odroid-u3.sources').read_text()
+assert 'URIs: https://the-ab.github.io/deb/\n' in source and 'Components: main u3\n' in source
+assert 'Signed-By: /usr/share/keyrings/the-ab-archive-keyring.gpg\n' in source
+assert 'Trusted:' not in source
+status=(r/'var/lib/dpkg/status').read_text()
+for name in ['the-ab-archive-keyring','odroid-u3-kernel-tools','linux-image-odroid-u3','linux-image-6.12.114-odroidu3-v1']:
+    assert any('Package: '+name+'\n' in s and 'Status: install ok installed\n' in s for s in status.split('\n\n'))
+with tempfile.TemporaryDirectory(dir=r/'run') as tmp:
+    key=subprocess.check_output(['gpg','--no-options','--homedir',tmp,'--with-colons','--show-keys',str(r/'usr/share/keyrings/the-ab-archive-keyring.gpg')],text=True,stderr=subprocess.DEVNULL)
+    assert 'fpr:::::::::E85346CA2461E1FA45AC7C7CD85BC090497CE8B9:' in key
+assert (r/'usr/sbin/odroid-kernel').is_file()
+assert not (r/'var/lib/odroid-kernel/state.json').exists()
+for m in (r/'usr/lib/odroid-u3/kernels').glob('*/MANIFEST.json'):
+    meta=json.loads(m.read_text())
+    for name,digest in meta['files'].items():assert hashlib.sha256((m.parent/name).read_bytes()).hexdigest()==digest
+    for name,digest in meta['modules'].items():assert hashlib.sha256((r/'usr/lib/modules'/meta['kernel_release']/name).read_bytes()).hexdigest()==digest
+print('Local kernel packages, payloads, APT source and archive signing fingerprint verified')
+
 print('Only odroid human login; root locked; sudo setuid; no authorized/host keys or cloned machine identity')
 PY
 chroot "$root" /usr/bin/ssh-keygen -q -t ed25519 -N '' -f /run/qa_host_key
 chroot "$root" /usr/sbin/sshd -t -h /run/qa_host_key
 chroot "$root" /usr/sbin/sshd -T -h /run/qa_host_key -C user=odroid,host=odroid-u3,addr=127.0.0.1 > "$root/run/sshd-effective.conf"
+grep -x 'pubkeyauthentication yes' "$root/run/sshd-effective.conf"
 grep -x 'passwordauthentication yes' "$root/run/sshd-effective.conf"
-grep -x 'permitrootlogin no' "$root/run/sshd-effective.conf"
+grep -Ex 'permitrootlogin (prohibit-password|without-password)' "$root/run/sshd-effective.conf"
 chroot "$root" /usr/bin/python3 - < "$repo/scripts/pam-smoke.py"
 chroot "$root" /usr/sbin/visudo -c
 chroot "$root" /usr/bin/id odroid

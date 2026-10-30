@@ -15,4 +15,6 @@ Before stable publication:
 5. Exact BL1/BL2/TrustZone binary redistribution and source coverage are documented. Current source recipes accept the hash-pinned reference image; that alone is not a firmware license statement. No vendor boot blobs are checked into Git.
 6. Source review and explicit release approval precede tag/publication. Build scripts do not publish automatically.
 
-Connected-HDMI Xorg/Weston output on the prototype was accepted separately. This does not close new-image first-boot or firmware provenance requirements. Downloads must describe remaining limitations accurately.
+Connected-HDMI Xorg/Weston output on the prototype was accepted separately. Minimal v1 native eMMC first boot and basic runtime checks subsequently passed; minimized/SD, any additional claimed scope and firmware provenance remain open. Downloads must describe remaining limitations accurately.
+
+Image candidate 1.0.1 adds owner-installed root SSH keys and locally installed APT kernel packages. Its physical boot and a different-kernel package upgrade remain pending; 1.0.0 acceptance does not cover those changes.

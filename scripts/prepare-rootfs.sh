@@ -65,7 +65,7 @@ printf 'odroid:odroid\n' | chpasswd
 rm -f /etc/sudoers.d/90-odroid
 rm -rf /root/.ssh /home/odroid/.ssh
 mkdir -p /etc/ssh/sshd_config.d
-printf 'PasswordAuthentication yes\nKbdInteractiveAuthentication no\nPermitRootLogin no\n' > /etc/ssh/sshd_config.d/10-image-access.conf
+printf 'PasswordAuthentication yes\nKbdInteractiveAuthentication no\nPermitRootLogin prohibit-password\n' > /etc/ssh/sshd_config.d/10-image-access.conf
 cat > /etc/netplan/10-ethernet.yaml <<'NETPLAN'
 network:
   version: 2

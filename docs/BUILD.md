@@ -44,6 +44,7 @@ out="$work/output-$variant"
 sudo mkdir "$root"
 sudo tar --numeric-owner -xpf "$work/cache/ubuntu-base-26.04.1-base-armhf.tar.gz" -C "$root"
 sudo unshare --mount --pid --fork bash "$repo/scripts/prepare-rootfs.sh" "$root" "$variant"
+sudo unshare --mount --pid --fork bash "$repo/scripts/install-kernel-packages.sh" "$root" "$work/kernel-debs"
 sudo python3 "$repo/scripts/assemble-image.py" --root "$root" \
   --kernel "$work/kernel-v1" --uboot "$work/u-boot/u-boot-dtb.bin" \
   --firmware "$work/cache" --output "$out" --variant "$variant"
@@ -58,3 +59,5 @@ Assembly accepts regular output files only. A 2 GiB IMG has a 256 MiB FAT16 boot
 APT uses current signed Ubuntu 26.04 repositories; `PACKAGES.tsv` captures each build's actual versions. Pinned source inputs and build steps are provided, but identical bytes across later moving package repositories/build environments are not claimed.
 
 Run source checks with `python3 -m unittest discover -s tests -v`, Python compilation and shellcheck. Offline ARM/image/ZIP checks do not replace physical first-boot acceptance. See [release requirements](RELEASES.md).
+
+Build the local `kernel-debs` directory as described in [kernel updates](KERNEL-UPDATES.md) before image assembly.

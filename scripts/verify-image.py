@@ -12,6 +12,7 @@ qa=a.qa_log.read_text()
 assert 'Fresh ARM rootfs access/configuration validation passed' in qa
 assert 'Default odroid password matches Unix hash; wrong password rejected' in qa
 assert 'Network time synchronization enabled' in qa
+assert 'Local kernel packages, payloads, APT source and archive signing fingerprint verified' in qa
 for service in ['login','sshd','sudo']:assert service+' ARM PAM authentication and account checks passed' in qa
 assert 'ordering cycle' not in qa.lower()
 with image.open('rb') as f:
@@ -47,7 +48,7 @@ assert [x[0] for x in passwd if 1000<=int(x[2])<65534]==['odroid']
 assert [x[0] for x in passwd if int(x[2])==0]==['root']
 shadow={x.split(':')[0]:x.split(':')[1] for x in read('/etc/shadow').decode().splitlines()}
 assert shadow['root'].startswith(('!','*')) and not shadow['odroid'].startswith(('!','*'))
-assert 'PermitRootLogin no\n' in read('/etc/ssh/sshd_config.d/10-image-access.conf').decode()
+assert 'PermitRootLogin prohibit-password\n' in read('/etc/ssh/sshd_config.d/10-image-access.conf').decode()
 assert 'PasswordAuthentication yes\n' in read('/etc/ssh/sshd_config.d/10-image-access.conf').decode()
 assert not read('/etc/machine-id')
 for path in ['/root','/home/odroid']:assert '/.ssh/' not in listing(path)
@@ -82,7 +83,11 @@ layout=json.loads(read('/usr/share/odroid-u3/fan-layout.json'));assert layout['f
 assert layout['default_temperatures_celsius']==[35,45,55] and layout['kernel_release']==version
 for name in ['odroid-fan','odroid-network-identity','odroid-grow-root']:assert read('/usr/local/sbin/'+name).startswith(b'#!')
 assert read('/usr/local/bin/odroid-gpu').startswith(b'#!')
-checks.update(only_odroid_human_account=True,root_locked_and_ssh_disabled=True,no_authorized_or_host_keys=True,no_host_workspace_acls=True,unique_machine_identity_on_boot=True,odroid_sudo_and_graphics_groups=True,sudo_executable_setuid_root_in_image=True,kernel_and_modules_version_match=True,board_support=True,arm_pam_and_full_boot_qa=True)
+assert 'https://the-ab.github.io/deb/' in read('/etc/apt/sources.list.d/the-ab-odroid-u3.sources').decode()
+assert read('/usr/share/keyrings/the-ab-archive-keyring.gpg')
+assert read('/usr/sbin/odroid-kernel').startswith(b'#!')
+checks['local_kernel_packages_and_signed_apt_source']=True
+checks.update(only_odroid_human_account=True,root_password_locked_and_key_only_ssh=True,no_authorized_or_host_keys=True,no_host_workspace_acls=True,unique_machine_identity_on_boot=True,odroid_sudo_and_graphics_groups=True,sudo_executable_setuid_root_in_image=True,kernel_and_modules_version_match=True,board_support=True,arm_pam_and_full_boot_qa=True)
 with image.open('rb') as f:assert hashlib.file_digest(f,'sha256').hexdigest()==manifest['image_sha256']
 result={'local_image_checks_passed':True,'image_sha256':manifest['image_sha256'],'checks':checks,'physical_boot_acceptance':False,'public_binary_distribution_clearance':False}
 (out/'VALIDATION.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

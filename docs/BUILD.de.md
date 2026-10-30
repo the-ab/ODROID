@@ -44,6 +44,7 @@ out="$work/output-$variant"
 sudo mkdir "$root"
 sudo tar --numeric-owner -xpf "$work/cache/ubuntu-base-26.04.1-base-armhf.tar.gz" -C "$root"
 sudo unshare --mount --pid --fork bash "$repo/scripts/prepare-rootfs.sh" "$root" "$variant"
+sudo unshare --mount --pid --fork bash "$repo/scripts/install-kernel-packages.sh" "$root" "$work/kernel-debs"
 sudo python3 "$repo/scripts/assemble-image.py" --root "$root" \
   --kernel "$work/kernel-v1" --uboot "$work/u-boot/u-boot-dtb.bin" \
   --firmware "$work/cache" --output "$out" --variant "$variant"
@@ -58,3 +59,5 @@ Zusammengebaut werden ausschließlich reguläre Dateien. Das 2-GiB-IMG enthält 
 APT verwendet aktuelle signierte Ubuntu-26.04-Quellen. `PACKAGES.tsv` hält die tatsächlich installierten Versionen fest. Eingänge und Bauweg sind festgelegt; identische Binärbytes bei später veränderten Paketquellen/Bauumgebungen werden nicht behauptet.
 
 Quellprüfungen: `python3 -m unittest discover -s tests -v`, Python-Kompilierung und shellcheck. Offline-ARM-, Image- und ZIP-Prüfungen ersetzen keinen realen Erststart. Siehe [Releaseanforderungen](RELEASES.de.md).
+
+Das lokale Verzeichnis `kernel-debs` vor dem Imagebau gemäß [Kernelupdates](KERNEL-UPDATES.de.md) erzeugen.

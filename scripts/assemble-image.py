@@ -15,6 +15,9 @@ assert os.geteuid()==0 and root.name=='rootfs-'+a.variant and (root.parent/'.odr
 subprocess.run(['python3',str(repo/'scripts/normalize-rootfs.py'),'--root',str(root)],check=True)
 assert not out.exists();out.mkdir(parents=True);stage=out/'stage';stage.mkdir();boot=stage/'boot';boot.mkdir();(boot/'extlinux').mkdir()
 release=board['kernel_release'];assert (kernel/'kernel.release').read_text().strip()==release
+package_manifest=json.loads((root/'usr/lib/odroid-u3/kernels'/release/'MANIFEST.json').read_text())
+for name in ['zImage','exynos4412-odroidu3.dtb','config','System.map']:
+    assert hashlib.sha256((kernel/name).read_bytes()).hexdigest()==package_manifest['files'][name]
 assert not any(root.rglob('authorized_keys')) and not any((root/'etc/ssh').glob('ssh_host_*'))
 assert (root/'etc/machine-id').read_bytes()==b''
 assert not (root/'root/.ssh').exists() and not (root/'home/odroid/.ssh').exists()
@@ -91,7 +94,7 @@ image=out/(image_id+'.img');newfile(image,disk_sectors*512)
 with image.open('r+b') as f:
     f.write(head);sparse_copy(boot_fs,f,boot_start*512);sparse_copy(root_fs,f,root_start*512)
 payload=out/'u3-boot0-prefix.bin';payload.write_bytes(prefix)
-manifest={'schema':1,'image':image.name,'image_sha256':sha(image),'image_bytes':image.stat().st_size,'ubuntu':board['ubuntu'],'variant':a.variant,'image_version':board['image_version'],'kernel':release,'disk_id':f'{disk_id:08x}','root_uuid':root_uuid,'built_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'partitions':[{'number':1,'start_sector':boot_start,'sectors':boot_sectors,'filesystem':'FAT16'},{'number':2,'start_sector':root_start,'sectors':root_sectors,'filesystem':'ext4'}],'firmware_components':components,'emmc_boot0_payload':{'file':payload.name,'bytes':len(prefix),'sha256':sha(payload),'separate_hardware_boot_partition':True},'access':{'human_users':['odroid'],'default_password':'odroid','sudo':'password required','root_password':'locked','root_ssh':False,'authorized_keys_included':False,'ssh_host_keys':'generated on first boot'},'hardware_acceptance':'this new image not yet physically boot-tested','boot_firmware_distribution':lock['boot_reference']['distribution_status']}
+manifest={'schema':1,'image':image.name,'image_sha256':sha(image),'image_bytes':image.stat().st_size,'ubuntu':board['ubuntu'],'variant':a.variant,'image_version':board['image_version'],'kernel':release,'disk_id':f'{disk_id:08x}','root_uuid':root_uuid,'built_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'partitions':[{'number':1,'start_sector':boot_start,'sectors':boot_sectors,'filesystem':'FAT16'},{'number':2,'start_sector':root_start,'sectors':root_sectors,'filesystem':'ext4'}],'firmware_components':components,'emmc_boot0_payload':{'file':payload.name,'bytes':len(prefix),'sha256':sha(payload),'separate_hardware_boot_partition':True},'access':{'human_users':['odroid'],'default_password':'odroid','sudo':'password required','root_password':'locked','root_ssh':True,'root_ssh_authentication':'public key only','root_password_ssh':False,'authorized_keys_included':False,'ssh_host_keys':'generated on first boot'},'hardware_acceptance':'this new image not yet physically boot-tested','boot_firmware_distribution':lock['boot_reference']['distribution_status']}
 (out/'BUILD-MANIFEST.json').write_text(json.dumps(manifest,indent=2)+'\n')
 shutil.copy2(root.parent/('packages-'+a.variant+'.tsv'),out/'PACKAGES.tsv')
 (out/(image.name+'.sha256')).write_text(manifest['image_sha256']+'  '+image.name+'\n')

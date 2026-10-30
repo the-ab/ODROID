@@ -11,7 +11,7 @@ Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme
 | `minimized` | Reduzierte Ubuntu-Base-Basis mit SSH, sudo, Netzwerk und Board-Unterstützung; Dokumentation bleibt minimiert. Das tatsächliche Kommando `unminimize` ist enthalten. |
 | `minimal` | `ubuntu-minimal`, `ubuntu-standard`, übliche Administrationsprogramme, wiederhergestellte Dokumentation/Manpages und Shell-Vervollständigung. |
 
-Beide Varianten starten mit Konsole und SSH. Einziges menschliches Konto: **`odroid` / `odroid`**, mit passwortgeschütztem sudo. Root-Passwort und Root-SSH sind gesperrt. Es werden keine Wartungsschlüssel, festen SSH-Hostschlüssel oder geklonten Maschinenidentitäten eingebaut. Nach der ersten Anmeldung mit `passwd` ein eigenes Passwort setzen.
+Beide Varianten starten mit Konsole und SSH. Einziges menschliches Konto: **`odroid` / `odroid`**, mit passwortgeschütztem sudo. Das Root-Passwort ist gesperrt; SSH erlaubt ab Image 1.0.1 einen vom Eigentümer in `/root/.ssh/authorized_keys` hinterlegten öffentlichen Schlüssel. Es werden keine Wartungsschlüssel, festen SSH-Hostschlüssel oder geklonten Maschinenidentitäten eingebaut. Nach der ersten Anmeldung mit `passwd` ein eigenes Passwort setzen.
 
 Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern der Treiber keine permanente Adresse liefert. Beide Varianten aktivieren die automatische Netzwerk-Zeitsynchronisierung. Root wächst beim ersten Start auf die Mediengröße. SD und eMMC-Benutzerbereich verwenden dasselbe Imageformat; für natives eMMC kann die separate boot0-Reparatur erforderlich sein.
 
@@ -23,3 +23,5 @@ Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern 
 - [Hardwareprüfung und Releaseanforderungen](docs/HARDWARE.de.md)
 
 Kernel und Skripte werden mit Quellen und Lizenzen bereitgestellt. Hersteller-Bootfirmware liegt nicht in diesem Git-Repository; genaue Weitergabe-/Quellbedingungen müssen vor öffentlichen Binärreleases dokumentiert sein. Ubuntu-Pakete und Firmware behalten ihre eigenen Lizenzen. Siehe [Releaseanforderungen](docs/RELEASES.de.md).
+
+Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
