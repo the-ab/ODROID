@@ -57,7 +57,8 @@ assert 'URIs: https://the-ab.github.io/deb/\n' in source and 'Components: main u
 assert 'Signed-By: /usr/share/keyrings/the-ab-archive-keyring.gpg\n' in source
 assert 'Trusted:' not in source
 status=(r/'var/lib/dpkg/status').read_text()
-for name in ['the-ab-archive-keyring','odroid-u3-kernel-tools','linux-image-odroid-u3','linux-image-6.12.114-odroidu3-v1']:
+expected_release=next((r/'usr/lib/odroid-u3/kernels').iterdir()).name
+for name in ['the-ab-archive-keyring','odroid-u3-kernel-tools','linux-image-odroid-u3','linux-image-'+expected_release]:
     assert any('Package: '+name+'\n' in s and 'Status: install ok installed\n' in s for s in status.split('\n\n'))
 with tempfile.TemporaryDirectory(dir=r/'run') as tmp:
     key=subprocess.check_output(['gpg','--no-options','--homedir',tmp,'--with-colons','--show-keys',str(r/'usr/share/keyrings/the-ab-archive-keyring.gpg')],text=True,stderr=subprocess.DEVNULL)
@@ -95,7 +96,7 @@ chroot "$root" /usr/bin/systemd-analyze verify --man=no default.target ssh.socke
 cat "$root/run/boot-verify.log"
 if grep -Ei 'ordering cycle|Job .* deleted' "$root/run/boot-verify.log"; then exit 1; fi
 test -z "$(chroot "$root" dpkg --audit)"
-systemctl --root="$root" is-enabled ssh.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service \
+systemctl --root="$root" is-enabled apparmor.service auditd.service ssh.service systemd-networkd.service systemd-resolved.service systemd-timesyncd.service \
     serial-getty@ttySAC1.service odroid-host-keys.service odroid-grow-root.service odroid-network-identity.service odroid-fan.service
 if [[ $variant == minimal ]]; then
     chroot "$root" dpkg-query -W ubuntu-minimal ubuntu-standard

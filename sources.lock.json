@@ -3,10 +3,12 @@
   "sources": [
     {
       "id": "kernel",
-      "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.12.114.tar.xz",
-      "sha256": "7a8589912bd7a8adb07fed074283652cf482a35facef8954554654f0154b4af3",
-      "bytes": 148721296,
-      "filename": "linux-6.12.114.tar.xz"
+      "url": "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-7.3.1.tar.xz",
+      "sha256": "fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231",
+      "bytes": 162406920,
+      "filename": "linux-7.3.1.tar.xz",
+      "source_date_epoch": 1793362237,
+      "server_profile": true
     },
     {
       "id": "ubuntu-base",

@@ -1,14 +1,14 @@
-Subject: [ODROID-U3] identity, thermal, USB and consumed IRQ link support
+Subject: [ODROID-U3] Linux 7.3.1 identity, thermal, USB and IRQ link support
 
-Local changes against Linux 6.12.114. These changes are not claimed to be
-accepted upstream. See docs/HARDWARE.md for the verification boundaries.
+Port of the 6.12.114 board changes. The drivers/base diagnostic is already
+present upstream and is not patched again. No IPv4/TCP security fix is reverted.
 
 diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
 --- a/drivers/soc/samsung/exynos-chipid.c
 +++ b/drivers/soc/samsung/exynos-chipid.c
-@@ -140,6 +140,24 @@
- 		return -ENODEV;
- 	}
+@@ -198,6 +198,24 @@
+ 	if (!soc_dev_attr->soc_id)
+ 		return dev_err_probe(dev, -ENODEV, "Unknown SoC\n");
  
 +	/* The Exynos4412 GUID is independent of the SD/eMMC installation. */
 +	if (soc_info.product_id == 0xE4412000) {
@@ -188,7 +188,7 @@ diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/
  #include <linux/interrupt.h>
  #include <linux/irqdomain.h>
  #include <linux/irq.h>
-@@ -758,6 +759,14 @@
+@@ -865,6 +866,14 @@
  		muxed_data->banks[idx++] = bank;
  	}
  
@@ -202,18 +202,4 @@ diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/
 +
  	return 0;
  }
- 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2237,8 +2237,8 @@
- 		}
- 
- 		if (con != sup_dev && !device_link_add(con, sup_dev, flags)) {
--			dev_err(con, "Failed to create device link (0x%x) with %s\n",
--				flags, dev_name(sup_dev));
-+			dev_err(con, "Failed to create device link (0x%x) with supplier %s for %pfwf\n",
-+				flags, dev_name(sup_dev), link->consumer);
- 			ret = -EINVAL;
- 		}
  

@@ -3,8 +3,8 @@
   "architecture": "armhf",
   "ubuntu": "26.04.1",
   "suite": "resolute",
-  "image_version": "1.0.1",
-  "kernel_release": "6.12.114-odroidu3-v1",
+  "image_version": "1.0.2",
+  "kernel_release": "7.3.1-odroidu3-v3",
   "uboot": "2026.10",
   "fan_celsius": [
     35,
@@ -44,5 +44,6 @@
       "u3"
     ],
     "fingerprint": "E85346CA2461E1FA45AC7C7CD85BC090497CE8B9"
-  }
+  },
+  "kernel_tools_version": "1.0.2"
 }

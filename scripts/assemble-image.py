@@ -45,16 +45,18 @@ for path in (root/'usr/lib/modules').rglob('*'):
         os.chown(path,0,0);path.chmod(0o755 if path.is_dir() else 0o644)
 os.chown(root/'usr/lib/modules',0,0);(root/'usr/lib/modules').chmod(0o755)
 run('depmod','-b',root,release)
-for name in ['zImage','exynos4412-odroidu3.dtb']:
-    shutil.copy2(kernel/name,boot/name)
+for name,target in [('zImage','vmlinuz-'+release),('exynos4412-odroidu3.dtb','exynos4412-odroidu3-'+release+'.dtb')]:
+    shutil.copy2(kernel/name,boot/target)
 for name in ['config','System.map']:
     shutil.copy2(kernel/name,boot/(name+'-'+release))
 shutil.copy2(kernel/'config',root/'boot'/('config-'+release))
 (root/'boot'/('config-'+release)).chmod(0o644)
-arguments=f'console=ttySAC1,115200n8 console=tty1 mem=2047M root=PARTUUID={disk_id:08x}-02 rootfstype=ext4 rootwait ro net.ifnames=0 fsck.repair=yes loglevel=4'
-(boot/'extlinux/extlinux.conf').write_text(f'TIMEOUT 30\nDEFAULT ubuntu26\nMENU TITLE ODROID-U3 Ubuntu {board["ubuntu"]}\n\nLABEL ubuntu26\n  MENU LABEL Ubuntu {board["ubuntu"]} / {release}\n  LINUX /zImage\n  FDT /exynos4412-odroidu3.dtb\n  APPEND {arguments}\n')
-appended=stage/'zImage-appended-dtb';appended.write_bytes((boot/'zImage').read_bytes()+(boot/'exynos4412-odroidu3.dtb').read_bytes())
-run('mkimage','-A','arm','-O','linux','-T','kernel','-C','none','-a','0x40008000','-e','0x40008000','-n','U3 '+release,'-d',appended,boot/'uImage')
+arguments=f'console=ttySAC1,115200n8 console=tty1 mem=2047M root=PARTUUID={disk_id:08x}-02 rootfstype=ext4 rootwait ro net.ifnames=0 fsck.repair=yes loglevel=4 audit=1 audit_backlog_limit=8192'
+(boot/'extlinux/extlinux.conf').write_text(f'TIMEOUT 30\nDEFAULT ubuntu26\nMENU TITLE ODROID-U3 Ubuntu {board["ubuntu"]}\n\nLABEL ubuntu26\n  MENU LABEL Ubuntu {board["ubuntu"]} / {release}\n  LINUX /vmlinuz-{release}\n  FDT /exynos4412-odroidu3-{release}.dtb\n  APPEND {arguments}\n')
+appended=stage/'zImage-appended-dtb';appended.write_bytes((boot/('vmlinuz-'+release)).read_bytes()+(boot/('exynos4412-odroidu3-'+release+'.dtb')).read_bytes())
+shutil.copy2(root/'usr/lib/odroid-u3/kernels'/release/'uImage',boot/'uImage')
+shutil.copy2(boot/'uImage',boot/('uImage-'+release))
+assert sha(boot/'uImage')==package_manifest['files']['uImage']
 (boot/'boot.txt').write_text('setenv initrd_high 0xffffffff\nsetenv fdt_high 0xffffffff\nsetenv bootdev 0\nif test -n "${devnum}"; then setenv bootdev ${devnum}; fi\n'+f'setenv bootargs "{arguments}"\n'+'setenv bootcmd "fatload mmc ${bootdev}:1 0x40008000 uImage; bootm 0x40008000"\nboot\n')
 run('mkimage','-A','arm','-O','linux','-T','script','-C','none','-a','0','-e','0','-n','ODROID-U3 boot','-d',boot/'boot.txt',boot/'boot.scr')
 (root/'etc/fstab').write_text(f'UUID={root_uuid} / ext4 defaults,noatime,errors=remount-ro 0 1\nPARTUUID={disk_id:08x}-01 /boot vfat defaults,noatime,umask=0077 0 2\n')

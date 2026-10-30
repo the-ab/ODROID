@@ -4,12 +4,13 @@ set -euo pipefail
 repo=$(cd -- "$(dirname -- "$0")/.." && pwd)
 archive=$(realpath -- "${1:?linux archive required}")
 build=${2:?new build directory required}
-release=${3:-6.12.114-odroidu3-v1}
+default_release=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["kernel_release"])' "$repo/boards/u3/board.json")
+release=${3:-$default_release}
 profile=${4:-}
 config="$repo/boards/u3/kernel.config"
 patchfile="$repo/boards/u3/patches/platform.patch"
-build_epoch=1793307600
-archive_hash=7a8589912bd7a8adb07fed074283652cf482a35facef8954554654f0154b4af3
+build_epoch=1793362237
+archive_hash=fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231
 if [[ -n $profile ]]; then
     profile=$(realpath -- "$profile")
     read -r archive_hash expected_release build_epoch < <(python3 - "$profile/source.json" <<'JSON'
@@ -21,7 +22,7 @@ JSON
     config="$profile/kernel.config"
     patchfile="$profile/platform.patch"
 else
-    [[ $release =~ ^6\.12\.114-odroidu3-v[0-9]+$ ]]
+    [[ $release == "$default_release" ]]
 fi
 [[ $release =~ ^[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+$ ]]
 [[ ! -e "$build" ]]
@@ -38,5 +39,8 @@ export SOURCE_DATE_EPOCH=$build_epoch
 KBUILD_BUILD_TIMESTAMP=${KBUILD_BUILD_TIMESTAMP:-$(date -u -d "@$build_epoch" "+%a %b %d %H:%M:%S UTC %Y")}
 export KBUILD_BUILD_TIMESTAMP
 make -C "$build" olddefconfig
+if [[ -z $profile || $profile == *server-v3 ]]; then
+    python3 "$repo/scripts/check-server-config.py" --config "$build/.config"
+fi
 make -C "$build" -j"${JOBS:-4}" zImage modules dtbs
 test "$(cat "$build/include/config/kernel.release")" = "$release"

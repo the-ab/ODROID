@@ -2,7 +2,7 @@
 
 [Deutsch](README.de.md)
 
-Community Ubuntu images, build recipes and board support for ODROID systems. The first target is **ODROID-U3 / Exynos4412**, running Ubuntu **26.04.1 armhf** with Linux **6.12.114-odroidu3-v1** and U-Boot **2026.10**. XU4 support is planned separately.
+Community Ubuntu images, build recipes and board support for ODROID systems. The first target is **ODROID-U3 / Exynos4412**, running Ubuntu **26.04.1 armhf** with Linux **7.3.1-odroidu3-v3** and U-Boot **2026.10**. XU4 support is planned separately.
 
 **Release preparation:** new images are candidates until their first-boot acceptance and release checks are complete. See [releases](https://github.com/the-ab/ODROID/releases) for published downloads and [hardware status](docs/HARDWARE.md) for what has actually been tested.
 
@@ -27,3 +27,5 @@ The kernel and scripts are provided with their source and licenses. Vendor boot 
 Kernel packages and signed APT updates: [guide](docs/KERNEL-UPDATES.md).
 
 A separate [Linux 7.3.1 candidate](boards/u3/kernel-candidates/7.3.1/README.md) has passed native APT/rollback/return and headphone tests. The existing1.0.1 image artifacts remain unchanged. See [security review](docs/SECURITY-REVIEW.md) and [audio](docs/AUDIO.md).
+
+The fresh 1.0.2 recipe uses the extended [server profile](boards/u3/kernel-candidates/7.3.1-server-v3/README.md) and a mandatory 101-capability configuration gate. Native Docker/VPN/firewall/file-service/security tests passed on v2; v3 and fresh image acceptance are recorded separately. Earlier 6.12/v1 kernels are hardware-baseline fallback profiles, not full server-feature builds.

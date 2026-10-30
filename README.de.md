@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme. Erstes Ziel ist **ODROID-U3 / Exynos4412** mit Ubuntu **26.04.1 armhf**, Linux **6.12.114-odroidu3-v1** und U-Boot **2026.10**. XU4 wird gesondert vorbereitet.
+Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme. Erstes Ziel ist **ODROID-U3 / Exynos4412** mit Ubuntu **26.04.1 armhf**, Linux **7.3.1-odroidu3-v3** und U-Boot **2026.10**. XU4 wird gesondert vorbereitet.
 
 **Releasevorbereitung:** Neue Images bleiben bis zur Erststart-Abnahme und den Releaseprüfungen Kandidaten. Veröffentlichte Downloads stehen unter [Releases](https://github.com/the-ab/ODROID/releases); der [Hardwarestand](docs/HARDWARE.de.md) beschreibt tatsächlich erfolgte Prüfungen.
 
@@ -27,3 +27,5 @@ Kernel und Skripte werden mit Quellen und Lizenzen bereitgestellt. Hersteller-Bo
 Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
 
 Ein separater [Linux 7.3.1-Kandidat](boards/u3/kernel-candidates/7.3.1/README.de.md) hat native APT-/Rückfall-/Rückkehr- und Kopfhörertests bestanden. Vorhandene1.0.1-Imageartefakte bleiben unverändert. Siehe [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md) und [Audio](docs/AUDIO.de.md).
+
+Das frische 1.0.2-Rezept verwendet das erweiterte [Serverprofil](boards/u3/kernel-candidates/7.3.1-server-v3/README.de.md) mit verbindlicher Prüfung von 101 Fähigkeiten. Native Docker-/VPN-/Firewall-/Dateidienst-/Sicherheitstests bestanden auf v2; v3- und Imageabnahme werden gesondert geführt. Frühere 6.12-/v1-Kernel sind Hardware-/Rückfallprofile und keine vollständigen Serverprofile.

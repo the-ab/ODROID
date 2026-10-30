@@ -39,7 +39,7 @@ apt-get dist-upgrade -y --no-install-recommends
 apt-get install -y --no-install-recommends systemd-sysv systemd-timesyncd udev dbus openssh-server sudo \
     systemd-resolved netplan.io iproute2 iputils-ping ca-certificates kmod \
     e2fsprogs dosfstools less nano tzdata locales netbase cloud-guest-utils \
-    wireless-regdb mmc-utils unminimize
+    wireless-regdb mmc-utils unminimize apparmor auditd
 if [[ $IMAGE_VARIANT == minimal ]]; then
     apt-get install -y --no-install-recommends ubuntu-minimal ubuntu-standard \
         bash-completion manpages curl htop ethtool tcpdump
@@ -84,6 +84,20 @@ network:
       optional: true
 NETPLAN
 chmod 600 /etc/netplan/10-ethernet.yaml
+# An upstream kernel lacks Ubuntu's optional downstream userns sysctl.
+# Preserve the requested value if supported later; ignore only a missing key.
+python3 - <<'COMPAT'
+from pathlib import Path
+p=Path('/usr/lib/sysctl.d/10-apparmor.conf')
+if p.exists():
+ s=p.read_text()
+ s=s.replace('kernel.apparmor_restrict_unprivileged_userns =', '-kernel.apparmor_restrict_unprivileged_userns =').replace('kernel.apparmor_restrict_unprivileged_userns=', '-kernel.apparmor_restrict_unprivileged_userns=')
+ Path('/etc/sysctl.d/10-apparmor.conf').write_text(s)
+p=Path('/etc/default/cron')
+if p.exists() and 'EXTRA_OPTS=' not in p.read_text():
+ with p.open('a') as f:f.write('\nEXTRA_OPTS=""\n')
+COMPAT
+systemctl enable apparmor auditd
 systemctl enable systemd-networkd systemd-resolved systemd-timesyncd ssh serial-getty@ttySAC1.service
 cat > /etc/systemd/system/odroid-host-keys.service <<'UNIT'
 [Unit]

@@ -73,8 +73,19 @@ groups=read('/etc/group').decode().splitlines()
 for group in ['sudo','video','render']:
     assert 'odroid' in next(x for x in groups if x.startswith(group+':')).split(':')[3].split(',')
 version=manifest['kernel'];assert '-test' not in version
-assert f'CONFIG_LOCALVERSION="-odroidu3-v1"' in read('/boot/config-'+version).decode()
+assert f'CONFIG_LOCALVERSION="-{version.split("-",1)[1]}"' in read('/boot/config-'+version).decode()
 assert read('/usr/lib/modules/'+version+'/modules.dep')
+boot=out/'stage/boot'
+assert (boot/('vmlinuz-'+version)).is_file() and (boot/('uImage-'+version)).is_file()
+assert (boot/('exynos4412-odroidu3-'+version+'.dtb')).is_file()
+boot_text=(boot/'extlinux/extlinux.conf').read_text()
+assert 'LINUX /vmlinuz-'+version in boot_text and 'audit=1 audit_backlog_limit=8192' in boot_text
+payload=json.loads(read('/usr/lib/odroid-u3/kernels/'+version+'/MANIFEST.json'))
+assert hashlib.sha256((boot/('uImage-'+version)).read_bytes()).hexdigest()==payload['files']['uImage']
+assert (boot/'uImage').read_bytes()==(boot/('uImage-'+version)).read_bytes()
+assert 'apparmor.service' in listing('/etc/systemd/system/sysinit.target.wants')+listing('/etc/systemd/system/multi-user.target.wants')
+assert 'auditd.service' in listing('/etc/systemd/system/multi-user.target.wants')
+checks['flat_versioned_boot_and_security_services']=True
 image_release=read('/etc/odroid-image-release').decode();assert 'ROOT_UUID='+manifest['root_uuid'] in image_release
 assert 'IMAGE_VARIANT='+manifest['variant'] in image_release
 assert 'KERNEL='+version in image_release

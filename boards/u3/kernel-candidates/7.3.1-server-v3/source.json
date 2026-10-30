@@ -12,5 +12,6 @@
   "patch": "platform.patch",
   "config": "kernel.config",
   "candidate_only": true,
-  "source_date_epoch": 1793362237
+  "source_date_epoch": 1793362237,
+  "server_profile": true
 }

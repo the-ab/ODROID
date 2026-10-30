@@ -12,6 +12,8 @@ if profile:
  assert hashlib.sha256((kernel/'config').read_bytes()).digest()==hashlib.sha256((profile/'kernel.config').read_bytes()).digest(),'Artifact configuration differs from the pinned profile'
 else:
  assert release.split('-odroidu3-v')[0]==board['kernel_release'].split('-odroidu3-v')[0],'A different upstream kernel requires --profile'
+if source_spec.get('server_profile'):
+ subprocess.run(['python3',str(repo/'scripts/check-server-config.py'),'--config',str(kernel/'config')],check=True)
 source_commit=subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'rev-parse','HEAD'],text=True).strip();tools_version=a.tools_version or board['image_version'];epoch=int(os.environ.get('SOURCE_DATE_EPOCH',str(int(time.time()))));results=[]
 def sha(p):
  with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
