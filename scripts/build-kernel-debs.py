@@ -3,7 +3,7 @@
 """Build locally installable U3 kernel, update-tool, meta and archive-keyring packages."""
 from pathlib import Path
 import argparse,hashlib,json,os,re,shutil,struct,subprocess,time,zlib
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--kernel',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--keyring',type=Path,required=True);p.add_argument('--profile',type=Path,help='Explicit pinned candidate source/config/patch profile');p.add_argument('--release',help='Explicit candidate release override; board/image default is unchanged');p.add_argument('--tools-version',help='New version for changed activation tools');p.add_argument('--version',help='Debian version; defaults to upstream version plus numeric board revision');a=p.parse_args();repo=Path(__file__).resolve().parents[1];board=json.loads((repo/'boards/u3/board.json').read_text());kernel=a.kernel.resolve();out=a.output.resolve();assert not out.exists();out.mkdir(parents=True);release=(kernel/'kernel.release').read_text().strip();assert release==(a.release or board['kernel_release']) and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+',release);a.version=a.version or release.split('-odroidu3-v')[0]+'-'+release.split('-odroidu3-v')[1];assert re.fullmatch('[0-9A-Za-z.+:~_-]+',a.version)
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--kernel',type=Path,required=True);p.add_argument('--output',type=Path,required=True);p.add_argument('--keyring',type=Path,required=True);p.add_argument('--profile',type=Path,help='Explicit pinned candidate source/config/patch profile');p.add_argument('--release',help='Explicit candidate release override; board/image default is unchanged');p.add_argument('--tools-version',help='New version for changed activation tools');p.add_argument('--version',help='Debian version; defaults to upstream version plus numeric board revision');a=p.parse_args();repo=Path(__file__).resolve().parents[1];board=json.loads((repo/'boards/u3/board.json').read_text());kernel=a.kernel.resolve();out=a.output.resolve();assert not out.exists();out.mkdir(parents=True);release=(kernel/'kernel.release').read_text().strip();assert release==(a.release or board['kernel_release']) and re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+',release);a.version=a.version or (board.get('kernel_deb_version') if release==board['kernel_release'] else None) or release.split('-odroidu3-v')[0]+'-'+release.split('-odroidu3-v')[1];assert re.fullmatch('[0-9A-Za-z.+:~_-]+',a.version)
 assert not subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'status','--porcelain'],text=True).strip(),'Commit the packaging recipe before building'
 profile=a.profile.resolve() if a.profile else None
 source_spec=json.loads((profile/'source.json').read_text()) if profile else next(x for x in json.loads((repo/'sources.lock.json').read_text())['sources'] if x['id']=='kernel')
@@ -58,6 +58,8 @@ if sys.argv[1] in protected:
 CHECK
 fi
 ''',0o755)
+cleanup=(repo/'boards/u3/support/kernel-package-postrm.py').read_text().replace('PACKAGE_SPEC = None  # populated by build-kernel-debs.py','PACKAGE_SPEC = '+repr({'release':release,'files':manifest['files']}))
+put(image,'DEBIAN/postrm',cleanup,0o755)
 meta=package('linux-image-odroid-u3',a.version,'armhf',name+' (= '+a.version+')','Latest released board kernel for ODROID-U3')
 for root in [key,tools,image,meta]:
  for d in [root,*[x for x in root.rglob('*') if x.is_dir()]]:d.chmod(0o755)

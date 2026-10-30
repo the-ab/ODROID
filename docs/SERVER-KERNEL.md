@@ -2,7 +2,7 @@
 
 [Deutsch](SERVER-KERNEL.de.md)
 
-Linux **7.3.1-odroidu3-v3**, Debian version **7.3.1-3**, is the full server profile used by fresh image **1.0.2**. The earlier 6.12 and 7.3.1-v1 configurations were hardware bring-up baselines and did not cover this full service scope. Existing installed kernels remain local recovery options.
+Linux **7.3.1-odroidu3-v3**, Debian version **7.3.1-4**, is the full server profile used by fresh image **1.0.2**. The earlier 6.12 and 7.3.1-v1 configurations were hardware bring-up baselines and did not cover this full service scope. Existing installed kernels remain local recovery options.
 
 The complete resolved configuration is [kernel.config](../boards/u3/kernel.config). The build and package gates require [101 capabilities](../boards/u3/server-requirements.json); a missing required option fails the build. `y` means built in; `m` means supplied as a loadable module. Kernel capability does not install or configure the corresponding server application.
 

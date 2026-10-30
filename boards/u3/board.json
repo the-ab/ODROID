@@ -45,5 +45,6 @@
     ],
     "fingerprint": "E85346CA2461E1FA45AC7C7CD85BC090497CE8B9"
   },
-  "kernel_tools_version": "1.0.2"
+  "kernel_tools_version": "1.0.2",
+  "kernel_deb_version": "7.3.1-4"
 }

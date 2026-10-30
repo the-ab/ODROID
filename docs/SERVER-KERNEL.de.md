@@ -2,7 +2,7 @@
 
 [English](SERVER-KERNEL.md)
 
-Linux **7.3.1-odroidu3-v3**, Debian-Version **7.3.1-3**, ist das vollständige Serverprofil für die frischen Images **1.0.2**. Die bisherigen 6.12- und 7.3.1-v1-Konfigurationen dienten der Hardware-Inbetriebnahme und deckten diesen Dienstumfang nicht vollständig ab. Bereits installierte Kernel bleiben als lokale Rückfallmöglichkeit erhalten.
+Linux **7.3.1-odroidu3-v3**, Debian-Version **7.3.1-4**, ist das vollständige Serverprofil für die frischen Images **1.0.2**. Die bisherigen 6.12- und 7.3.1-v1-Konfigurationen dienten der Hardware-Inbetriebnahme und deckten diesen Dienstumfang nicht vollständig ab. Bereits installierte Kernel bleiben als lokale Rückfallmöglichkeit erhalten.
 
 Maßgeblich ist die vollständig aufgelöste [kernel.config](../boards/u3/kernel.config). Build und Paketierung prüfen [101 Pflichtfähigkeiten](../boards/u3/server-requirements.json); fehlt eine davon, bricht der Build ab. `y` bedeutet fest eingebaut, `m` ein mitgeliefertes ladbares Modul. Kernel-Unterstützung installiert oder konfiguriert noch keinen Serverdienst.
 
