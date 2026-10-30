@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 """Package a locally validated candidate as ZIP and verify its complete image stream."""
 from pathlib import Path
-import argparse,hashlib,json,zipfile
+import argparse,hashlib,json,zipfile,subprocess
 if not __debug__:raise SystemExit('Run without Python optimization: validation must remain enabled')
 
 p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,required=True);a=p.parse_args()
@@ -20,5 +20,6 @@ with zipfile.ZipFile(archive) as z:
     assert z.testzip() is None
 with archive.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
 (out/(archive.name+'.sha256')).write_text(digest+'  '+archive.name+'\n')
-proof={'zip':archive.name,'zip_bytes':archive.stat().st_size,'zip_sha256':digest,'image_sha256':actual,'zip_crc_and_image_roundtrip_verified':True,'physical_boot_acceptance':False,'public_release_published':False}
+docs_commit=subprocess.check_output(['git','-c','safe.directory='+str(repo),'-C',str(repo),'rev-parse','HEAD'],text=True).strip()
+proof={'documentation_packaging_commit':docs_commit,'image_recipe_commit':m['recipe_commit'],'zip':archive.name,'zip_bytes':archive.stat().st_size,'zip_sha256':digest,'image_sha256':actual,'zip_crc_and_image_roundtrip_verified':True,'physical_boot_acceptance':False,'public_release_published':False}
 (out/'ZIP-VERIFICATION.json').write_text(json.dumps(proof,indent=2)+'\n');print(json.dumps(proof,indent=2))

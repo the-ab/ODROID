@@ -18,3 +18,5 @@ Before stable publication:
 Connected-HDMI Xorg/Weston output on the prototype was accepted separately. Minimal v1 native eMMC first boot and basic runtime checks subsequently passed; minimized/SD, any additional claimed scope and firmware provenance remain open. Downloads must describe remaining limitations accurately.
 
 Image candidate 1.0.1 adds owner-installed root SSH keys and locally installed APT kernel packages. Minimal 1.0.1 has passed native-eMMC basic checks, including owner root-key login, installed kernel packages and APT source/signature. The subsequent7.3.1 APT update/rollback/return test passed; minimized/SD remain pending.
+
+Fresh image1.0.2 minimal/minimized candidates now pass local ARM login/PAM/sudo/SSH, systemd, filesystem, full partition/boot/package readback and ZIP roundtrip checks. They contain server kernel7.3.1-odroidu3-v3, package7.3.1-4 with tested purge cleanup. Native server-kernel service tests passed on the installed1.0.1 test system; neither fresh1.0.2 image has physical first-boot acceptance yet.
