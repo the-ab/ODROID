@@ -5,6 +5,7 @@ from pathlib import Path
 import argparse,datetime,fcntl,hashlib,json,os,re,shutil,signal,stat,struct,subprocess,tempfile,zlib
 RELEASE=re.compile(r'[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+')
 FILES=('uImage','extlinux/extlinux.conf')
+BOOT_NAMES={'zImage':'vmlinuz-{release}','uImage':'uImage-{release}','exynos4412-odroidu3.dtb':'exynos4412-odroidu3-{release}.dtb','config':'config-{release}','System.map':'System.map-{release}'}
 def need(ok,msg):
     if not ok:raise RuntimeError(msg)
 def sha(p):
@@ -62,8 +63,7 @@ def config_for(text,release,previous_text=None,token=None):
     need(args and 'root=' in args,'Missing root boot arguments')
     if token is not None:need('root=PARTUUID='+token in args.split(),'Selected boot entry belongs to another root partition')
     need(not any(l.strip().upper().startswith('INITRD ') for l in selected[1]),'Initrd boot needs a matching tested package contract')
-    version='/odroid-kernels/'+release
-    managed=['LABEL odroid-managed-current','  MENU LABEL ODROID-U3 '+release,'  LINUX '+version+'/zImage','  FDT '+version+'/exynos4412-odroidu3.dtb','  APPEND '+args]
+    managed=['LABEL odroid-managed-current','  MENU LABEL ODROID-U3 '+release,'  LINUX /vmlinuz-'+release,'  FDT /exynos4412-odroidu3-'+release+'.dtb','  APPEND '+args]
     if previous_text is not None:
         old_default=next((l.strip().split(None,1)[1] for l in previous_text.splitlines() if l.strip().upper().startswith('DEFAULT ')),None)
         old_blocks=[];old=None
@@ -109,10 +109,14 @@ def commit_boot(root,data,newstate,write=atomic):
     finally:signal.pthread_sigmask(signal.SIG_SETMASK,blocked)
 def activate(root,release,token,running):
     p,m=payload(root,release);old=readstate(root);need(not old or old.get('media')==token,'Kernel state belongs to another root partition');boot=root/'boot';need(not boot.is_symlink() and not (boot/'extlinux').is_symlink(),'Unsafe boot path')
-    version=boot/'odroid-kernels'/release;need(not (boot/'odroid-kernels').is_symlink() and not version.is_symlink(),'Unsafe versioned boot path');marker=version/'MANAGED.json';identity=hashlib.sha256(json.dumps({'files':m['files'],'modules':m['modules']},sort_keys=True).encode()).hexdigest()
-    if marker.exists():need(json.loads(marker.read_text())['payload_identity']==identity,'A changed payload needs a new kernel release suffix')
-    if old.get('active_release')==release and sha(boot/'uImage')==m['files']['uImage'] and marker.exists() and all((version/n).is_file() and sha(version/n)==m['files'][n] for n in ['zImage','exynos4412-odroidu3.dtb']) and ('  LINUX /odroid-kernels/'+release+'/zImage') in (boot/'extlinux/extlinux.conf').read_text():return {'changed':False,'active_release':release,'reboot_required':running!=release}
-    need(os.statvfs(boot).f_bavail*os.statvfs(boot).f_frsize>sum((p/n).stat().st_size for n in ['zImage','exynos4412-odroidu3.dtb','uImage'])+4*1024*1024,'Insufficient /boot space; review old managed kernel copies')
+    names={n:boot/template.format(release=release) for n,template in BOOT_NAMES.items()}
+    need(set(names).issubset(m['files']),'Incomplete standard boot payload')
+    # Existing versioned files are immutable. Never follow links or overwrite a collision.
+    for n,dst in names.items():
+        need(not dst.is_symlink(),'Unsafe versioned boot path')
+        if dst.exists():need(dst.is_file() and sha(dst)==m['files'][n],'A changed payload needs a new kernel release suffix')
+    if old.get('active_release')==release and sha(boot/'uImage')==m['files']['uImage'] and all(dst.is_file() and sha(dst)==m['files'][n] for n,dst in names.items()) and ('  LINUX /vmlinuz-'+release) in (boot/'extlinux/extlinux.conf').read_text():return {'changed':False,'active_release':release,'reboot_required':running!=release}
+    need(os.statvfs(boot).f_bavail*os.statvfs(boot).f_frsize>sum((p/n).stat().st_size for n,dst in names.items() if not dst.exists())+4*1024*1024,'Insufficient /boot space; review old kernel copies')
     need(os.statvfs(root).f_bavail*os.statvfs(root).f_frsize>(boot/'uImage').stat().st_size+4*1024*1024,'Insufficient root space for rollback backup')
     text=(boot/'extlinux/extlinux.conf').read_text();previous_text=None
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
@@ -122,9 +126,9 @@ def activate(root,release,token,running):
     saved=snapshot(root,token,running);previous=saved
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
         backupdata(root,old['previous_snapshot'],token);previous=old['previous_snapshot']
-    version.mkdir(parents=True,exist_ok=True)
-    for n in ['zImage','exynos4412-odroidu3.dtb']:atomic(version/n,(p/n).read_bytes())
-    atomic(marker,(json.dumps({'project':'ODROID-U3','release':release,'payload_identity':identity},indent=2)+'\n').encode())
+    for n,dst in names.items():
+        if not dst.exists():atomic(dst,(p/n).read_bytes())
+    need(all(sha(dst)==m['files'][n] for n,dst in names.items()),'Versioned boot readback differs')
     state={'active_release':release,'previous_running':running,'previous_snapshot':previous,'last_snapshot':saved,'media':token,'activated_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
     commit_boot(root,{'uImage':(p/'uImage').read_bytes(),'extlinux/extlinux.conf':newconfig.encode()},state)
     return {'changed':True,'active_release':release,'previous_release':running,'reboot_required':running!=release,'boot0_written':False,'reboot_performed':False}
