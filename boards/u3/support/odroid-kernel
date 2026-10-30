@@ -48,7 +48,7 @@ def payload(root,release):
     need(v[0]==0x27051956 and v[1]==zlib.crc32(header) and v[3]==len(u)-64 and v[6]==zlib.crc32(u[64:]),'Invalid uImage CRC')
     need(u[64:]==(p/'zImage').read_bytes()+(p/'exynos4412-odroidu3.dtb').read_bytes(),'Kernel/DTB mismatch')
     return p,m
-def config_for(text,release,previous_text=None):
+def config_for(text,release,previous_text=None,token=None):
     head=[];blocks=[];current=None;default=None
     for line in text.splitlines():
         fields=line.strip().split(None,1)
@@ -60,6 +60,7 @@ def config_for(text,release,previous_text=None):
     selected=next((b for b in blocks if b[0]==default),blocks[0] if blocks else None);need(selected is not None,'Missing extlinux boot entry')
     args=next((l.strip().split(None,1)[1] for l in selected[1] if l.strip().upper().startswith('APPEND ')),None)
     need(args and 'root=' in args,'Missing root boot arguments')
+    if token is not None:need('root=PARTUUID='+token in args.split(),'Selected boot entry belongs to another root partition')
     need(not any(l.strip().upper().startswith('INITRD ') for l in selected[1]),'Initrd boot needs a matching tested package contract')
     version='/odroid-kernels/'+release
     managed=['LABEL odroid-managed-current','  MENU LABEL ODROID-U3 '+release,'  LINUX '+version+'/zImage','  FDT '+version+'/exynos4412-odroidu3.dtb','  APPEND '+args]
@@ -107,7 +108,7 @@ def commit_boot(root,data,newstate,write=atomic):
             raise
     finally:signal.pthread_sigmask(signal.SIG_SETMASK,blocked)
 def activate(root,release,token,running):
-    p,m=payload(root,release);old=readstate(root);boot=root/'boot';need(not boot.is_symlink() and not (boot/'extlinux').is_symlink(),'Unsafe boot path')
+    p,m=payload(root,release);old=readstate(root);need(not old or old.get('media')==token,'Kernel state belongs to another root partition');boot=root/'boot';need(not boot.is_symlink() and not (boot/'extlinux').is_symlink(),'Unsafe boot path')
     version=boot/'odroid-kernels'/release;need(not (boot/'odroid-kernels').is_symlink() and not version.is_symlink(),'Unsafe versioned boot path');marker=version/'MANAGED.json';identity=hashlib.sha256(json.dumps({'files':m['files'],'modules':m['modules']},sort_keys=True).encode()).hexdigest()
     if marker.exists():need(json.loads(marker.read_text())['payload_identity']==identity,'A changed payload needs a new kernel release suffix')
     if old.get('active_release')==release and sha(boot/'uImage')==m['files']['uImage'] and marker.exists() and all((version/n).is_file() and sha(version/n)==m['files'][n] for n in ['zImage','exynos4412-odroidu3.dtb']) and ('  LINUX /odroid-kernels/'+release+'/zImage') in (boot/'extlinux/extlinux.conf').read_text():return {'changed':False,'active_release':release,'reboot_required':running!=release}
@@ -116,7 +117,7 @@ def activate(root,release,token,running):
     text=(boot/'extlinux/extlinux.conf').read_text();previous_text=None
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
         previous_data,_=backupdata(root,old['previous_snapshot'],token);previous_text=previous_data['extlinux/extlinux.conf'].decode()
-    newconfig=config_for(text,release,previous_text)
+    newconfig=config_for(text,release,previous_text,token)
     need('root=PARTUUID='+token in newconfig.split(),'Boot root identity does not match this medium')
     saved=snapshot(root,token,running);previous=saved
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):

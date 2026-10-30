@@ -32,4 +32,12 @@ class KernelUpdate(unittest.TestCase):
   self.payload('6.12.115-odroidu3-v1');(self.root/'boot/odroid-kernels').symlink_to(self.root/'foreign',target_is_directory=True)
   with self.assertRaises(RuntimeError):m.activate(self.root,'6.12.115-odroidu3-v1','abc-02','6.12.114-odroidu3-v1')
   self.assertFalse((self.root/'foreign').exists())
+ def test_wrong_selected_root_is_refused_despite_valid_other_entry(self):
+  self.payload('6.12.115-odroidu3-v1');(self.root/'boot/extlinux/extlinux.conf').write_text('DEFAULT wrong\nLABEL wrong\n LINUX /zImage\n APPEND root=PARTUUID=other-02 ro\nLABEL fallback\n LINUX /zImage\n APPEND root=PARTUUID=abc-02 ro\n')
+  with self.assertRaises(RuntimeError):m.activate(self.root,'6.12.115-odroidu3-v1','abc-02','6.12.114-odroidu3-v1')
+  self.assertEqual((self.root/'boot/uImage').read_bytes(),b'original')
+ def test_existing_state_cannot_be_reused_for_another_root(self):
+  r='6.12.115-odroidu3-v1';self.payload(r);m.activate(self.root,r,'abc-02','6.12.114-odroidu3-v1');before=(self.root/'boot/uImage').read_bytes()
+  with self.assertRaises(RuntimeError):m.activate(self.root,r,'other-02',r)
+  self.assertEqual((self.root/'boot/uImage').read_bytes(),before)
 if __name__=='__main__':unittest.main()
