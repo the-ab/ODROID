@@ -97,3 +97,19 @@ int main(void){
 }
 """
 c=w/'test-optional-vbus.c';c.write_text(usb_test);exe=w/'test-optional-vbus';subprocess.run(['cc','-Wall','-Wextra','-Wno-unused-parameter','-Werror',str(c),'-o',str(exe)],check=True);subprocess.run([str(exe)],check=True);print('Actual USB acquisition branch: present/absent provider, probe deferral and I/O error propagation passed');temporary.cleanup()
+
+# Inspect the compiled board contract: a capture backend alone can still carry
+# silence when the microphone is represented as a headphone sink or IN1 is
+# connected although the selected codec preamplifier consumes IN12.
+dtb=tree/'arch/arm/boot/dts/samsung/exynos4412-odroidu3.dtb'
+def strings(property_name):
+ raw=subprocess.check_output(['fdtget','-t','bx',str(dtb),'/sound',property_name],text=True)
+ return bytes(int(v,16) for v in raw.split()).decode().rstrip('\0').split('\0')
+def pairs(values):
+ assert len(values)%2==0
+ return set(zip(values[::2],values[1::2]))
+widgets=pairs(strings('samsung,audio-widgets'));routes=pairs(strings('audio-routing'))
+assert ('Microphone','Mic Jack') in widgets,'Capture needs a real microphone source endpoint'
+assert {('Mic Jack','MICBIAS'),('IN12','Mic Jack'),('Mixer DAI RX','HiFi Capture')} <= routes,'Capture path is incomplete'
+assert ('IN1','Headphone Jack') not in routes,'A headphone sink cannot supply capture'
+print('Compiled U3 capture graph: microphone source, bias, actual IN12 preamp and I2S backend are connected')

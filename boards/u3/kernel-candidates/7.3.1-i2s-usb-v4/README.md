@@ -1,7 +1,7 @@
-# U3 I2S/USB revision4
+# U3 I2S/USB intermediate revision 4
 
 [Deutsch](README.de.md)
 
-Release7.3.1-odroidu3-v4/package7.3.1-5 uses the unchanged signed Linux7.3.1 base and complete101-capability server profile. The full patch retains the five prior board changes and corrects optional VBUS acquisition, secondary I2S stream-specific DMA ownership/parentage and the missing MAX98090 capture route in the legacy U3 audio graph. No generic log suppression, fabricated power rail or removal of audio functionality.
+Kernel `7.3.1-odroidu3-v4`, package `7.3.1-5`, uses signed Linux 7.3.1 and the unchanged 101-capability server configuration. Native eMMC testing removed the optional-VBUS dummy-regulator and duplicate I2S RX-channel warnings. USB Ethernet transferred 16 MiB each way with verified SHA256; headphone playback was accepted on both sides.
 
-The primary TX/RX channels were present on v3; its duplicate RX warning came from the unused secondary playback PCM. A real baseline capture attempt also exposed a missing backend route. Resource-logic host checks and ARM compilation precede separate native USB/playback/capture qualification. Keep the tested v3 packages and matching current-root backup as fallback. Source/configuration does not by itself accept hardware.
+Adding the capture backend made ALSA capture open, but samples were all zero. DAPM inspection proved the legacy board represented the microphone as a headphone sink and connected IN1 while the selected microphone preamp consumes IN12; ADC/bias stayed off. This intermediate revision was not published. Continue with [revision 5](../7.3.1-i2s-usb-v5/README.md). Its exact source profile and test package are retained for traceability.
