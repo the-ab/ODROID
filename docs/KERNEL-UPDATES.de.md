@@ -2,7 +2,7 @@
 
 [English](KERNEL-UPDATES.md)
 
-Das gemeinsame Repository [the-ab/deb](https://github.com/the-ab/deb) liegt unter **https://the-ab.github.io/deb/**. Weitere Projekte können eigene Komponenten erhalten. `main` enthält gemeinsame Pakete; `u3` ist für ODROID-U3 reserviert. XU4 benötigt eigene Pakete und Prüfungen. Zunächst sind nur signierte leere Paketlisten veröffentlicht; die Einrichtung veröffentlicht noch keinen Kernel.
+Das gemeinsame Repository [the-ab/deb](https://github.com/the-ab/deb) liegt unter **https://the-ab.github.io/deb/**. Weitere Projekte können eigene Komponenten erhalten. `main` enthält gemeinsame Pakete; `u3` ist für ODROID-U3 reserviert. XU4 benötigt eigene Pakete und Prüfungen. Die getesteten Kernel **7.3.1-1** und **6.12.114-1** sind veröffentlicht. Das Metapaket wählt 7.3.1; 6.12.114 bleibt separat als Rückfall verfügbar. [Paket-/Quellmanifest](https://github.com/the-ab/deb/blob/main/publications/u3-2026-10-30.json) · [Passende Quellen](https://github.com/the-ab/ODROID/releases/tag/u3-kernels-2026.10.30).
 
 Images ab 1.0.1 installieren lokal `the-ab-archive-keyring`, `odroid-u3-kernel-tools`, `linux-image-6.12.114-odroidu3-v1` und das Metapaket `linux-image-odroid-u3`. Die Datei `/etc/apt/sources.list.d/the-ab-odroid-u3.sources` enthält:
 
@@ -20,7 +20,7 @@ Signaturfingerabdruck: `E85346CA2461E1FA45AC7C7CD85BC090497CE8B9`. Dieser öffen
 ```sh
 sudo apt update
 apt-cache policy linux-image-odroid-u3
-sudo apt upgrade
+sudo apt install linux-image-odroid-u3
 odroid-kernel status
 # Nach erfolgreichem Update zu einem passenden Zeitpunkt neu starten:
 sudo reboot
@@ -56,8 +56,10 @@ In frischen markierten Imageroots vor dem Zusammensetzen `sudo unshare --mount -
 
 Für ein freigegebenes Kernelrelease das genaue Linux-Upstreamarchiv, vollständigen Patch/Config und Packaging-Quellcommit mit Prüfsummen im Quellrelease bereitstellen. Kernel-DEBs enthalten keine Hersteller-Bootfirmware. Geprüfte gemeinsame DEBs nach `deb/pool/main/`, U3-DEBs nach `deb/pool/u3/` kopieren und alte Versionen erhalten. Mit `scripts/build-apt-repository.py --root /pfad/zu/deb --gpg-home /privater/signaturschluessel --signing-key FINGERABDRUCK` Listen erstellen und signieren, alle Änderungen prüfen und erst danach veröffentlichen. Der private Signaturschlüssel bleibt außerhalb beider Repositories. Images und große Quellarchive gehören in die Produkt-Releases statt in die Pages-Seite. Der Listenbauer begrenzt einzelne DEBs auf 95 MiB; bei weiteren Projekten auch die gesamte GitHub-Pages-Größe beachten.
 
-Lokale Paketinstallation, Signaturprüfung und Datei-Rollbacktests sind geprüft. Ein echtes signiertes APT-Update aufLinux 7.3.1, nativer Start, Rückfall auf 6.12.114 und erneuter Start auf 7.3.1 haben auf dem Test-eMMC bestanden. Kandidaten werden nie automatisch nach `stable` veröffentlicht.
+Lokale Paketinstallation, Signaturprüfung und Datei-Rollbacktests sind geprüft. Ein echtes signiertes APT-Update auf Linux 7.3.1, nativer Start, Rückfall auf 6.12.114 und erneuter Start auf 7.3.1 haben auf dem Test-eMMC bestanden. Kandidaten werden nie automatisch nach `stable` veröffentlicht.
 
 Minimal-Image 1.0.1 hat inzwischen nativ von eMMC gestartet. Installierte Paketversionen/-dateien, laufender v1-Kernel, Board-/Medien-/Payload-Prüfungen des Werkzeugs und APT-Quelle/Schlüssel/Signatur wurden geprüft. Damit sind die im Image vorinstallierten Pakete bestätigt; der anschließende signierte APT-Wechsel mit Rückfall und Rückkehr ist inzwischen ebenfalls geprüft.
 
-Am 30.10.2026 erfolgte6.12.114 → 7.3.1 → 6.12.114 → 7.3.1 über signierte private APT-Pakete und echte native eMMC-Starts. Abschließend aktiv:7.3.1-odroidu3-v1. Boot0/boot1, SSH-Schlüssel und vorhandene Quelldateien blieben unverändert. v1 samt Modulen bleibt Rückfall. Die Veröffentlichung stabiler Pakete benötigt weiterhin eine eigene Freigabe; der Test veröffentlichte keinen Kandidaten. Versionierte Dateien liegen unter `/boot/odroid-kernels/<release>/`; extlinux wählt sie aus, zusätzlich bedient `/boot/uImage` den bisherigen Startweg. Image-Metadaten beschreiben das ursprüngliche Image; für den aktiven Kernel `uname -r` und `odroid-kernel status` verwenden.
+Am 30.10.2026 erfolgte 6.12.114 → 7.3.1 → 6.12.114 → 7.3.1 über signierte private APT-Pakete und echte native eMMC-Starts. Abschließend aktiv: 7.3.1-odroidu3-v1. Boot0/boot1, SSH-Schlüssel und vorhandene Quelldateien blieben unverändert. 6.12.114 samt Modulen bleibt Rückfall. Der Test selbst war privat; am 30.10. wurden beide getesteten Kernelpakete nach ausdrücklichem Nutzerauftrag in stable veröffentlicht. Vorhandene 1.0.1-Imageartefakte bleiben unverändert. Versionierte Dateien liegen unter `/boot/odroid-kernels/<release>/`; extlinux wählt sie aus, zusätzlich bedient `/boot/uImage` den bisherigen Startweg. Image-Metadaten beschreiben das ursprüngliche Image; für den aktiven Kernel `uname -r` und `odroid-kernel status` verwenden.
+
+Der 6.12-Kernel lässt sich separat mit `sudo apt install linux-image-6.12.114-odroidu3-v1` installieren. Die Erstinstallation aktiviert ihn für den nächsten Start; ist er bereits installiert, mit `sudo odroid-kernel activate 6.12.114-odroidu3-v1` ausdrücklich auswählen und vor dem Neustart den Status prüfen. Für die zuletzt gesicherten Bootdateien weiterhin `odroid-kernel rollback` verwenden. Das Metapaket folgt 7.3.1 und künftigen freigegebenen Versionen. Boardwerkzeuge setzen Python 3.11 oder neuer voraus; unterstütztes/testetes Ziel ist Ubuntu 26.04 armhf.

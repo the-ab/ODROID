@@ -18,7 +18,9 @@ for component,architectures in config['components'].items():
   assert re.fullmatch('[a-z0-9-]+',arch)
   target=dist/component/('binary-'+arch);target.mkdir(parents=True,exist_ok=True);content=('\n'.join(meta for architecture,meta in packages if architecture in (arch,'all'))+'\n').encode() if packages else b''
   for name,data in [('Packages',content),('Packages.xz',lzma.compress(content))]:
-   (target/name).write_bytes(data);byhash=target/'by-hash/SHA256';byhash.mkdir(parents=True,exist_ok=True);(byhash/digest(data)).write_bytes(data)
+   (target/name).write_bytes(data);
+   for algorithm in ['sha256','sha512']:
+    byhash=target/'by-hash'/algorithm.upper();byhash.mkdir(parents=True,exist_ok=True);(byhash/digest(data,algorithm)).write_bytes(data)
 indices=sorted(p for p in dist.glob('*/binary-*/Packages*') if p.is_file())
 architectures=sorted(set(arch for values in config['components'].values() for arch in values));now=datetime.datetime.now(datetime.timezone.utc)
 release='Origin: the-ab\nLabel: the-ab packages\nSuite: '+suite+'\nCodename: '+suite+'\nDate: '+now.strftime('%a, %d %b %Y %H:%M:%S +0000')+'\nArchitectures: '+' '.join(architectures)+'\nComponents: '+' '.join(config['components'])+'\nAcquire-By-Hash: yes\nDescription: Signed packages maintained by the-ab\n'

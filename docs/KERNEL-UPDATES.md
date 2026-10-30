@@ -2,7 +2,7 @@
 
 [Deutsch](KERNEL-UPDATES.de.md)
 
-The shared repository is [the-ab/deb](https://github.com/the-ab/deb), served at **https://the-ab.github.io/deb/**. It can host separate components for other projects. `main` contains shared packages; `u3` is reserved for ODROID-U3. XU4 requires its own packages and acceptance. The initial published repository contains signed empty indices; creating it does not publish a kernel release.
+The shared repository is [the-ab/deb](https://github.com/the-ab/deb), served at **https://the-ab.github.io/deb/**. It can host separate components for other projects. `main` contains shared packages; `u3` is reserved for ODROID-U3. XU4 requires its own packages and acceptance. Tested kernels **7.3.1-1** and **6.12.114-1** are published. The metapackage selects 7.3.1; 6.12.114 remains separately available for fallback. [Package/source manifest](https://github.com/the-ab/deb/blob/main/publications/u3-2026-10-30.json) · [Matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-kernels-2026.10.30).
 
 Images from 1.0.1 install these packages locally: `the-ab-archive-keyring`, `odroid-u3-kernel-tools`, `linux-image-6.12.114-odroidu3-v1`, and the tracking metapackage `linux-image-odroid-u3`. They also install `/etc/apt/sources.list.d/the-ab-odroid-u3.sources`:
 
@@ -20,7 +20,7 @@ Archive signing fingerprint: `E85346CA2461E1FA45AC7C7CD85BC090497CE8B9`. This pu
 ```sh
 sudo apt update
 apt-cache policy linux-image-odroid-u3
-sudo apt upgrade
+sudo apt install linux-image-odroid-u3
 odroid-kernel status
 # Reboot when convenient, after a successful update:
 sudo reboot
@@ -60,4 +60,6 @@ Local package installation, signature checks and file rollback tests have passed
 
 Minimal image 1.0.1 has now booted natively from eMMC. The installed package versions/files, running v1 kernel, update-tool board/media/payload checks and APT source/key/signature were verified. This accepts the preinstalled image packages; the subsequent signed APT update/rollback/return test has also passed, as documented below.
 
-On 2026-10-30, signed private APT packages performed6.12.114 → 7.3.1 → 6.12.114 → 7.3.1 with real native eMMC boots. Final runtime:7.3.1-odroidu3-v1. Boot0/boot1, SSH keys and existing source configuration were unchanged. v1 and its modules remain as fallback. Public stable package publication is a separate approval; this test did not publish the candidate. Versioned files live in `/boot/odroid-kernels/<release>/`; extlinux selects them, while `/boot/uImage` also serves the legacy path. Image-release metadata describes the original image; use `uname -r` and `odroid-kernel status` for the active kernel.
+On 2026-10-30, signed private APT packages performed 6.12.114 → 7.3.1 → 6.12.114 → 7.3.1 with real native eMMC boots. Final runtime: 7.3.1-odroidu3-v1. Boot0/boot1, SSH keys and existing source configuration were unchanged. 6.12.114 and its modules remain as fallback. The test was private; both tested versions were subsequently published to stable on 30 October 2026 following explicit approval. Versioned files live in `/boot/odroid-kernels/<release>/`; extlinux selects them, while `/boot/uImage` also serves the legacy path. Image-release metadata describes the original image; use `uname -r` and `odroid-kernel status` for the active kernel.
+
+Published on 30 October 2026 after explicit approval: tested 7.3.1-1 and 6.12.114-1 packages, byte-identical to the native tests. The metapackage tracks 7.3.1. Install `linux-image-6.12.114-odroidu3-v1` for the separate fallback; its first installation activates it for next boot. If already installed, explicitly select it with `sudo odroid-kernel activate 6.12.114-odroidu3-v1` and inspect status before rebooting. Use `odroid-kernel rollback` for the last saved boot files. Matching full sources are in [the kernel source release](https://github.com/the-ab/ODROID/releases/tag/u3-kernels-2026.10.30). Existing 1.0.1 images are unchanged. Board tools require Python 3.11 or newer; supported/tested target is Ubuntu 26.04 armhf.
