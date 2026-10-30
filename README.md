@@ -31,3 +31,5 @@ A separate [Linux 7.3.1 candidate](boards/u3/kernel-candidates/7.3.1/README.md) 
 The fresh 1.0.2 recipe uses the extended [server profile](boards/u3/kernel-candidates/7.3.1-server-v3/README.md) and a mandatory 101-capability configuration gate. Native Docker/VPN/firewall/file-service/security tests passed on v2 and v3; fresh image first-boot acceptance remains separate. Earlier 6.12/v1 kernels are hardware-baseline fallback profiles, not full server-feature builds.
 
 [Server kernel features and qualification](docs/SERVER-KERNEL.md)
+
+[I2S/USB candidate fixes and remaining warm-start qualification](docs/I2S-USB.md).

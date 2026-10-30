@@ -16,3 +16,5 @@ amixer -c 0 -- sset Headphone -20dB
 ```
 
 `--` vor dem Befehl verhindert, dass ein negativer dB-Wert als Option gelesen wird. Mit einer leisen Datei über `aplay -D plughw:0,0 DATEI.wav` testen, nicht bei maximalem Pegel starten. Geprüft wurden `MIXHPLSEL Mux`/`MIXHPRSEL Mux` auf `DAC Only` und aktivierte linke/rechte Kopfhörerschalter. `odroid` ist bereits in der Audiogruppe. `alsactl --no-ucm` sichert/restauriert direkte Mixerregler ohne Board-UCM-Profil. Desktop-PipeWire/PulseAudio, Mikrofonrouting und andere Geräte bleiben eigene Prüfungen. Testeinstellungen anschließend zurückgestellt, funktionierenden Snapshot privat aufbewahrt.
+
+Die vorherige RX-Warnungsbeschreibung betrifft den historischen v1/v3-Stand. Der [v6-Kandidat](I2S-USB.de.md) behebt die doppelte DMA-Anforderung und ergänzt den fehlenden Aufnahmegraphen. Interner Voll-Duplex und Kopfhörerwiedergabe bestanden; physische Sprachaufnahme und Warmstartabnahme bleiben getrennt.

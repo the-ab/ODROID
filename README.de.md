@@ -31,3 +31,5 @@ Ein separater [Linux 7.3.1-Kandidat](boards/u3/kernel-candidates/7.3.1/README.de
 Das frische 1.0.2-Rezept verwendet das erweiterte [Serverprofil](boards/u3/kernel-candidates/7.3.1-server-v3/README.de.md) mit verbindlicher Prüfung von 101 Fähigkeiten. Native Docker-/VPN-/Firewall-/Dateidienst-/Sicherheitstests bestanden auf v2; v3- und Imageabnahme werden gesondert geführt. Frühere 6.12-/v1-Kernel sind Hardware-/Rückfallprofile und keine vollständigen Serverprofile.
 
 [Serverkernel: Funktionen und Prüfungen](docs/SERVER-KERNEL.de.md)
+
+[I2S-/USB-Korrekturkandidat und offene Warmstartprüfung](docs/I2S-USB.de.md).
