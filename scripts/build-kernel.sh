@@ -10,12 +10,13 @@ profile=${4:-}
 config="$repo/boards/u3/kernel.config"
 patchfile="$repo/boards/u3/patches/platform.patch"
 build_epoch=1793362237
+require_server=1
 archive_hash=fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231
 if [[ -n $profile ]]; then
     profile=$(realpath -- "$profile")
-    read -r archive_hash expected_release build_epoch < <(python3 - "$profile/source.json" <<'JSON'
+    read -r archive_hash expected_release build_epoch require_server < <(python3 - "$profile/source.json" <<'JSON'
 import json,sys
-p=json.load(open(sys.argv[1]));print(p['sha256'],p['kernel_release'],p.get('source_date_epoch',1793307600))
+p=json.load(open(sys.argv[1]));print(p['sha256'],p['kernel_release'],p.get('source_date_epoch',1793307600),int(p.get('server_profile',False)))
 JSON
     )
     [[ $release == "$expected_release" ]]
@@ -39,7 +40,7 @@ export SOURCE_DATE_EPOCH=$build_epoch
 KBUILD_BUILD_TIMESTAMP=${KBUILD_BUILD_TIMESTAMP:-$(date -u -d "@$build_epoch" "+%a %b %d %H:%M:%S UTC %Y")}
 export KBUILD_BUILD_TIMESTAMP
 make -C "$build" olddefconfig
-if [[ -z $profile || $profile == *server-v3 ]]; then
+if [[ $require_server == 1 ]]; then
     python3 "$repo/scripts/check-server-config.py" --config "$build/.config"
 fi
 make -C "$build" -j"${JOBS:-4}" zImage modules dtbs
