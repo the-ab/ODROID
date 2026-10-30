@@ -11,7 +11,7 @@ Source/configuration support, prototype operation and acceptance of a new image 
 | Ethernet identity | Hardware-derived locally administered MAC stayed stable across SD/eMMC; the driver-supplied permanent address takes precedence. |
 | Fan/thermal/power key | Four fan states observed; configurable dedicated trips 35/45/55 °C, CPU protection retained; clean power-key shutdown confirmed. |
 | Pin controller | Consumed wakeup-IRQ fwnode link fix removed the preceding device-link error in actual SD/eMMC boots. |
-| Mali/HDMI/X11/Wayland | See [graphics](GRAPHICS.md). Hardware rendering confirmed; physical desktop output and new-image acceptance remain open. |
+| Mali/HDMI/X11/Wayland | See [graphics](GRAPHICS.md). Connected HDMI at 1080p60 with Xorg and native Weston DRM/GL confirmed, including the user's visual acceptance. New v1 images and complete desktop environments retain separate acceptance. |
 | USB, input, GPIO/I²C/SPI, RTC | Drivers enabled. Only the actually exercised USB/network/input paths are confirmed; no blanket peripheral acceptance. |
 | MAX98090 audio / Samsung MFC video | Kernel support and MFC firmware included; physical audio and hardware decoding not validated. |
 | XU4 | Planned, no image or hardware verification yet. |

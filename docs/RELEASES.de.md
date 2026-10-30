@@ -15,4 +15,4 @@ Vor stabiler Veröffentlichung:
 5. Genaue Binär-Weitergabe-/Quellbedingungen von BL1/BL2/TrustZone belegen. Ein hashgebundenes Referenzimage als Baueingang ersetzt keine Firmware-Lizenzaussage. Hersteller-Bootblobs werden nicht in Git eingecheckt.
 6. Quellprüfung und ausdrückliche Releasefreigabe erfolgen vor Tag/Veröffentlichung. Baurezepte veröffentlichen nicht automatisch.
 
-Kandidatenprüfungen und Prototypergebnisse schließen die offenen Erststart-/physischen Desktop- und Firmware-Herkunftsanforderungen nicht. Downloads weisen verbliebene Grenzen zutreffend aus.
+Die Xorg-/Weston-Ausgabe am angeschlossenen HDMI des Prototyps wurde gesondert abgenommen. Erststart der neuen Images und Firmware-Herkunftsanforderungen bleiben offen. Downloads weisen verbliebene Grenzen zutreffend aus.

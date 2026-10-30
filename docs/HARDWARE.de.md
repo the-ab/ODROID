@@ -11,7 +11,7 @@ Quell-/Konfigurationsunterstützung, Betrieb des Prototyps und Abnahme eines neu
 | Ethernetidentität | Hardware-MAC blieb über SD/eMMC stabil. Eine vom Treiber gelieferte permanente Adresse hat Vorrang. |
 | Lüfter/Thermik/Taster | Alle vier Lüfterstufen beobachtet; einstellbare eigene Trips 35/45/55 °C, CPU-Schutz erhalten; sauberes Herunterfahren per Taster bestätigt. |
 | Pincontroller | Aufräumen verbrauchter Wakeup-IRQ-fwnode-Links beseitigte den vorherigen Device-Link-Fehler bei realen SD-/eMMC-Starts. |
-| Mali/HDMI/X11/Wayland | Siehe [Grafik](GRAPHICS.de.md). Hardware-Rendering bestätigt; physischer Desktop und neue Images noch abzunehmen. |
+| Mali/HDMI/X11/Wayland | Siehe [Grafik](GRAPHICS.de.md). Angeschlossenes HDMI bei 1080p60 mit Xorg und nativem Weston DRM/GL einschließlich Sichtabnahme durch den Nutzer bestätigt. Neue v1-Images und vollständige Desktopumgebungen behalten eigene Abnahme. |
 | USB, Eingabe, GPIO/I²C/SPI, RTC | Treiber aktiviert. Bestätigt sind nur tatsächlich genutzte USB-/Netz-/Eingabepfade, keine pauschale Peripherieabnahme. |
 | MAX98090-Audio / Samsung-MFC-Video | Kernelunterstützung und MFC-Firmware enthalten; Audioausgabe und Hardwaredekodierung nicht geprüft. |
 | XU4 | Vorgemerkt, noch kein Image oder Hardwarenachweis. |

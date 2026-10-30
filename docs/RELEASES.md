@@ -15,4 +15,4 @@ Before stable publication:
 5. Exact BL1/BL2/TrustZone binary redistribution and source coverage are documented. Current source recipes accept the hash-pinned reference image; that alone is not a firmware license statement. No vendor boot blobs are checked into Git.
 6. Source review and explicit release approval precede tag/publication. Build scripts do not publish automatically.
 
-Current candidate checks and prototype results do not close the remaining first-boot/physical desktop and firmware provenance requirements. Downloads must describe remaining limitations accurately.
+Connected-HDMI Xorg/Weston output on the prototype was accepted separately. This does not close new-image first-boot or firmware provenance requirements. Downloads must describe remaining limitations accurately.
