@@ -1,0 +1,153 @@
+#!/usr/bin/python3
+# SPDX-License-Identifier: GPL-2.0-only
+"""ODROID-U3 kernel activation with versioned files and a known-running fallback."""
+from pathlib import Path
+import argparse,datetime,fcntl,hashlib,json,os,re,shutil,signal,stat,struct,subprocess,tempfile,zlib
+RELEASE=re.compile(r'[0-9]+\.[0-9]+\.[0-9]+-odroidu3-v[0-9]+')
+FILES=('uImage','extlinux/extlinux.conf')
+BOOT_NAMES={'zImage':'vmlinuz-{release}','uImage':'uImage-{release}','exynos4412-odroidu3.dtb':'exynos4412-odroidu3-{release}.dtb','config':'config-{release}','System.map':'System.map-{release}'}
+def need(ok,msg):
+    if not ok:raise RuntimeError(msg)
+def sha(p):
+    with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
+def fsyncdir(p):
+    fd=os.open(p,os.O_RDONLY|os.O_DIRECTORY)
+    try:os.fsync(fd)
+    finally:os.close(fd)
+def atomic(p,data):
+    p.parent.mkdir(parents=True,exist_ok=True)
+    need(not p.is_symlink(),'Refusing symlink: '+str(p))
+    fd,name=tempfile.mkstemp(prefix='.'+p.name+'-',dir=p.parent)
+    try:
+        with os.fdopen(fd,'wb') as f:f.write(data);f.flush();os.fsync(f.fileno())
+        os.chmod(name,0o644);os.replace(name,p);fsyncdir(p.parent)
+    finally:
+        if os.path.exists(name):os.unlink(name)
+def readstate(root):
+    p=root/'var/lib/odroid-kernel/state.json'
+    return json.loads(p.read_text()) if p.exists() else {}
+def guard():
+    need(os.geteuid()==0,'Use sudo')
+    need(b'hardkernel,odroid-u3' in Path('/sys/firmware/devicetree/base/compatible').read_bytes().split(b'\0'),'Only ODROID-U3 is supported')
+    need(Path('/sys/devices/soc0/soc_id').read_text().strip()=='EXYNOS4412','Wrong SoC')
+    d=os.stat('/').st_dev;s=Path(f'/sys/dev/block/{os.major(d)}:{os.minor(d)}').resolve();card=s.parent.name
+    need(re.fullmatch(r'mmcblk[0-9]+p2',s.name) and s.name==card+'p2','Root must be partition 2 on SD/eMMC')
+    need((Path('/sys/class/block')/card/'device/type').read_text().strip() in ('MMC','SD'),'Wrong root medium')
+    p=subprocess.check_output(['findmnt','-n','-o','SOURCE,FSTYPE','/boot'],text=True).split()
+    need(len(p)==2 and Path(p[0]).resolve()==Path('/dev')/(card+'p1') and p[1]=='vfat','Mount this medium partition 1 as /boot (vfat)')
+    return subprocess.check_output(['blkid','-s','PARTUUID','-o','value','/dev/'+s.name],text=True).strip()
+def payload(root,release):
+    need(bool(RELEASE.fullmatch(release)),'Invalid kernel release')
+    p=root/'usr/lib/odroid-u3/kernels'/release;m=json.loads((p/'MANIFEST.json').read_text())
+    need(m['board']=='ODROID-U3' and m['architecture']=='armhf' and m['kernel_release']==release,'Wrong kernel manifest')
+    for name,digest in m['files'].items():
+        need(Path(name).name==name and not (p/name).is_symlink() and sha(p/name)==digest,'Corrupt payload: '+name)
+    for name,digest in m['modules'].items():
+        rel=Path(name);need(not rel.is_absolute() and '..' not in rel.parts,'Unsafe module path')
+        need(sha(root/'usr/lib/modules'/release/rel)==digest,'Missing/corrupt module: '+name)
+    u=(p/'uImage').read_bytes();header=bytearray(u[:64]);v=struct.unpack('>7I4B32s',header);header[4:8]=b'\0'*4
+    need(v[0]==0x27051956 and v[1]==zlib.crc32(header) and v[3]==len(u)-64 and v[6]==zlib.crc32(u[64:]),'Invalid uImage CRC')
+    need(u[64:]==(p/'zImage').read_bytes()+(p/'exynos4412-odroidu3.dtb').read_bytes(),'Kernel/DTB mismatch')
+    return p,m
+def config_for(text,release,previous_text=None,token=None):
+    head=[];blocks=[];current=None;default=None
+    for line in text.splitlines():
+        fields=line.strip().split(None,1)
+        if fields and fields[0].upper()=='DEFAULT':default=fields[1] if len(fields)>1 else None;continue
+        if fields and fields[0].upper()=='LABEL':
+            current=[fields[1],[line]];blocks.append(current)
+        elif current:current[1].append(line)
+        else:head.append(line)
+    selected=next((b for b in blocks if b[0]==default),blocks[0] if blocks else None);need(selected is not None,'Missing extlinux boot entry')
+    args=next((l.strip().split(None,1)[1] for l in selected[1] if l.strip().upper().startswith('APPEND ')),None)
+    need(args and 'root=' in args,'Missing root boot arguments')
+    if token is not None:need('root=PARTUUID='+token in args.split(),'Selected boot entry belongs to another root partition')
+    need(not any(l.strip().upper().startswith('INITRD ') for l in selected[1]),'Initrd boot needs a matching tested package contract')
+    managed=['LABEL odroid-managed-current','  MENU LABEL ODROID-U3 '+release,'  LINUX /vmlinuz-'+release,'  FDT /exynos4412-odroidu3-'+release+'.dtb','  APPEND '+args]
+    if previous_text is not None:
+        old_default=next((l.strip().split(None,1)[1] for l in previous_text.splitlines() if l.strip().upper().startswith('DEFAULT ')),None)
+        old_blocks=[];old=None
+        for l in previous_text.splitlines():
+            f=l.strip().split(None,1)
+            if f and f[0].upper()=='LABEL':old=[f[1],[l]];old_blocks.append(old)
+            elif old:old[1].append(l)
+        selected=next((b for b in old_blocks if b[0]==old_default),old_blocks[0] if old_blocks else None);need(selected is not None,'Missing known-running boot entry')
+    previous=['LABEL odroid-managed-previous',*selected[1][1:]]
+    rest=[b for b in blocks if b[0] not in ('odroid-managed-current','odroid-managed-previous')]
+    return '\n'.join(['DEFAULT odroid-managed-current',*head,'',*managed,'',*previous,'',*[l for _,ls in rest for l in ls]])+'\n'
+def snapshot(root,token,running):
+    directory=root/'var/lib/odroid-kernel/backups';directory.mkdir(parents=True,exist_ok=True);directory.chmod(0o700)
+    p=Path(tempfile.mkdtemp(prefix=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ-'),dir=directory));m={'media':token,'running_release':running,'files':{}}
+    for name in FILES:
+        src=root/'boot'/name;need(src.is_file() and not src.is_symlink(),'Missing original boot file: '+name)
+        dst=p/name;atomic(dst,src.read_bytes());m['files'][name]=sha(dst)
+    atomic(p/'BACKUP.json',(json.dumps(m,indent=2)+'\n').encode());fsyncdir(p)
+    return str(p.relative_to(root))
+def backupdata(root,relative,token):
+    p=root/relative;expected=root/'var/lib/odroid-kernel/backups';need(p.parent.resolve()==expected.resolve() and not p.is_symlink(),'Invalid backup path')
+    m=json.loads((p/'BACKUP.json').read_text());need(m['media']==token,'Backup belongs to another root partition')
+    need(set(m['files'])==set(FILES),'Invalid backup file list')
+    data={}
+    for name,digest in m['files'].items():need(sha(p/name)==digest,'Corrupt backup');data[name]=(p/name).read_bytes()
+    return data,m
+def commit_boot(root,data,newstate,write=atomic):
+    """Ordinary write failures restore the complete prior two-file boot state."""
+    before={n:(root/'boot'/n).read_bytes() for n in FILES};sp=root/'var/lib/odroid-kernel/state.json';oldstate=sp.read_bytes() if sp.exists() else None
+    blocked=signal.pthread_sigmask(signal.SIG_BLOCK,{signal.SIGINT,signal.SIGTERM,signal.SIGHUP})
+    try:
+        try:
+            # Both versions already have their modules and complete payload. Either boot path remains usable during switching.
+            for n in reversed(FILES):write(root/'boot'/n,data[n])
+            write(sp,(json.dumps(newstate,indent=2)+'\n').encode())
+            need(all((root/'boot'/n).read_bytes()==data[n] for n in FILES),'Boot readback differs')
+        except BaseException:
+            for n in FILES:atomic(root/'boot'/n,before[n])
+            if oldstate is None:sp.unlink(missing_ok=True)
+            else:atomic(sp,oldstate)
+            need(all((root/'boot'/n).read_bytes()==before[n] for n in FILES),'Automatic boot-file rollback failed')
+            raise
+    finally:signal.pthread_sigmask(signal.SIG_SETMASK,blocked)
+def activate(root,release,token,running):
+    p,m=payload(root,release);old=readstate(root);need(not old or old.get('media')==token,'Kernel state belongs to another root partition');boot=root/'boot';need(not boot.is_symlink() and not (boot/'extlinux').is_symlink(),'Unsafe boot path')
+    names={n:boot/template.format(release=release) for n,template in BOOT_NAMES.items()}
+    need(set(names).issubset(m['files']),'Incomplete standard boot payload')
+    # Existing versioned files are immutable. Never follow links or overwrite a collision.
+    for n,dst in names.items():
+        need(not dst.is_symlink(),'Unsafe versioned boot path')
+        if dst.exists():need(dst.is_file() and sha(dst)==m['files'][n],'A changed payload needs a new kernel release suffix')
+    if old.get('active_release')==release and sha(boot/'uImage')==m['files']['uImage'] and all(dst.is_file() and sha(dst)==m['files'][n] for n,dst in names.items()) and ('  LINUX /vmlinuz-'+release) in (boot/'extlinux/extlinux.conf').read_text():return {'changed':False,'active_release':release,'reboot_required':running!=release}
+    need(os.statvfs(boot).f_bavail*os.statvfs(boot).f_frsize>sum((p/n).stat().st_size for n,dst in names.items() if not dst.exists())+4*1024*1024,'Insufficient /boot space; review old kernel copies')
+    need(os.statvfs(root).f_bavail*os.statvfs(root).f_frsize>(boot/'uImage').stat().st_size+4*1024*1024,'Insufficient root space for rollback backup')
+    text=(boot/'extlinux/extlinux.conf').read_text();previous_text=None
+    if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
+        previous_data,_=backupdata(root,old['previous_snapshot'],token);previous_text=previous_data['extlinux/extlinux.conf'].decode()
+    newconfig=config_for(text,release,previous_text,token)
+    need('root=PARTUUID='+token in newconfig.split(),'Boot root identity does not match this medium')
+    saved=snapshot(root,token,running);previous=saved
+    if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
+        backupdata(root,old['previous_snapshot'],token);previous=old['previous_snapshot']
+    for n,dst in names.items():
+        if not dst.exists():atomic(dst,(p/n).read_bytes())
+    need(all(sha(dst)==m['files'][n] for n,dst in names.items()),'Versioned boot readback differs')
+    state={'active_release':release,'previous_running':running,'previous_snapshot':previous,'last_snapshot':saved,'media':token,'activated_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    commit_boot(root,{'uImage':(p/'uImage').read_bytes(),'extlinux/extlinux.conf':newconfig.encode()},state)
+    return {'changed':True,'active_release':release,'previous_release':running,'reboot_required':running!=release,'boot0_written':False,'reboot_performed':False}
+def rollback(root,token,running):
+    state=readstate(root);need(state.get('previous_snapshot'),'No managed previous kernel backup')
+    data,m=backupdata(root,state['previous_snapshot'],token);previous=m['running_release'];need((root/'usr/lib/modules'/previous).is_dir(),'Previous kernel modules are absent')
+    if state.get('active_release')==previous:return {'changed':False,'next_boot_release':previous,'reboot_required':running!=previous}
+    saved=snapshot(root,token,running);new={'active_release':previous,'previous_running':previous,'previous_snapshot':state['previous_snapshot'],'last_snapshot':saved,'media':token,'rolled_back_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    commit_boot(root,data,new);return {'next_boot_release':previous,'reboot_required':running!=previous,'boot0_written':False,'reboot_performed':False}
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['status','activate','rollback']);p.add_argument('release',nargs='?');a=p.parse_args();root=Path('/');running=os.uname().release
+    if a.action=='status':
+        state=readstate(root);print(json.dumps({'running_kernel':running,'next_boot_kernel':state.get('active_release',running),'previous_kernel':state.get('previous_running'),'reboot_required':state.get('active_release',running)!=running},indent=2));return
+    token=guard();lock=Path('/run/lock/odroid-kernel.lock');lock.parent.mkdir(parents=True,exist_ok=True)
+    with lock.open('a') as f:
+        fcntl.flock(f,fcntl.LOCK_EX)
+        if a.action=='activate':need(a.release is not None,'Kernel release required');r=activate(root,a.release,token,running)
+        else:r=rollback(root,token,running)
+    print(json.dumps(r,indent=2))
+if __name__=='__main__':
+    try:main()
+    except Exception as e:raise SystemExit('Kernel operation refused/failed: '+str(e))

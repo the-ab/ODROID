@@ -1,0 +1,262 @@
+{
+  "SLAB_FREELIST_RANDOM": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SLAB_FREELIST_HARDENED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "LIST_HARDENED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "INIT_STACK_ALL_ZERO": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_LOCKDOWN_LSM": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_LOCKDOWN_LSM_EARLY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "FS_ENCRYPTION": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "FS_VERITY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TCP_CONG_ADVANCED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "KPROBES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "FTRACE_SYSCALLS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BSD_PROCESS_ACCT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BSD_PROCESS_ACCT_V3": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SCHEDSTATS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "WATCHDOG_SYSFS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "XDP_SOCKETS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BPF_STREAM_PARSER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "PSTORE": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "PSTORE_COMPRESS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "PSTORE_ZSTD_COMPRESS": {
+    "requested": "y",
+    "resolved": "not_enabled_or_removed"
+  },
+  "ZSWAP": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TCP_CONG_BBR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_NETEM": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_TBF": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_FLOWER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_MATCHALL": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_PEDIT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_CSUM": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_TUNNEL_KEY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_SET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_BPF": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_CONNMARK": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_IPRANGE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_HASHLIMIT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_NFLOG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_NFQUEUE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_NETLINK_QUEUE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_NETLINK_LOG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_QUEUE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET_HASH_NETPORT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_VS_NFCT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_CONNTRACK_FTP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NF_NAT_FTP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NF_CONNTRACK_SIP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "TLS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_TCP_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_UDP_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "UNIX_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PACKET_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETLINK_DIAG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "EXFAT_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NTFS3_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "ISO9660_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "UDF_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "EROFS_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_VERITY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_INTEGRITY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BLK_DEV_NBD": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "USB_SERIAL": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "USB_SERIAL_FTDI_SIO": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "USB_SERIAL_CP210X": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "USB_SERIAL_PL2303": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BLK_DEV_SR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PSTORE_RAM": {
+    "requested": "m",
+    "resolved": "m"
+  }
+}

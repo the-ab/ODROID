@@ -1,0 +1,858 @@
+{
+  "CGROUPS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_SCHED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "FAIR_GROUP_SCHED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CFS_BANDWIDTH": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CPUSETS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_CPUACCT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_PIDS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_DEVICE": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_FREEZER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CGROUP_BPF": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BLK_CGROUP": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "MEMCG": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "PSI": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "PSI_DEFAULT_DISABLED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TASKSTATS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TASK_DELAY_ACCT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TASK_XACCT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TASK_IO_ACCOUNTING": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CHECKPOINT_RESTORE": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NAMESPACES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "USER_NS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECCOMP": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECCOMP_FILTER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BPF_SYSCALL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BPF_JIT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NET_SCHED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IP_MULTIPLE_TABLES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IPV6_MULTIPLE_TABLES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SYN_COOKIES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NET_SCH_FQ_CODEL": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_FQ": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_CAKE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_HTB": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_SCH_INGRESS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_U32": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_FW": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_CGROUP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_MIRRED": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_POLICE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IFB": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BRIDGE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "VLAN_8021Q": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BONDING": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DUMMY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "VETH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "TUN": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "MACVLAN": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IPVLAN": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "VXLAN": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "WIREGUARD": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PPP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PPP_ASYNC": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PPP_SYNC_TTY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PPP_DEFLATE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "PPPOE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "L2TP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "L2TP_ETH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "L2TP_IP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_IPIP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_IPGRE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IPV6_TUNNEL": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "XFRM_USER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_ESP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_AH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET_IPCOMP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET6_ESP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET6_AH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "INET6_IPCOMP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES_INET": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES_IPV4": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES_IPV6": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES_ARP": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_TABLES_NETDEV": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_CONNTRACK_EVENTS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_CONNTRACK_MARK": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NETFILTER_ADVANCED": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NF_CONNTRACK": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NF_NAT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BRIDGE_NETFILTER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_CT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_NAT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_MASQ": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_REDIR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_REJECT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_LOG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_LIMIT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_QUOTA": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_NUMGEN": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_HASH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_FIB_INET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_FIB_IPV4": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_FIB_IPV6": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_SOCKET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_TPROXY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_CONNLIMIT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_SYNPROXY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFT_COMPAT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XTABLES": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_ADDRTYPE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_CONNTRACK": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_COMMENT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_LIMIT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_MULTIPORT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_PHYSDEV": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_STATE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_TCPMSS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_OWNER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_MATCH_SET": {
+    "requested": "m",
+    "resolved": "not_enabled_or_removed"
+  },
+  "NETFILTER_XT_TARGET_CHECKSUM": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_LOG": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_MASQUERADE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_REDIRECT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_TCPMSS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_MARK": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_CONNMARK": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NETFILTER_XT_TARGET_CT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_IPTABLES": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_FILTER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_NAT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_MANGLE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_RAW": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_NF_TARGET_REJECT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_IPTABLES": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_FILTER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_NAT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_MANGLE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_RAW": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_TARGET_REJECT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET_HASH_IP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET_HASH_NET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET_HASH_IPPORT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_SET_LIST_SET": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_VS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_VS_RR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_VS_WRR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP_VS_SH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "QUOTA": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "QFMT_V2": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "QUOTACTL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TMPFS_POSIX_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "TMPFS_XATTR": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFS_V4": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFS_V4_1": {
+    "requested": "y",
+    "resolved": "not_enabled_or_removed"
+  },
+  "NFS_V4_2": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V3": {
+    "requested": "y",
+    "resolved": "not_enabled_or_removed"
+  },
+  "NFSD_V4": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V4_SECURITY_LABEL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CIFS_XATTR": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "CIFS_POSIX": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "BTRFS_FS_POSIX_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "XFS_POSIX_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "F2FS_FS_XATTR": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "F2FS_FS_POSIX_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "OVERLAY_FS_REDIRECT_DIR": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "OVERLAY_FS_INDEX": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "OVERLAY_FS_XINO_AUTO": {
+    "requested": "y",
+    "resolved": "not_enabled_or_removed"
+  },
+  "MD": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "OVERLAY_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "FUSE_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CUSE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NFSD": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CIFS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "XFS_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BTRFS_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "F2FS_FS": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "BLK_DEV_MD": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "MD_RAID0": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "MD_RAID1": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "MD_RAID10": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "MD_RAID456": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_CRYPT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_SNAPSHOT": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_THIN_PROVISIONING": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_MIRROR": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_ZERO": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "DM_CACHE": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "ISCSI_TCP": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "SECURITY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_APPARMOR": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_APPARMOR_HASH": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_APPARMOR_HASH_DEFAULT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_YAMA": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_LANDLOCK": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "AUDIT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "AUDITSYSCALL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "HARDENED_USERCOPY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "FORTIFY_SOURCE": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "INIT_ON_ALLOC_DEFAULT_ON": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "STACKPROTECTOR_STRONG": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "SECURITY_DMESG_RESTRICT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "RANDOMIZE_KSTACK_OFFSET_DEFAULT": {
+    "requested": "y",
+    "resolved": "not_enabled_or_removed"
+  },
+  "CRYPTO_CHACHA20": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CRYPTO_POLY1305": {
+    "requested": "m",
+    "resolved": "not_enabled_or_removed"
+  },
+  "CRYPTO_USER_API_HASH": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CRYPTO_USER_API_SKCIPHER": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CRYPTO_USER_API_AEAD": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CRYPTO_SHA512": {
+    "requested": "m",
+    "resolved": "y"
+  },
+  "CRYPTO_MD4": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "CRYPTO_CMAC": {
+    "requested": "m",
+    "resolved": "y"
+  },
+  "CRYPTO_AES_ARM": {
+    "requested": "m",
+    "resolved": "not_enabled_or_removed"
+  },
+  "NETFILTER_XTABLES_LEGACY": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IP_ADVANCED_ROUTER": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NET_CLS_ACT": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "L2TP_V3": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V3_ACL": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "NFSD_V4_POSIX_ACLS": {
+    "requested": "y",
+    "resolved": "y"
+  },
+  "IP_NF_IPTABLES_LEGACY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "IP6_NF_IPTABLES_LEGACY": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_IPGRE_DEMUX": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_CLS_BPF": {
+    "requested": "m",
+    "resolved": "m"
+  },
+  "NET_ACT_BPF": {
+    "requested": "m",
+    "resolved": "m"
+  }
+}

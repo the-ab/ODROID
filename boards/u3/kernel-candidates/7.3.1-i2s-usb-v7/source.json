@@ -1,0 +1,18 @@
+{
+  "version": "7.3.1",
+  "sha256": "fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231",
+  "bytes": 162406920,
+  "signer_fingerprint": "647F28654894E3BD457199BE38DBBDC86092693E",
+  "developer_signature_valid": true,
+  "checksum_matches_kernel_org": true,
+  "url": "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-7.3.1.tar.xz",
+  "id": "kernel",
+  "filename": "linux-7.3.1.tar.xz",
+  "kernel_release": "7.3.1-odroidu3-v7",
+  "patch": "platform.patch",
+  "config": "kernel.config",
+  "candidate_only": true,
+  "source_date_epoch": 1793362237,
+  "server_profile": true,
+  "deb_version": "7.3.1-8"
+}
