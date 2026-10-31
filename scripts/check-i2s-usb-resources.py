@@ -120,3 +120,47 @@ source=(tree/'drivers/gpu/drm/exynos/exynos_hdmi.c').read_text()
 initializer=source.split('struct hdmi_codec_pdata codec_data = {',1)[1].split('};',1)[0]
 assert '.no_i2s_capture = 1,' in initializer,'HDMI TX must not advertise an RX stream'
 print('Exynos HDMI advertises playback only; MAX98090 capture remains independent')
+
+# Keep the software secondary PCM topology compatible with upstream. Its DMA
+# callback already selects the physical CPU-DAI controller explicitly.
+with tempfile.TemporaryDirectory() as directory:
+ path=Path(directory)
+ i2s=(tree/'sound/soc/samsung/i2s.c').read_text()
+ function=i2s.split('static int i2s_create_secondary_device(',1)[1].split('static void i2s_delete_secondary_device',1)[0]
+ function='static int i2s_create_secondary_device('+function
+ stubs=r"""
+#include <assert.h>
+#include <stddef.h>
+#include <string.h>
+#define GFP_KERNEL 0
+#define ENOMEM 12
+#define EINVAL 22
+struct device { void *of_node; struct device *parent; };
+struct platform_device { struct device dev; };
+struct samsung_i2s_priv { struct platform_device *pdev,*pdev_sec; };
+static struct platform_device secondary;
+static int added,override_set;
+static const char *dev_name(struct device *dev){return "3830000.i2s";}
+static char *devm_kasprintf(struct device *dev,int flags,const char *fmt,...){return "3830000.i2s-sec";}
+static struct platform_device *platform_device_alloc(const char *name,int id){assert(!strcmp(name,"3830000.i2s-sec") && id==-1);return &secondary;}
+static int device_set_driver_override(struct device *dev,const char *name){assert(!strcmp(name,"samsung-i2s"));override_set++;return 0;}
+static int platform_device_add(struct platform_device *dev){added++;return 0;}
+static void platform_device_put(struct platform_device *dev){}
+static void platform_device_unregister(struct platform_device *dev){}
+static int device_attach(struct device *dev){return 1;}
+static void dev_info(struct device *dev,const char *fmt,...){}
+"""
+ tests=r"""
+int main(void){
+ struct platform_device controller={.dev={.of_node=(void *)1}};
+ struct samsung_i2s_priv priv={.pdev=&controller};
+ assert(i2s_create_secondary_device(&priv)==0);
+ assert(priv.pdev_sec==&secondary && added==1 && override_set==1);
+ assert(!secondary.dev.parent);
+ return 0;
+}
+"""
+ source=path/'secondary-topology.c';source.write_text(stubs+function+tests);exe=path/'secondary-topology'
+ subprocess.run(['cc','-Wall','-Wextra','-Wno-unused-parameter','-Werror',str(source),'-o',str(exe)],check=True)
+ subprocess.run([str(exe)],check=True)
+print('Actual secondary PCM construction preserves upstream topology; DMA still selects the physical controller explicitly')
