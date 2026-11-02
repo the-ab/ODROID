@@ -21,3 +21,9 @@ After the GIC warning, all four CPUs were online and interrupt delivery operated
 The eMMC hardware reset was already enabled (`RST_N_FUNCTION=0x01`), pwrseq_emmc is bound and the active-low reset GPIO is correctly owned/high. No EXT_CSD setting or boot0/boot1 content was changed. Preserve the verified v3 fallback and same-medium backup. Further early-boot diagnosis needs a captured console trace; a U3-compatible UART must respect the manufacturer's [1.8 V interfaces](https://www.hardkernel.com/shop/odroid-u3/). Board-specific connector and pinout must be checked before connection.
 
 These are local reviewed fixes, not claimed upstream acceptances. The functional I2S/USB results do not qualify an unstable kernel for public APT or new images. Matching sources, configs, recipes, exact packages and verified debug-build archives are retained. References include the [optional regulator API](https://docs.kernel.org/driver-api/regulator.html) and the exact upstream bindings/drivers in the matching sources.
+
+## UART follow-up (2 November 2026)
+
+Complete early serial output also reproduced a failure with the unchanged v3 kernel: two GIC CPU-mask warnings before secondary-CPU startup, all CPUs up only after4.076 seconds and no RCU Tasks Trace callback or login. A manual cold start with the same kernel and arguments had no GIC warning, all CPUs up after0.234 seconds and both RCU callbacks. The original boot configuration was restored after recovery. This supersedes the assumption that the older successful v3 restarts establish a reliable hardware fallback. Preserve its files and the matching backup, but do not claim boot reliability or an I2S-specific cause.
+
+The separate [v8 diagnostic profile](../boards/u3/kernel-candidates/7.3.1-gicdiag-v8/README.md) adds read-only early GIC register output on the v3 baseline. It is instrumentation, not a routing fix or a released replacement.
