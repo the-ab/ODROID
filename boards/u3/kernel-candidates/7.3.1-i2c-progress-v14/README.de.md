@@ -26,3 +26,5 @@ Bau, Paketprüfung und tatsächliche Hardwareabnahme bleiben getrennt. Passende 
 Dies ersetzt das bereits gebootete v13: Dessen optionale debugfs-Datei wurde laut verlinkter Core-Initcall-Reihenfolge vor debugfs_init angefordert. V14 behält frühe RAM-Marken und RCU-Beobachtung bei, erstellt die Datei aber in einem getrennten Late-Initcall und prüft Fehler. Die genaue Reihenfolge ist vor dem Hardwaretest im verlinkten ELF zu prüfen.
 
 Der ARM-Bau bestand am03.11.2026 ohne Compilerwarnungen. Im verlinkten ELF liegt die optionale Dateiinitialisierung ausdrücklich auf Stufe7 nach debugfs_init auf Stufe1; der frühe Beobachter bleibt auf Stufe1. Konfigurations-/DTB-Prüfungen bestanden; Hardwareprüfung steht noch aus.
+
+Native Prüfung am2026-11-03: RAM-Datei und alle vier Kanäle verfügbar, vier Warmstarts gesund. Der nächste Start hing vor Userspace mit Watchdog-Softlockups ohne RCU-Momentaufnahme. Nutzer-Kaltstart stellte gesundes v14 wieder her. Revision15 ergänzt die begrenzte Aufnahme an der vorhandenen Softlockup-Meldestelle; Plattformursache weiterhin offen.
