@@ -1,0 +1,434 @@
+Subject: [ODROID-U3] Linux 7.3.1 identity, thermal, USB and IRQ link support
+
+Port of the 6.12.114 board changes. The drivers/base diagnostic is already
+present upstream and is not patched again. No IPv4/TCP security fix is reverted.
+
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -198,6 +198,24 @@
+ 	if (!soc_dev_attr->soc_id)
+ 		return dev_err_probe(dev, -ENODEV, "Unknown SoC\n");
+ 
++	/* The Exynos4412 GUID is independent of the SD/eMMC installation. */
++	if (soc_info.product_id == 0xE4412000) {
++		u32 uid_low, uid_high;
++
++		ret = regmap_read(regmap, EXYNOS_CHIPID_REG_LOT_ID, &uid_low);
++		if (!ret)
++			ret = regmap_read(regmap, 0x18, &uid_high);
++		if (!ret && (uid_low || uid_high) &&
++		    (uid_low != U32_MAX || uid_high != U32_MAX)) {
++			soc_dev_attr->serial_number = devm_kasprintf(&pdev->dev,
++				GFP_KERNEL, "%08x%08x", uid_high, uid_low);
++			if (!soc_dev_attr->serial_number)
++				return -ENOMEM;
++		} else {
++			dev_warn(&pdev->dev, "Exynos4412 GUID unavailable\n");
++		}
++	}
++
+ 	/* please note that the actual registration will be deferred */
+ 	soc_dev = soc_device_register(soc_dev_attr);
+ 	if (IS_ERR(soc_dev))
+diff --git a/arch/arm/boot/dts/samsung/exynos4412-odroidu3.dts b/arch/arm/boot/dts/samsung/exynos4412-odroidu3.dts
+--- a/arch/arm/boot/dts/samsung/exynos4412-odroidu3.dts
++++ b/arch/arm/boot/dts/samsung/exynos4412-odroidu3.dts
+@@ -50,7 +50,7 @@
+ 		compatible = "pwm-fan";
+ 		pwms = <&pwm 0 10000 0>;
+ 		#cooling-cells = <2>;
+-		cooling-levels = <0 102 170 230>;
++		cooling-levels = <0 102 170 255>;
+ 	};
+ };
+ 
+@@ -67,22 +67,47 @@
+ };
+ 
+ &cpu_thermal {
++	polling-delay = <1000>;
++	polling-delay-passive = <1000>;
++	trips {
++		u3_fan_low: fan-low {
++			temperature = <35000>;
++			hysteresis = <3000>;
++			type = "active";
++		};
++		u3_fan_medium: fan-medium {
++			temperature = <45000>;
++			hysteresis = <3000>;
++			type = "active";
++		};
++		u3_fan_high: fan-high {
++			temperature = <55000>;
++			hysteresis = <3000>;
++			type = "active";
++		};
++	};
+ 	cooling-maps {
+ 		map0 {
+ 			trip = <&cpu_alert1>;
+ 			cooling-device = <&cpu0 9 9>, <&cpu1 9 9>,
+-					 <&cpu2 9 9>, <&cpu3 9 9>,
+-					 <&fan0 1 2>;
++					 <&cpu2 9 9>, <&cpu3 9 9>;
+ 		};
+ 		map1 {
+ 			trip = <&cpu_alert2>;
+ 			cooling-device = <&cpu0 15 15>, <&cpu1 15 15>,
+-					 <&cpu2 15 15>, <&cpu3 15 15>,
+-					 <&fan0 2 3>;
++					 <&cpu2 15 15>, <&cpu3 15 15>;
+ 		};
+ 		map2 {
+-			trip = <&cpu_alert0>;
+-			cooling-device = <&fan0 0 1>;
++			trip = <&u3_fan_low>;
++			cooling-device = <&fan0 1 1>;
++		};
++		fan-medium-map {
++			trip = <&u3_fan_medium>;
++			cooling-device = <&fan0 2 2>;
++		};
++		fan-high-map {
++			trip = <&u3_fan_high>;
++			cooling-device = <&fan0 3 3>;
+ 		};
+ 	};
+ };
+@@ -146,6 +171,13 @@
+ 			"Speakers", "SPKR";
+ };
+ 
++/* This board's regulator constraints already reject the 875 mV GPU OPP. */
++&gpu_opp_table {
++	opp-160000000 {
++		status = "disabled";
++	};
++};
++
+ &spi_1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&spi1_bus>;
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -94,12 +94,23 @@
+ 	int i;
+ 	int ret = 0;
+ 
+-	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
++	for (i = 0; i < PHY_NUMBER; i++) {
++		ret = phy_init(exynos_ehci->phy[i]);
++		if (ret)
++			goto err_disable;
+ 		ret = phy_power_on(exynos_ehci->phy[i]);
+-	if (ret)
+-		for (i--; i >= 0; i--)
+-			phy_power_off(exynos_ehci->phy[i]);
+-
++		if (ret) {
++			phy_exit(exynos_ehci->phy[i]);
++			goto err_disable;
++		}
++	}
++	return 0;
++
++err_disable:
++	while (--i >= 0) {
++		phy_power_off(exynos_ehci->phy[i]);
++		phy_exit(exynos_ehci->phy[i]);
++	}
+ 	return ret;
+ }
+ 
+@@ -109,8 +120,10 @@
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int i;
+ 
+-	for (i = 0; i < PHY_NUMBER; i++)
++	for (i = PHY_NUMBER - 1; i >= 0; i--) {
+ 		phy_power_off(exynos_ehci->phy[i]);
++		phy_exit(exynos_ehci->phy[i]);
++	}
+ }
+ 
+ static void exynos_setup_vbus_gpio(struct device *dev)
+diff --git a/drivers/usb/dwc2/params.c b/drivers/usb/dwc2/params.c
+--- a/drivers/usb/dwc2/params.c
++++ b/drivers/usb/dwc2/params.c
+@@ -486,7 +486,7 @@
+ 	p->lpm = hsotg->hw_params.lpm_mode;
+ 	if (p->lpm) {
+ 		p->lpm_clock_gating = true;
+-		p->besl = true;
++		p->besl = hsotg->hw_params.snpsid >= DWC2_CORE_REV_3_00a;
+ 		p->hird_threshold_en = true;
+ 		p->hird_threshold = 4;
+ 	} else {
+@@ -564,7 +564,8 @@
+ 		 * default.
+ 		 */
+ 		p->g_rx_fifo_size = 2048;
+-		p->g_np_tx_fifo_size = 1024;
++		p->g_np_tx_fifo_size = min_t(u32, 1024,
++					   hw->dev_nperio_tx_fifo_size);
+ 		dwc2_set_param_tx_fifo_sizes(hsotg);
+ 	}
+ }
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -15,6 +15,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/device.h>
++#include <linux/fwnode.h>
+ #include <linux/interrupt.h>
+ #include <linux/irqdomain.h>
+ #include <linux/irq.h>
+@@ -865,6 +866,14 @@
+ 		muxed_data->banks[idx++] = bank;
+ 	}
+ 
++	/*
++	 * This node describes the muxed IRQ handled above, not a child device.
++	 * Its resources have been consumed by this driver. Drop the remaining
++	 * firmware links so fw_devlink does not try to proxy them through the
++	 * already bound pin controller when an IRQ supplier's ancestor binds.
++	 */
++	fwnode_links_purge(of_fwnode_handle(wkup_np));
++
+ 	return 0;
+ }
+ 
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -12,3 +12,6 @@
+ 
+ obj-$(CONFIG_EXYNOS_MCPM)	+= mcpm-exynos.o
+ CFLAGS_mcpm-exynos.o		+= -march=armv7-a
++
++# Private U3 diagnostic profile, inactive without its explicit boot argument.
++obj-$(CONFIG_SOC_EXYNOS4412) += odroid-u3-irqdiag.o
+--- /dev/null
++++ b/arch/arm/mach-exynos/odroid-u3-irqdiag.c
+@@ -0,0 +1,158 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/* Private, opt-in U3 observation at an existing RCU stall tracepoint. */
++#include <linux/atomic.h>
++#include <linux/init.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/jiffies.h>
++#include <linux/kernel_stat.h>
++#include <linux/of_address.h>
++#include <linux/of_irq.h>
++#include <linux/smp.h>
++#include <trace/events/rcu.h>
++
++static bool u3_diag_enabled;
++static void __iomem *u3_dist, *u3_cpu, *u3_mct;
++static unsigned int u3_timer_irq;
++static atomic_t u3_diag_busy = ATOMIC_INIT(0);
++static atomic_t u3_diag_reports = ATOMIC_INIT(0);
++
++static int __init u3_diag_setup(char *value)
++{
++	return !kstrtobool(value, &u3_diag_enabled);
++}
++__setup("odroid_u3_irqdiag=", u3_diag_setup);
++
++struct u3_diag_bank {
++	u32 dctl, enabled, pending, active, target;
++	u32 cctl, pmr, bpr, rpr, hppir;
++	u32 tcntb, icntb, tcon, status, inten, wstat;
++	u32 irqs;
++};
++
++static void u3_diag_dump(const char *reason)
++{
++	struct u3_diag_bank bank[4];
++	u32 high1, low1, high2, low2, global_tcon;
++	u32 shared_enabled[4], shared_pending[4], shared_active[4];
++	unsigned int cpu, group;
++
++	if (atomic_cmpxchg(&u3_diag_busy, 0, 1))
++		return;
++
++	/* All snapshots precede console output. No acknowledge/clear writes. */
++	high1 = readl_relaxed(u3_mct + 0x104);
++	low1 = readl_relaxed(u3_mct + 0x100);
++	global_tcon = readl_relaxed(u3_mct + 0x240);
++	for (cpu = 0; cpu < ARRAY_SIZE(bank); cpu++) {
++		void __iomem *d = u3_dist + cpu * 0x4000;
++		void __iomem *c = u3_cpu + cpu * 0x4000;
++		void __iomem *t = u3_mct + 0x300 + cpu * 0x100;
++		struct u3_diag_bank *b = &bank[cpu];
++
++		b->dctl = readl_relaxed(d);
++		b->enabled = readl_relaxed(d + 0x100);
++		b->pending = readl_relaxed(d + 0x200);
++		b->active = readl_relaxed(d + 0x300);
++		b->target = readl_relaxed(d + 0x800);
++		b->cctl = readl_relaxed(c);
++		b->pmr = readl_relaxed(c + 0x04);
++		b->bpr = readl_relaxed(c + 0x08);
++		b->rpr = readl_relaxed(c + 0x14);
++		b->hppir = readl_relaxed(c + 0x18);
++		b->tcntb = readl_relaxed(t);
++		b->icntb = readl_relaxed(t + 0x08);
++		b->tcon = readl_relaxed(t + 0x20);
++		b->status = readl_relaxed(t + 0x30);
++		b->inten = readl_relaxed(t + 0x34);
++		b->wstat = readl_relaxed(t + 0x40);
++		b->irqs = kstat_irqs_cpu(u3_timer_irq, cpu);
++	}
++	for (group = 0; group < ARRAY_SIZE(shared_enabled); group++) {
++		shared_enabled[group] = readl_relaxed(u3_dist + 0x104 + group * 4);
++		shared_pending[group] = readl_relaxed(u3_dist + 0x204 + group * 4);
++		shared_active[group] = readl_relaxed(u3_dist + 0x304 + group * 4);
++	}
++	high2 = readl_relaxed(u3_mct + 0x104);
++	low2 = readl_relaxed(u3_mct + 0x100);
++
++	pr_info("U3IRQDIAG reason=%s observer=%u irq=%u jiffies=%lu global=%08x:%08x->%08x:%08x gtcon=%08x\n",
++		reason, raw_smp_processor_id(), u3_timer_irq, jiffies,
++		high1, low1, high2, low2, global_tcon);
++	for (cpu = 0; cpu < ARRAY_SIZE(bank); cpu++) {
++		struct u3_diag_bank *b = &bank[cpu];
++
++		pr_info("U3IRQDIAG bank=%u dctl=%08x en=%08x pend=%08x act=%08x target=%08x cctl=%08x pmr=%08x bpr=%08x rpr=%08x hppir=%08x\n",
++			cpu, b->dctl, b->enabled, b->pending, b->active, b->target,
++			b->cctl, b->pmr, b->bpr, b->rpr, b->hppir);
++		pr_info("U3IRQDIAG timer=%u tcntb=%08x icntb=%08x tcon=%08x stat=%08x inten=%08x wstat=%08x irqs=%u\n",
++			cpu, b->tcntb, b->icntb, b->tcon, b->status, b->inten,
++			b->wstat, b->irqs);
++	}
++	for (group = 0; group < ARRAY_SIZE(shared_enabled); group++)
++		pr_info("U3IRQDIAG spi-group=%u en=%08x pend=%08x act=%08x\n",
++			group + 1, shared_enabled[group], shared_pending[group],
++			shared_active[group]);
++	atomic_set(&u3_diag_busy, 0);
++}
++
++static void u3_diag_rcu_stall(void *unused, const char *name, const char *message)
++{
++	/* No allocation, sleeping, cross-CPU call or new timer in this hook. */
++	if (atomic_inc_return(&u3_diag_reports) <= 3)
++		u3_diag_dump(message);
++}
++
++static int __init u3_diag_init(void)
++{
++	struct device_node *gic, *mct;
++	struct resource dr, cr, tr;
++	struct irq_data *data;
++	u32 stride;
++	int ret = -ENODEV;
++
++	if (!u3_diag_enabled || !of_machine_is_compatible("hardkernel,odroid-u3"))
++		return 0;
++	gic = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-gic");
++	mct = of_find_compatible_node(NULL, NULL, "samsung,exynos4412-mct");
++	if (!gic || !mct || of_address_to_resource(gic, 0, &dr) ||
++	    of_address_to_resource(gic, 1, &cr) ||
++	    of_address_to_resource(mct, 0, &tr) ||
++	    of_property_read_u32(gic, "cpu-offset", &stride))
++		goto out;
++	if (dr.start != 0x10490000 || resource_size(&dr) != 0x10000 ||
++	    cr.start != 0x10480000 || resource_size(&cr) != 0x10000 ||
++	    tr.start != 0x10050000 || resource_size(&tr) != 0x800 ||
++	    stride != 0x4000)
++		goto out;
++	u3_timer_irq = irq_of_parse_and_map(mct, 4);
++	data = irq_get_irq_data(u3_timer_irq);
++	if (!data || data->hwirq != 28)
++		goto out;
++	u3_dist = ioremap(dr.start, resource_size(&dr));
++	u3_cpu = ioremap(cr.start, resource_size(&cr));
++	u3_mct = ioremap(tr.start, resource_size(&tr));
++	if (!u3_dist || !u3_cpu || !u3_mct) {
++		ret = -ENOMEM;
++		goto unmap;
++	}
++	ret = register_trace_rcu_stall_warning(u3_diag_rcu_stall, NULL);
++	if (ret)
++		goto unmap;
++	u3_diag_dump("armed");
++	goto out;
++unmap:
++	if (u3_dist)
++		iounmap(u3_dist);
++	if (u3_cpu)
++		iounmap(u3_cpu);
++	if (u3_mct)
++		iounmap(u3_mct);
++out:
++	of_node_put(gic);
++	of_node_put(mct);
++	if (ret)
++		pr_err("U3IRQDIAG unavailable: %d\n", ret);
++	return ret;
++}
++core_initcall(u3_diag_init);
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -412,6 +412,48 @@
+ 					 &gic_data[gic_nr]);
+ }
+ 
++/* Private U3 diagnostics: remember original results without extra MMIO. */
++static bool u3_gic_defer_enabled;
++static u16 u3_gic_early_masks[NR_GIC_CPU_IF][2];
++
++static int __init u3_gic_defer_setup(char *value)
++{
++	return !kstrtobool(value, &u3_gic_defer_enabled);
++}
++__setup("odroid_u3_gic_defer=", u3_gic_defer_setup);
++
++static void u3_gic_remember_mask(u8 mask)
++{
++	unsigned int cpu;
++
++	if (!u3_gic_defer_enabled)
++		return;
++	cpu = raw_smp_processor_id();
++	if (cpu >= NR_GIC_CPU_IF)
++		return;
++	/* Each CPU writes only its own slots; bit 8 marks even a zero result. */
++	if (!READ_ONCE(u3_gic_early_masks[cpu][0]))
++		WRITE_ONCE(u3_gic_early_masks[cpu][0], 0x100 | mask);
++	else if (!READ_ONCE(u3_gic_early_masks[cpu][1]))
++		WRITE_ONCE(u3_gic_early_masks[cpu][1], 0x100 | mask);
++}
++
++static int __init u3_gic_defer_report(void)
++{
++	unsigned int cpu;
++
++	if (!u3_gic_defer_enabled ||
++	    !of_machine_is_compatible("hardkernel,odroid-u3"))
++		return 0;
++	pr_info("U3GICDEFER software-map=%*ph\n", NR_GIC_CPU_IF, gic_cpu_map);
++	for (cpu = 0; cpu < 4; cpu++)
++		pr_info("U3GICDEFER cpu=%u first=%03x second=%03x\n", cpu,
++			READ_ONCE(u3_gic_early_masks[cpu][0]),
++			READ_ONCE(u3_gic_early_masks[cpu][1]));
++	return 0;
++}
++core_initcall(u3_gic_defer_report);
++
+ static u8 gic_get_cpumask(struct gic_chip_data *gic)
+ {
+ 	void __iomem *base = gic_data_dist_base(gic);
+@@ -428,6 +470,7 @@
+ 	if (!mask && num_possible_cpus() > 1)
+ 		pr_crit("GIC CPU mask not found - kernel will fail to boot.\n");
+ 
++	u3_gic_remember_mask(mask);
+ 	return mask;
+ }
+ 
