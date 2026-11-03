@@ -23,3 +23,5 @@ Der vorhandene begrenzte RCU-Hook kopiert die RAM-Daten vor der Konsolenausgabe 
 Bau, Paketprüfung und tatsächliche Hardwareabnahme bleiben getrennt. Passende Quellen/Debug-ELF, lokale UART-Aufzeichnung und geprüften v12-/v3-Bootdatei-Rückfall vor dem Test erhalten. Dieses Profil ersetzt keine öffentlichen Kernel oder Images.
 
 Am03.11.2026 bestand der abschließende ARM-Bau ohne Compilerwarnungen; alle101 Server-Konfigurationskriterien,351 Modul-Vermagic-Prüfungen sowie unverändertes DTB und Quell-/Kontrollflussprüfungen bestanden. Die Hardwareprüfung steht noch aus.
+
+Der erste native v13-Start erreichte Userspace; die optionale RAM-Datei fehlte jedoch, weil ihr Core-Initcall vor debugfs_init lag. Dieser Fehler der Diagnoseansicht wird getrennt in v14 korrigiert; v13 hat die vollständige Hardwareprüfung nicht bestanden.

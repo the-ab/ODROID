@@ -23,3 +23,5 @@ The existing bounded RCU hook copies these records before console output and pri
 Build, package and actual hardware qualification are recorded separately. Preserve matching source/debug ELF, local UART capture and verified v12/v3 boot-file recovery before testing. This profile is not a public kernel/image replacement.
 
 On2026-11-03 the final ARM build completed without compiler warnings; all101 server configuration gates,351 module vermagic checks, unchanged-DTB and source/control-flow checks passed. Native qualification is still pending.
+
+Native v13 first boot reached userspace, but the optional RAM file was not created because its core initcall preceded debugfs_init. This diagnostic-interface defect is corrected separately in v14; v13 has not passed full native qualification.
