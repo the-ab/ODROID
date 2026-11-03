@@ -1,0 +1,13 @@
+# U3-GIC-Diagnose mit verzögerter Ausgabe, Revision 11
+
+[English](README.md)
+
+Der private Kandidat `7.3.1-odroidu3-v11` ergänzt den v10-Beobachter um `odroid_u3_gic_defer=1`. Die ursprüngliche GIC-Zielregister-Leseschleife, Nullmaskenwarnung, Distributor-Initialisierung und zurückgegebene Maske bleiben erhalten. Unmittelbar nach der ursprünglichen Warnung speichert ein kleiner, ausdrücklich aktivierter Helfer die ersten beiden Ergebnisse jeder CPU in deren RAM-Feldern. Er fügt keine frühen MMIO-Lesezugriffe, Controller-Schreibzugriffe, Ausgaben, Sperren oder CPU-übergreifenden Aufrufe hinzu. Zusätzlicher Code und RAM-Schreibzugriffe können das Timing trotzdem beeinflussen; dies ist eine Messung, keine Korrektur.
+
+Ein Early-Initcall nach dem SMP-Start gibt `U3GICDEFER software-map=...` und die gespeicherten Felder aus. Bit8 (`0x100`) markiert ein erfasstes Ergebnis: `100` bedeutet echte Nullmaske, `101` Maske1 und `000` ein unbenutztes Feld. Auf diesem U3-Bootpfad mit einem GIC ist CPU0s erster Aufruf die Distributor- und der zweite die CPU-Schnittstelleninitialisierung. So lässt sich eine vorübergehende anfängliche Null von einer in der Software-CPU-Tabelle erhaltenen Null unterscheiden, sofern der Bootvorgang die Ausgabestelle erreicht. Die ursprüngliche Warnung wird weder unterdrückt noch ersetzt; es wird keine Ersatzmaske erfunden.
+
+Der vorhandene optionale v10-RCU-Stillstandsbeobachter bleibt über den getrennten Parameter `odroid_u3_irqdiag=1` verfügbar. Für den ersten Diagnosetest beide Parameter mit der bewährten seriellen Frühkonsole und `loglevel=7`, passendem Bootdatei-Rückfall und lokaler UART-Aufzeichnung verwenden. Beide Beobachter ändern weder den Release-Standard noch die Bootfirmware.
+
+Anlass: v10 absolvierte drei saubere Warmstarts mit Beobachter. Mit derselben Binärdatei und ausschließlich weggelassenem Beobachterparameter waren zwei Warmstarts sauber; ein dritter erreichte trotz einer frühen Nullmaskenwarnung das System. CPU0-Timer- und Funktionsaufruf-IPI-Zähler stiegen weiter. Der nächste normale v3-Start scheiterte mit GIC-, PMIC-Spannungslese-, CPU0-RCU- und CPU2-Softlockup-Meldungen. Eine einzelne Warnung oder deren Ausbleiben genügt somit nicht als Bootzustandsprüfung. Eine später gesunde Registeraufnahme zeigt nicht, welcher frühe Aufruf Null zurückgab. Die acht Byte der Softwaretabelle waren über `/proc/kcore` in dieser Konfiguration nicht lesbar; keine Zugriffsregel wurde dafür geändert.
+
+Lokale Übersetzung, die101 Server-Konfigurationskriterien, unverändertes DTB sowie Quell-/Patchprüfung bestanden am 03.11.2026. Hardwareboot und der neue Ausgabepfad sind noch ungeprüft.
