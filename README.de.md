@@ -35,3 +35,5 @@ Das frische 1.0.2-Rezept verwendet das erweiterte [Serverprofil](boards/u3/kerne
 [I2S-/USB-Korrekturkandidat und offene Warmstartprüfung](docs/I2S-USB.de.md).
 
 Die unabhängigen I²C-Gegenproben mit [Synchronisierung](boards/u3/kernel-candidates/7.3.1-i2c-sync-v19/README.de.md) und [gehaltenem Takt](boards/u3/kernel-candidates/7.3.1-i2c-clockhold-v20/README.de.md) reproduzierten den Startfehler. Eine getrennte [Polling-Gegenprobe](boards/u3/kernel-candidates/7.3.1-i2c-poll-v21/README.de.md) reproduzierte den Stillstand nach vier gesunden reinen Warmstarts ebenfalls; keiner der Eingriffe ist ein bestätigter Fix.
+
+Eine getrennte [Korrektur der Diagnosezulassung](boards/u3/kernel-candidates/7.3.1-diag-budget-v22/README.de.md) erhält das Budget dreier vollständiger später Aufnahmen bei gleichzeitigen Watchdog-Aufrufen; die Hardwareprüfung bleibt getrennt.
