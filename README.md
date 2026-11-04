@@ -33,3 +33,5 @@ The fresh 1.0.2 recipe uses the extended [server profile](boards/u3/kernel-candi
 [Server kernel features and qualification](docs/SERVER-KERNEL.md)
 
 [I2S/USB candidate fixes and remaining warm-start qualification](docs/I2S-USB.md).
+
+The independent I²C [synchronization](boards/u3/kernel-candidates/7.3.1-i2c-sync-v19/README.md) and [clock-hold](boards/u3/kernel-candidates/7.3.1-i2c-clockhold-v20/README.md) controls reproduced the start stall. A separate [polling control](boards/u3/kernel-candidates/7.3.1-i2c-poll-v21/README.md) is being prepared; none is an accepted fix.

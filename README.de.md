@@ -33,3 +33,5 @@ Das frische 1.0.2-Rezept verwendet das erweiterte [Serverprofil](boards/u3/kerne
 [Serverkernel: Funktionen und Prüfungen](docs/SERVER-KERNEL.de.md)
 
 [I2S-/USB-Korrekturkandidat und offene Warmstartprüfung](docs/I2S-USB.de.md).
+
+Die unabhängigen I²C-Gegenproben mit [Synchronisierung](boards/u3/kernel-candidates/7.3.1-i2c-sync-v19/README.de.md) und [gehaltenem Takt](boards/u3/kernel-candidates/7.3.1-i2c-clockhold-v20/README.de.md) reproduzierten den Startfehler. Eine getrennte [Polling-Gegenprobe](boards/u3/kernel-candidates/7.3.1-i2c-poll-v21/README.de.md) wird vorbereitet; keiner der Eingriffe ist ein bestätigter Fix.
