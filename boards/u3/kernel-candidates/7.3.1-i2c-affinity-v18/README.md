@@ -17,3 +17,7 @@ python3 check-control.py --source /path/to/patched/linux/drivers/i2c/busses/i2c-
 ```
 
 It compiles the actual helper with IRQ API stubs and exercises seven cases: disabled, untargeted, invalid/offline CPU, success, API failure and CPU0. ARM compilation, package integrity and native routing/boot acceptance remain separate checks. Retain matching debug ELF, packages, UART evidence and a verified full-function fallback. Stop a bounded reboot series at its first failure. This candidate changes no image default and has no public binary release qualification.
+
+Native result on2026-11-04: the initial transition passed all351 module/configuration checks, four advancing CPU timers, active PMU/audit, clean journal/services and requested/effective I²C IRQ affinity on CPU1. The first additional same-kernel warmboot hung, so the five-attempt series stopped at0/1. Two subsequent cold recoveries failed; the third passed and allowed restoration and a verified boot of the original full v17 configuration.
+
+In one failed cold start, two late snapshots show I²C IRQ progress only on CPU1, its local timer fixed at698 interrupts, GIC running priority0 and INTID90 active; the other CPUs report waiting in `multi_cpu_stop`. The stall following the selected IRQ CPU is a useful correlation, not a captured CPU1 program counter or proof of a particular I²C/GIC instruction. The last global GIC marker records handler return and the later idle marker records entry. This control is not a fix and is not release-qualified.
