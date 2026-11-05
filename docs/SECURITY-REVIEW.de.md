@@ -2,6 +2,13 @@
 
 [English](SECURITY-REVIEW.md)
 
+
+## Nachprüfung — 05.11.2026
+
+Kernel.org führt weiterhin 7.3.1 als aktuelle stabile Version. Der aktualisierte Linux-CNA-Stand `b537cbcd0154f07e083400c5ba2f9826be84ee26` enthält 18.204 veröffentlichte Datensätze: Der vorhandene konservative Versionsbereichsprüfer ordnete 18.193 als nicht betroffen, zehn als betroffen und einen als unbekannt ein. Die elf Restfälle umfassen die vier unten früher bewerteten Fälle und sieben zusätzliche io_uring-Fälle: CVE-2026-99228, CVE-2026-99229, CVE-2026-99230, CVE-2026-99231, CVE-2026-99253, CVE-2026-99254 und CVE-2026-99255.
+
+V25 aktiviert `CONFIG_IO_URING=y`. Seine Funktion `io_uring_cmd_del_cancelable()` verwendet weiterhin `hlist_del()`, während CVE-2026-99230 nach dem Entfernen einen ungehashten Knoten verlangt. Diese konkrete Quelllücke ist bestätigt; die übrigen neuen Fälle benötigen Quell-/Anwendbarkeitsprüfung und geprüfte Upstream-Korrekturen. In dieser Nachprüfung wurden keine neuen Korrekturen oder Exploit-Reproduktionen ausgeführt. V25 hat keine abschließende Sicherheitsabnahme. Die unten datierte Bewertung bleibt historisch und gilt nicht als aktuelle Freigabe gegenüber diesen neuen Befunden. Allein die neueste Stable-Versionsnummer reicht für eine Release-Abnahme nicht aus.
+
 Kandidat 7.3.1-odroidu3-v3 verwendet die vollständigen signierten Linux 7.3.1-Stablequellen. SHA256: `fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231`. Entwicklersignatur von Greg Kroah-Hartman gegen den über kernel.org-WKD bezogenen Schlüssel geprüft.95.979 reguläre Upstream-Quelldateien verglichen; nur fünf dokumentierte U3-Quelldateien geändert. Die laufende Kernelkonfiguration stimmt mit dem geprüften Profil überein.
 
 Linux-CNA-Datensatz `6e051cebb25cdd17a28267fbf1a4de5c9c8164f8`:18.164 veröffentlichte Einträge geprüft.18.160 laut veröffentlichten Versionsbereichen nicht betroffen. Vier verbleibende Versionszuordnungen manuell bewertet: CVE-2021-47645(Zoran nicht aktiviert), CVE-2026-68086(THP deaktiviert, Code upstream entfernt), CVE-2026-98938(Rust deaktiviert, upstream überarbeitet), CVE-2026-98941(Dateisystemverschlüsselung in v3 aktiviert; laut CNA betroffener Code bis 7.2, ab 7.3überarbeitet). Für dieses Profil verbleibt kein bekannter anwendbarer offener Treffer dieses Datenstands.
