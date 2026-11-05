@@ -39,3 +39,5 @@ Die unabhängigen I²C-Gegenproben mit [Synchronisierung](boards/u3/kernel-candi
 Eine getrennte [Korrektur der Diagnosezulassung](boards/u3/kernel-candidates/7.3.1-diag-budget-v22/README.de.md) erhält das Budget dreier vollständiger später Aufnahmen bei gleichzeitigen Watchdog-Aufrufen; die Hardwareprüfung bleibt getrennt.
 
 Eine getrennte [MMC-Regulator-Fehlerpfadkorrektur](boards/u3/kernel-candidates/7.3.1-mmc-regulator-v23/README.de.md) weist ungültige Bereiche ab und reicht nach einem Startstillstand beobachtete Abfragefehler weiter; sie ist kein qualifizierter Fix dieses Stillstands.
+
+Ein separater [Kandidat zur GIC-Alias-Beobachtung](boards/u3/kernel-candidates/7.3.1-gic-alias-v25/README.de.md) folgt auf eine erfolgreiche gesunde Gegenprobe mit vier CPUs und vier Aliassen. Quellen-/Helfer- und ARM-Objektprüfungen sind bestanden; vollständiger Kernelbau, Paketprüfung und native Abnahme stehen noch aus.

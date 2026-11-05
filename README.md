@@ -39,3 +39,5 @@ The independent I²C [synchronization](boards/u3/kernel-candidates/7.3.1-i2c-syn
 A separate [diagnostic-admission correction](boards/u3/kernel-candidates/7.3.1-diag-budget-v22/README.md) preserves the three completed late snapshots when watchdog calls overlap; native qualification remains separate.
 
 A separate [MMC regulator error-path correction](boards/u3/kernel-candidates/7.3.1-mmc-regulator-v23/README.md) rejects invalid ranges and propagates capability-query errors observed after a start stall; it is not a qualified fix for that stall.
+
+A separate [GIC alias observation candidate](boards/u3/kernel-candidates/7.3.1-gic-alias-v25/README.md) follows a successful healthy four-CPU/four-alias control. Source/helper and ARM-object checks pass; full kernel/package/native qualification remains pending.
