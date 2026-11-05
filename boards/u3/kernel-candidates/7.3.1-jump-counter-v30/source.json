@@ -1,0 +1,22 @@
+{
+  "version": "7.3.1",
+  "sha256": "fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231",
+  "bytes": 162406920,
+  "signer_fingerprint": "647F28654894E3BD457199BE38DBBDC86092693E",
+  "developer_signature_valid": true,
+  "checksum_matches_kernel_org": true,
+  "url": "https://cdn.kernel.org/pub/linux/kernel/v7.x/linux-7.3.1.tar.xz",
+  "id": "kernel",
+  "filename": "linux-7.3.1.tar.xz",
+  "kernel_release": "7.3.1-odroidu3-v30",
+  "patch": "platform.patch",
+  "config": "kernel.config",
+  "candidate_only": true,
+  "source_date_epoch": 1793913532,
+  "server_profile": true,
+  "diagnostic_deb_version": "7.3.1-31~jumpcounter1",
+  "base_profile": "7.3.1-gic-base-v29",
+  "purpose": "GIC accessor uses supported static_key_enabled RAM counter instead of patched static branch; retain XFS features requiring global JUMP_LABEL and all seven io_uring fixes",
+  "security_fixes_manifest": "../7.3.1-iouring-v26/security/upstream-fixes.json",
+  "security_CNA_snapshot": "b537cbcd0154f07e083400c5ba2f9826be84ee26"
+}
