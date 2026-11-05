@@ -1,0 +1,94 @@
+{
+  "CNA_snapshot": "b537cbcd0154f07e083400c5ba2f9826be84ee26",
+  "fixes": [
+    {
+      "order": 1,
+      "cve": "CVE-2026-99231",
+      "commit": "c254eec4364b9f4b4cbdce43be3fb4df5a651a70",
+      "parent": "0870eb27a8dae98c45e2f457773b10697f94c9f6",
+      "subject": "io_uring/waitid: own the request before clearing ->head",
+      "patch": "01-CVE-2026-99231.patch",
+      "patch_sha256": "290891ce8c966cfccf894223d068d9618bfe4360264715eed73e9caaba8e1243",
+      "bytes": 816,
+      "canonical": "https://git.kernel.org/stable/c/c254eec4364b9f4b4cbdce43be3fb4df5a651a70",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/c254eec4364b9f4b4cbdce43be3fb4df5a651a70^!/?format=TEXT"
+    },
+    {
+      "order": 2,
+      "cve": "CVE-2026-99230",
+      "commit": "4c83e39f4d1944d7146fd06094f2c8053238d55c",
+      "parent": "c254eec4364b9f4b4cbdce43be3fb4df5a651a70",
+      "subject": "io_uring/cmd: don't leave list poison in ->hash_node",
+      "patch": "02-CVE-2026-99230.patch",
+      "patch_sha256": "269eb55c24f97b1059a3f062411a4fe559f5dc015bc3669a80cca0cd7f8a960a",
+      "bytes": 428,
+      "canonical": "https://git.kernel.org/stable/c/4c83e39f4d1944d7146fd06094f2c8053238d55c",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/4c83e39f4d1944d7146fd06094f2c8053238d55c^!/?format=TEXT"
+    },
+    {
+      "order": 3,
+      "cve": "CVE-2026-99229",
+      "commit": "34f5a664c34d3cb62f6bec7f4156754594a7d25b",
+      "parent": "4c83e39f4d1944d7146fd06094f2c8053238d55c",
+      "subject": "io_uring/wait: don't spin on a stuck overflow list",
+      "patch": "03-CVE-2026-99229.patch",
+      "patch_sha256": "bd8009cfba5ce3a76e03db4cc4142026f1e6605e2831d1e163128b40caaa8412",
+      "bytes": 793,
+      "canonical": "https://git.kernel.org/stable/c/34f5a664c34d3cb62f6bec7f4156754594a7d25b",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/34f5a664c34d3cb62f6bec7f4156754594a7d25b^!/?format=TEXT"
+    },
+    {
+      "order": 4,
+      "cve": "CVE-2026-99228",
+      "commit": "63c103279a95e82280092f2f4232e91e8117a252",
+      "parent": "34f5a664c34d3cb62f6bec7f4156754594a7d25b",
+      "subject": "io_uring/io-wq: don't lose the signal that ends work",
+      "patch": "04-CVE-2026-99228.patch",
+      "patch_sha256": "5b7f9ef2a6a893421d61cb2132baa9a149fad24adf3fd807b7d0f2e0edd28830",
+      "bytes": 783,
+      "canonical": "https://git.kernel.org/stable/c/63c103279a95e82280092f2f4232e91e8117a252",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/63c103279a95e82280092f2f4232e91e8117a252^!/?format=TEXT"
+    },
+    {
+      "order": 5,
+      "cve": "CVE-2026-99255",
+      "commit": "436d48a2ed13112d2d27085325838e5bce6b4507",
+      "parent": "63c103279a95e82280092f2f4232e91e8117a252",
+      "subject": "io_uring/io-wq: don't hide a link from cancellations",
+      "patch": "05-CVE-2026-99255-7.3.1-backport.patch",
+      "patch_sha256": "054289d26cf82f965c62e4b355bec3280cbc8c206f8d75a4cfa8ccf2d92bb67a",
+      "bytes": 4841,
+      "canonical": "https://git.kernel.org/stable/c/436d48a2ed13112d2d27085325838e5bce6b4507",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/436d48a2ed13112d2d27085325838e5bce6b4507^!/?format=TEXT",
+      "original_mainline_patch": "05-CVE-2026-99255.patch",
+      "compatibility_backport_commit": "92e20e9c72bdf6cfa6f84eded7b33399bc7061da",
+      "compatibility_backport_patch": "05-CVE-2026-99255-stable-backport.patch",
+      "local_backport": "io_uring.c uses the CNA-referenced stable fix preserving the target IO_REQ_LINK_FLAGS condition; io-wq.c and io_uring.h use original mainline hunks preserving the target KCOV context. No unrelated REQ_F_CQE_SKIP API change is imported."
+    },
+    {
+      "order": 6,
+      "cve": "CVE-2026-99254",
+      "commit": "22e643e61b9b6299b42ff7d88bab48bccada8a5d",
+      "parent": "436d48a2ed13112d2d27085325838e5bce6b4507",
+      "subject": "io_uring: don't flood a cancelling task with task_work",
+      "patch": "06-CVE-2026-99254.patch",
+      "patch_sha256": "f08e6a213e1af2caf48114565083a544fd6babd95a43c5ad98b8b6720df61b4d",
+      "bytes": 1365,
+      "canonical": "https://git.kernel.org/stable/c/22e643e61b9b6299b42ff7d88bab48bccada8a5d",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/22e643e61b9b6299b42ff7d88bab48bccada8a5d^!/?format=TEXT"
+    },
+    {
+      "order": 7,
+      "cve": "CVE-2026-99253",
+      "commit": "76a82c666abf155ad52d5f41043eac77dd3e41d8",
+      "parent": "8257f6ec45ee07c6ed933c59d8982b03cc7bc1ca",
+      "subject": "io_uring/cancel: rearm local work wake up before sleep",
+      "patch": "07-CVE-2026-99253.patch",
+      "patch_sha256": "b152c45f27f610dc474f6a6d4af3e2417a10548ace5a8ad2485e9e81d2a93fea",
+      "bytes": 932,
+      "canonical": "https://git.kernel.org/stable/c/76a82c666abf155ad52d5f41043eac77dd3e41d8",
+      "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/76a82c666abf155ad52d5f41043eac77dd3e41d8^!/?format=TEXT"
+    }
+  ],
+  "source_or_hardware_modified": false
+}
