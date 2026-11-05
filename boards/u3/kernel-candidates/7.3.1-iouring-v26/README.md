@@ -2,7 +2,7 @@
 
 [Deutsch](README.de.md)
 
-Private candidate `7.3.1-odroidu3-v26` extends [v25](../7.3.1-gic-alias-v25/README.md) with the following CNA-referenced io_uring fixes. IO_URING remains enabled. The seven effective patches pass strict source-context checks and an exact reverse roundtrip on the 7.3.1 source. The ARM cross-build and server configuration check pass. Package and native acceptance are still pending. No image or public APT promotion follows from source checks.
+Private candidate `7.3.1-odroidu3-v26` extends [v25](../7.3.1-gic-alias-v25/README.md) with the following CNA-referenced io_uring fixes. IO_URING remains enabled. The seven effective patches pass strict source-context checks and an exact reverse roundtrip on the 7.3.1 source. The ARM cross-build and server configuration check pass. Package validation passes for all 351 modules, image CRCs and the unchanged DTB. The first native transition reproduced the earlier platform boot failure; native qualification is stopped pending diagnosis/recovery. No image or public APT promotion follows from source checks.
 
 | CVE | Original upstream fix |
 |---|---|
@@ -16,4 +16,8 @@ Private candidate `7.3.1-odroidu3-v26` extends [v25](../7.3.1-gic-alias-v25/READ
 
 For CVE-2026-99255, `io_uring.c` uses the CNA-referenced stable backport `92e20e9c72bdf6cfa6f84eded7b33399bc7061da`, preserving the target's existing link predicate. The original mainline `io-wq.c` and header hunks preserve its KCOV context. This avoids importing an unrelated REQ_F_CQE_SKIP API change. Original and compatibility patches, effective patch and metadata/checksums are retained under `security/`.
 
-The v25 board/driver patches and all server features remain unchanged; only seven io_uring files and the revision suffix differ. V25 is the direct rollback baseline requested by the owner; v17 remains an additional preserved reserve. Test the new revision before preparing images, with bounded boot series and benign io_uring functionality checks. The original CPU/interrupt cause and poweroff automatic-power-on behavior remain separate open results. No vulnerability reproduction is needed to verify patch provenance and ordinary functionality.
+The v25 board/driver patches and all server features remain unchanged; only seven io_uring files and the revision suffix differ. V25 is the direct rollback baseline requested by the owner; v17 remains an additional preserved reserve. The ordinary bounded [io_uring smoke test](../../../../tests/iouring_smoke.c) covers NOP completions, linked regular-file write/fsync, readback, asynchronous open/close, poll cancellation and child waitid. It is not a vulnerability reproducer. Test the new revision before preparing images, with bounded boot series and benign io_uring functionality checks. The original CPU/interrupt cause and poweroff automatic-power-on behavior remain separate open results. No vulnerability reproduction is needed to verify patch provenance and ordinary functionality.
+
+On the U3, compile from the repository root with `cc -O2 -Wall -Wextra -Werror tests/iouring_smoke.c -o /tmp/odroid-iouring-smoke`, then run `/tmp/odroid-iouring-smoke` as an ordinary user. No liburing dependency is required. The test has a 20-second deadline and removes its temporary regular file on success.
+
+Native status: the first warm transition failed with the earlier I2C/PMIC/platform symptoms. After one controlled cold recovery, all 351 modules, live configuration, journal, audit and four CPU timers pass, as does the ordinary non-root io_uring smoke test. Boot stability is not accepted. The exact v25 boot set is the primary rollback, with v17 preserved as an additional reserve. Device-specific URING_CMD runtime behavior is not tested.
