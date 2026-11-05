@@ -1,4 +1,4 @@
-# U3 TUN statistics correction, revision32
+# U3 TUN statistics correction, revision 32
 
 [Deutsch](README.de.md)
 
@@ -6,6 +6,6 @@ V31 passed ten pure warmboots and five controlled halt/cold starts with normal r
 
 The signed upstream32-bit u64_stats contract requires write-side exclusion against interrupt-context users. TUN has three process-context counter updates guarded only by preempt_disable(), while an existing XDP sender updates the same statistics with bottom halves disabled. The common network statistics lock class also covers USB softirq completions, matching the captured warning. This local candidate changes exactly those three short counter sections to local_bh_disable()/local_bh_enable(); copies and packet handling remain outside them. It preserves all v31 fixes and configuration except LOCALVERSION. Lockdep stays enabled. The exact underlying GIC text-patch/cache mechanism remains unproven.
 
-Package verification, fresh native warning/lockdep checks and normal boot/service qualification remain pending. V25 stays the exact direct rollback, v17 the reserve; v31 evidence/debug/reinstall bytes are retained. No firmware change or public binary/APT/Main promotion.
+The 25-file pinned-source replay, resolved configuration,101-capability check, ARM build and package verification of all 351 modules pass. Native normal-profile first boot, ten pure warmboots and five controlled halt/cold starts pass. Every boot verified all four CPU timers, module/configuration/boot hashes, journal/services/audit and enabled lockdep. The full server regression passes Docker, WireGuard/OpenVPN, IPv4/IPv6 firewall, encrypted SMB3.1.1, NFS4.2 with journal-confirmed nfsdcld tracking, SSHFS, AppArmor/Landlock/audit, extra modules, bounded CPU/RAM/storage load, internal stereo codec loop, ordinary non-root io_uring and 16 MiB real Ethernet transfer in each direction. Final kernel-warning delta is empty, lockdep remains enabled and temporary test instances are removed. Physical graphics/microphone and fresh image first boots are not inferred.
 
-The25-file pinned-source replay, resolved configuration,101-capability check and ARM kernel/module build pass. The DTB remains byte-identical to v31. Package/native verification remains pending.
+The natively tested candidate package is 7.3.1-33~tunstats1 from source 30de7f47849fe3c26a050b6ceedf45b40619f630; final 7.3.1-33 packaging must preserve those exact kernel/DTB/module bytes. V25 remains the exact direct fallback and v17 the additional reserve. V31 debug/reinstall evidence remains retained. No firmware change, public binary/APT/Main promotion or blanket CVE guarantee.

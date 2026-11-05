@@ -2,7 +2,7 @@
 
 [Deutsch](RELEASES.de.md)
 
-Image version: SemVer, first candidate `1.0.0`. Kernel: upstream version plus board revision, currently `7.3.1-odroidu3-v3`. U3 and XU4 releases have separate hardware evidence.
+Image version: SemVer, first candidate `1.0.0`. Kernel: upstream version plus board revision, currently `7.3.1-odroidu3-v32`. U3 and XU4 releases have separate hardware evidence.
 
 A release must identify the source commit, exact package manifest, IMG/ZIP checksums, kernel/modules/DTB and boot0 payload. ZIP CRC and complete decompressed IMG hash are checked. Matching kernel/U-Boot sources, configuration, local patches and build instructions accompany binary distribution; package and firmware licenses remain available.
 
@@ -19,4 +19,6 @@ Connected-HDMI Xorg/Weston output on the prototype was accepted separately. Mini
 
 Image candidate 1.0.1 adds owner-installed root SSH keys and locally installed APT kernel packages. Minimal 1.0.1 has passed native-eMMC basic checks, including owner root-key login, installed kernel packages and APT source/signature. The subsequent7.3.1 APT update/rollback/return test passed; minimized/SD remain pending.
 
-Fresh image1.0.2 minimal/minimized candidates now pass local ARM login/PAM/sudo/SSH, systemd, filesystem, full partition/boot/package readback and ZIP roundtrip checks. They contain server kernel7.3.1-odroidu3-v3, package7.3.1-4 with tested purge cleanup. Native server-kernel service tests passed on the installed1.0.1 test system; the fresh minimal1.0.2 image has now passed native-eMMC first-boot checks. Minimized/SD and the other release gates remain open.
+Fresh image1.0.2 minimal/minimized candidates now pass local ARM login/PAM/sudo/SSH, systemd, filesystem, full partition/boot/package readback and ZIP roundtrip checks. They contain server kernel 7.3.1-odroidu3-v3, package 7.3.1-4 with tested purge cleanup. Native server-kernel service tests passed on the installed1.0.1 test system; the fresh minimal1.0.2 image has now passed native-eMMC first-boot checks. Minimized/SD and the other release gates remain open.
+
+Local 1.0.3 preparation selects the natively qualified v32 kernel: ten pure warmboots and five controlled halt/cold starts, all four CPU timers and 351 matching modules; full listed server tests, ordinary non-root io_uring,16 MiB Ethernet roundtrip and internal stereo codec loop pass with lockdep enabled and no new warnings. Its fresh image/ZIP gates and first boots are separate. Exact vendor boot-firmware distribution coverage and explicit public promotion remain open.

@@ -2,7 +2,7 @@
 
 [Deutsch](README.de.md)
 
-Community Ubuntu images, build recipes and board support for ODROID systems. The first target is **ODROID-U3 / Exynos4412**, running Ubuntu **26.04.1 armhf** with Linux **7.3.1-odroidu3-v3** and U-Boot **2026.10**. XU4 support is planned separately.
+Community Ubuntu images, build recipes and board support for ODROID systems. The first target is **ODROID-U3 / Exynos4412**, running Ubuntu **26.04.1 armhf** with Linux **7.3.1-odroidu3-v32** and U-Boot **2026.10**. XU4 support is planned separately.
 
 **Release preparation:** new images are candidates until their first-boot acceptance and release checks are complete. See [releases](https://github.com/the-ab/ODROID/releases) for published downloads and [hardware status](docs/HARDWARE.md) for what has actually been tested.
 
@@ -26,18 +26,6 @@ The kernel and scripts are provided with their source and licenses. Vendor boot 
 
 Kernel packages and signed APT updates: [guide](docs/KERNEL-UPDATES.md).
 
-A separate [Linux 7.3.1 candidate](boards/u3/kernel-candidates/7.3.1/README.md) has passed native APT/rollback/return and headphone tests. The existing1.0.1 image artifacts remain unchanged. See [security review](docs/SECURITY-REVIEW.md) and [audio](docs/AUDIO.md).
+The local **1.0.3** recipe uses [revision 32](boards/u3/kernel-candidates/7.3.1-tun-stats-v32/README.md): the complete 101-capability server profile, seven reviewed io_uring security fixes, the tested GIC base-selection correction and the audio/USB/TUN corrections. Native qualification passed ten pure warmboots, five controlled halt/cold starts, Docker, VPN, firewall, file services, security, ordinary unprivileged io_uring and a real Ethernet transfer, with lockdep enabled and no new kernel warnings.
 
-The fresh 1.0.2 recipe uses the extended [server profile](boards/u3/kernel-candidates/7.3.1-server-v3/README.md) and a mandatory 101-capability configuration gate. Native Docker/VPN/firewall/file-service/security tests passed on v2 and v3; fresh image first-boot acceptance remains separate. Earlier 6.12/v1 kernels are hardware-baseline fallback profiles, not full server-feature builds.
-
-[Server kernel features and qualification](docs/SERVER-KERNEL.md)
-
-[I2S/USB candidate fixes and remaining warm-start qualification](docs/I2S-USB.md).
-
-The independent I²C [synchronization](boards/u3/kernel-candidates/7.3.1-i2c-sync-v19/README.md) and [clock-hold](boards/u3/kernel-candidates/7.3.1-i2c-clockhold-v20/README.md) controls reproduced the start stall. A separate [polling control](boards/u3/kernel-candidates/7.3.1-i2c-poll-v21/README.md) also reproduced the stall after four successful pure warmboots; none is an accepted fix.
-
-A separate [diagnostic-admission correction](boards/u3/kernel-candidates/7.3.1-diag-budget-v22/README.md) preserves the three completed late snapshots when watchdog calls overlap; native qualification remains separate.
-
-A separate [MMC regulator error-path correction](boards/u3/kernel-candidates/7.3.1-mmc-regulator-v23/README.md) rejects invalid ranges and propagates capability-query errors observed after a start stall; it is not a qualified fix for that stall.
-
-A separate [GIC alias observation candidate](boards/u3/kernel-candidates/7.3.1-gic-alias-v25/README.md) follows a successful healthy four-CPU/four-alias control. Source/helper and ARM-object checks pass; full kernel/package/native qualification remains pending.
+Fresh minimal/minimized image checks and physical first boots remain separate gates. No new public APT package, binary release or Main promotion is implied by this draft recipe. See [server scope](docs/SERVER-KERNEL.md), [security review](docs/SECURITY-REVIEW.md), [audio](docs/AUDIO.md) and [I2S/USB investigation](docs/I2S-USB.md).

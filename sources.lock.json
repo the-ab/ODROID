@@ -7,8 +7,10 @@
       "sha256": "fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231",
       "bytes": 162406920,
       "filename": "linux-7.3.1.tar.xz",
-      "source_date_epoch": 1793362237,
-      "server_profile": true
+      "source_date_epoch": 1793919518,
+      "server_profile": true,
+      "security_fixes_manifest": "boards/u3/kernel-candidates/7.3.1-iouring-v26/security/upstream-fixes.json",
+      "security_CNA_snapshot": "b537cbcd0154f07e083400c5ba2f9826be84ee26"
     },
     {
       "id": "ubuntu-base",

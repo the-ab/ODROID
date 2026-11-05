@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme. Erstes Ziel ist **ODROID-U3 / Exynos4412** mit Ubuntu **26.04.1 armhf**, Linux **7.3.1-odroidu3-v3** und U-Boot **2026.10**. XU4 wird gesondert vorbereitet.
+Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme. Erstes Ziel ist **ODROID-U3 / Exynos4412** mit Ubuntu **26.04.1 armhf**, Linux **7.3.1-odroidu3-v32** und U-Boot **2026.10**. XU4 wird gesondert vorbereitet.
 
 **Releasevorbereitung:** Neue Images bleiben bis zur Erststart-Abnahme und den Releaseprüfungen Kandidaten. Veröffentlichte Downloads stehen unter [Releases](https://github.com/the-ab/ODROID/releases); der [Hardwarestand](docs/HARDWARE.de.md) beschreibt tatsächlich erfolgte Prüfungen.
 
@@ -26,18 +26,6 @@ Kernel und Skripte werden mit Quellen und Lizenzen bereitgestellt. Hersteller-Bo
 
 Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
 
-Ein separater [Linux 7.3.1-Kandidat](boards/u3/kernel-candidates/7.3.1/README.de.md) hat native APT-/Rückfall-/Rückkehr- und Kopfhörertests bestanden. Vorhandene1.0.1-Imageartefakte bleiben unverändert. Siehe [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md) und [Audio](docs/AUDIO.de.md).
+Das lokale **1.0.3**-Rezept verwendet [Revision 32](boards/u3/kernel-candidates/7.3.1-tun-stats-v32/README.de.md): vollständiges Serverprofil mit 101 Pflichtfähigkeiten, sieben geprüfte io_uring-Sicherheitsfixes, die getestete GIC-Basiswahlkorrektur und Audio-/USB-/TUN-Korrekturen. Native Prüfung bestanden: zehn reine Warmstarts, fünf kontrollierte Halt-Kaltstarts, Docker, VPN, Firewall, Dateidienste, Sicherheit, normale unprivilegierte io_uring-Aufrufe und echte Ethernetübertragung; Lockdep blieb aktiv, neue Kernelwarnungen traten nicht auf.
 
-Das frische 1.0.2-Rezept verwendet das erweiterte [Serverprofil](boards/u3/kernel-candidates/7.3.1-server-v3/README.de.md) mit verbindlicher Prüfung von 101 Fähigkeiten. Native Docker-/VPN-/Firewall-/Dateidienst-/Sicherheitstests bestanden auf v2; v3- und Imageabnahme werden gesondert geführt. Frühere 6.12-/v1-Kernel sind Hardware-/Rückfallprofile und keine vollständigen Serverprofile.
-
-[Serverkernel: Funktionen und Prüfungen](docs/SERVER-KERNEL.de.md)
-
-[I2S-/USB-Korrekturkandidat und offene Warmstartprüfung](docs/I2S-USB.de.md).
-
-Die unabhängigen I²C-Gegenproben mit [Synchronisierung](boards/u3/kernel-candidates/7.3.1-i2c-sync-v19/README.de.md) und [gehaltenem Takt](boards/u3/kernel-candidates/7.3.1-i2c-clockhold-v20/README.de.md) reproduzierten den Startfehler. Eine getrennte [Polling-Gegenprobe](boards/u3/kernel-candidates/7.3.1-i2c-poll-v21/README.de.md) reproduzierte den Stillstand nach vier gesunden reinen Warmstarts ebenfalls; keiner der Eingriffe ist ein bestätigter Fix.
-
-Eine getrennte [Korrektur der Diagnosezulassung](boards/u3/kernel-candidates/7.3.1-diag-budget-v22/README.de.md) erhält das Budget dreier vollständiger später Aufnahmen bei gleichzeitigen Watchdog-Aufrufen; die Hardwareprüfung bleibt getrennt.
-
-Eine getrennte [MMC-Regulator-Fehlerpfadkorrektur](boards/u3/kernel-candidates/7.3.1-mmc-regulator-v23/README.de.md) weist ungültige Bereiche ab und reicht nach einem Startstillstand beobachtete Abfragefehler weiter; sie ist kein qualifizierter Fix dieses Stillstands.
-
-Ein separater [Kandidat zur GIC-Alias-Beobachtung](boards/u3/kernel-candidates/7.3.1-gic-alias-v25/README.de.md) folgt auf eine erfolgreiche gesunde Gegenprobe mit vier CPUs und vier Aliassen. Quellen-/Helfer- und ARM-Objektprüfungen sind bestanden; vollständiger Kernelbau, Paketprüfung und native Abnahme stehen noch aus.
+Frische minimal-/minimized-Imageprüfungen und physische Erststarts sind eigene Gates. Dieses Entwurfsrezept veröffentlicht keine neuen APT-Pakete/Binärreleases und führt keine Main-Promotion aus. Siehe [Serverumfang](docs/SERVER-KERNEL.de.md), [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md), [Audio](docs/AUDIO.de.md) und [I2S-/USB-Untersuchung](docs/I2S-USB.de.md).

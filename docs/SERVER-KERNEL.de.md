@@ -2,7 +2,7 @@
 
 [English](SERVER-KERNEL.md)
 
-Linux **7.3.1-odroidu3-v3**, Debian-Version **7.3.1-4**, ist das vollständige Serverprofil für die frischen Images **1.0.2**. Die bisherigen 6.12- und 7.3.1-v1-Konfigurationen dienten der Hardware-Inbetriebnahme und deckten diesen Dienstumfang nicht vollständig ab. Bereits installierte Kernel bleiben als lokale Rückfallmöglichkeit erhalten.
+Linux **7.3.1-odroidu3-v32**, Debian-Version **7.3.1-33**, ist das vollständige Serverprofil für die lokalen Imagekandidaten **1.0.3**. Die bisherigen 6.12- und 7.3.1-v1-Konfigurationen dienten der Hardware-Inbetriebnahme und deckten diesen Dienstumfang nicht vollständig ab. Bereits installierte Kernel bleiben als lokale Rückfallmöglichkeit erhalten.
 
 Maßgeblich ist die vollständig aufgelöste [kernel.config](../boards/u3/kernel.config). Build und Paketierung prüfen [101 Pflichtfähigkeiten](../boards/u3/server-requirements.json); fehlt eine davon, bricht der Build ab. `y` bedeutet fest eingebaut, `m` ein mitgeliefertes ladbares Modul. Kernel-Unterstützung installiert oder konfiguriert noch keinen Serverdienst.
 
@@ -23,6 +23,6 @@ Die Dateien liegen flach unter `/boot`: `vmlinuz-<release>`, `uImage-<release>`,
 
 Frische Images aktivieren AppArmor und auditd. `audit=1 audit_backlog_limit=8192 psi=1` verhindert den im Test beobachteten Überlauf der frühen Standardwarteschlange mit64 Einträgen. Das fehlende Ubuntu-spezifische `kernel.apparmor_restrict_unprivileged_userns` wird als optional markiert: Upstream-AppArmor funktioniert, diese zusätzliche Ubuntu-Einschränkung wird jedoch **nicht** als wirksam behauptet. Die optionale leere Cron-Variable wird definiert.
 
-Grenzen: Cortex-A9 bietet hier keine nutzbare KVM-Virtualisierung; keine BTF/CO-RE- oder vollständige eBPF-Anwendungskompatibilitätszusage; keine erzwungene Verified-Boot-/Modulsignatur-Vertrauenskette; Verschlüsselungsmodule ersetzen keinen geprüften Encrypted-Root-/Initramfs-Installer; Pstore-Unterstützung reserviert keinen persistenten RAM. BBR bleibt optional, CUBIC Standard. Frühere Grafik-/Audioabnahmen ersetzen keine vollständige Desktop-/Peripherieabnahme auf v3. Siehe [Sicherheit](SECURITY-REVIEW.de.md), [Hardware](HARDWARE.de.md) und [Releasebedingungen](RELEASES.de.md).
+Grenzen: Cortex-A9 bietet hier keine nutzbare KVM-Virtualisierung; keine BTF/CO-RE- oder vollständige eBPF-Anwendungskompatibilitätszusage; keine erzwungene Verified-Boot-/Modulsignatur-Vertrauenskette; Verschlüsselungsmodule ersetzen keinen geprüften Encrypted-Root-/Initramfs-Installer; Pstore-Unterstützung reserviert keinen persistenten RAM. BBR bleibt optional, CUBIC Standard. Frühere Grafik-/Audioabnahmen ersetzen keine vollständige Desktop-/Peripherieabnahme auf v32. Siehe [Sicherheit](SECURITY-REVIEW.de.md), [Hardware](HARDWARE.de.md) und [Releasebedingungen](RELEASES.de.md).
 
 Die nativen v3-Prüfungen für Docker, VPN, Firewall, Dateidienste und Sicherheit bestanden; neue Imageprüfungen werden separat im Release-Nachweis erfasst. Eine kompilierte Option oder lokal geprüfte ZIP bestätigt keinen physischen Erststart dieses Images.

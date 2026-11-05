@@ -9,7 +9,7 @@ release=${3:-$default_release}
 profile=${4:-}
 config="$repo/boards/u3/kernel.config"
 patchfile="$repo/boards/u3/patches/platform.patch"
-build_epoch=1793362237
+build_epoch=1793919518
 require_server=1
 archive_hash=fa595aad93734f829c963c2a90ef7c3673224fd7fdae7b49406e397cde2de231
 if [[ -n $profile ]]; then

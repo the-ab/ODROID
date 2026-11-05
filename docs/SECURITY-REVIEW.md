@@ -2,6 +2,8 @@
 
 [Deutsch](SECURITY-REVIEW.de.md)
 
+Current v32 follow-up (5 November 2026): the official Linux CNA HEAD and its mirror still match snapshot `b537cbcd0154f07e083400c5ba2f9826be84ee26`; kernel.org still lists 7.3.1 as latest stable. Revision 32 retains all seven reviewed io_uring backports and the prior source/configuration assessment. Native non-root ordinary io_uring operations pass, as do ten pure warmboots, five halt/cold starts and the listed server/security tests. Lockdep remains enabled and the final kernel-warning delta is empty. Device-specific URING_CMD remains source/build checked; no exploit reproducer or blanket security guarantee is claimed. Matching source/configuration/patches are required for final 7.3.1-33 packaging.
+
 
 ## Follow-up — 2026-11-05
 

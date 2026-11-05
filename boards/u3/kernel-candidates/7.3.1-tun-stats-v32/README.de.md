@@ -1,4 +1,4 @@
-# U3-TUN-Statistikschutz, Revision32
+# U3-TUN-Statistikschutz, Revision 32
 
 [English](README.md)
 
@@ -6,6 +6,6 @@ V31 bestand zehn reine Warmstarts und fünf kontrollierte Halt-Kaltstarts mit no
 
 Der32-Bit-u64_stats-Vertrag im signierten Upstream verlangt Schreibschutz gegen Interruptkontexte. Drei TUN-Zählerabschnitte im Prozesskontext sperren bislang nur die Präemption; ein vorhandener XDP-Sender schreibt dieselben Statistiken mit gesperrten Bottom Halves. Die gemeinsame Netzwerk-Statistik-Lockklasse umfasst auch USB-Softirq-Abschlüsse, passend zur aufgezeichneten Warnung. Dieser lokale Kandidat ändert genau die drei kurzen Zählerabschnitte auf local_bh_disable()/local_bh_enable(); Kopier- und Paketoperationen bleiben außerhalb. Alle v31-Fixes und die Konfiguration außer LOCALVERSION bleiben erhalten. Lockdep bleibt aktiv. Der genaue frühere GIC-Textpatch-/Cache-Mechanismus bleibt unbewiesen.
 
-Paketprüfung, frische native Warnungs-/Lockdep-Prüfung und normale Boot-/Dienstqualifikation stehen aus. V25 bleibt exakt direkt, v17 Reserve; v31-Belege/Debug-/Reinstallbytes sind gesichert. Keine Firmwareänderung oder öffentliche Binär-/APT-/Main-Promotion.
+Gepinnter 25-Datei-Replay, aufgelöste Konfiguration,101-Pflichtfähigkeiten, ARM-Bau und Paketprüfung aller351 Module bestanden. Nativer Erststart mit normalen Parametern, zehn reine Warmstarts und fünf kontrollierte Halt-Kaltstarts bestanden. Jeder Start prüfte vier CPU-Timer, Modul-/Konfigurations-/Boothashes, Journal/Dienste/Audit und aktiven Lockdep. Die Serverregression bestand Docker, WireGuard/OpenVPN, IPv4/IPv6-Firewall, verschlüsseltes SMB3.1.1, NFS4.2 mit im Journal bestätigtem nfsdcld-Tracking, SSHFS, AppArmor/Landlock/Audit, zusätzliche Module, begrenzte CPU/RAM/Dateilast, internen Stereo-Codec-Loop, normale unprivilegierte io_uring-Aufrufe und 16 MiB echte Ethernetdaten je Richtung. Keine neuen Kernelwarnungen, Lockdep weiter aktiv; temporäre Testinstanzen entfernt. Physische Grafik-/Mikrofonabnahme und frische Image-Erststarts werden daraus nicht abgeleitet.
 
-Gepinnter25-Datei-Replay, aufgelöste Konfiguration,101-Pflichtfähigkeiten und ARM-Kernel-/Modulbau bestanden. Die DTB bleibt bytegleich v31. Paket-/Hardwareprüfung steht weiterhin aus.
+Nativ geprüftes Kandidatenpaket: 7.3.1-33~tunstats1 aus Quelle 30de7f47849fe3c26a050b6ceedf45b40619f630; die abschließende 7.3.1-33-Paketierung muss Kernel-/DTB-/Modulbytes erhalten. V25 bleibt exakt direkt, v17 zusätzliche Reserve; v31-Debug-/Reinstallbelege bleiben gesichert. Keine Firmwareänderung, öffentliche Binär-/APT-/Main-Promotion oder pauschale CVE-Garantie.

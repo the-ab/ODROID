@@ -2,7 +2,9 @@
 
 [Deutsch](KERNEL-UPDATES.de.md)
 
-The signed repository is [the-ab/deb](https://the-ab.github.io/deb/), with shared `main` and board-specific `u3` components. The current server kernel is **7.3.1-odroidu3-v3**, package **7.3.1-4**, with activation tools **1.0.2**. Earlier kernel/metapackage versions were retired from the current APT pool at the owner's request after testing their replacement. Installed fallback kernels and local backups remain available; they are not automatically removed. Historical sources/Git history are preserved. [Package manifest](https://github.com/the-ab/deb/blob/main/publications/u3-server-2026-10-30.json) · [Complete matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-server-kernel-7.3.1-4).
+The signed repository is [the-ab/deb](https://the-ab.github.io/deb/), with shared `main` and board-specific `u3` components. The currently published server kernel is **7.3.1-odroidu3-v3**, package **7.3.1-4**, with activation tools **1.0.2**. Earlier kernel/metapackage versions were retired from the current APT pool at the owner's request after testing their replacement. Installed fallback kernels and local backups remain available; they are not automatically removed. Historical sources/Git history are preserved. [Package manifest](https://github.com/the-ab/deb/blob/main/publications/u3-server-2026-10-30.json) · [Complete matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-server-kernel-7.3.1-4).
+
+Local candidate 1.0.3 selects kernel 7.3.1-odroidu3-v32/package 7.3.1-33 and tools 1.0.3. Its compiled kernel is natively qualified; final package installation and fresh image checks are tracked separately. These versions are not yet promoted to the signed public repository.
 
 Images from1.0.1 include the public key and source below. Image1.0.1 originally shipped6.12.114-v1; fresh1.0.2 uses7.3.1-v3. The image version describes the original installation; use `uname -r` for the running kernel.
 
@@ -32,7 +34,7 @@ The tracking metapackage pulls a versioned kernel. Installation verifies U3/Exyn
 
 The tools verify all new files before switching the selectors. Ordinary write/readback failures restore the previous selectors. Boot0/U-Boot/BL1/BL2/TrustZone are never changed and installation never reboots automatically. Keep sufficient boot-partition space. Removal of the running, next-boot or saved rollback kernel is refused; versioned kernels are excluded from autoremove. A changed compiled payload always receives a new board suffix.
 
-Candidate tools1.0.3 also reserve space for atomic replacement of the compatibility `uImage`, the larger old image needed for rollback, the configuration copy and the root-side backup. Insufficient space is rejected before creating a snapshot or versioned boot files. Low-space and activation/rollback tests pass; this source change is not a claim of public APT promotion or native package acceptance.
+Candidate tools 1.0.3 also reserve space for atomic replacement of the compatibility `uImage`, the larger old image needed for rollback, the configuration copy and the root-side backup. Insufficient space is rejected before creating a snapshot or versioned boot files. Low-space and activation/rollback tests pass; this source change is not a claim of public APT promotion or native package acceptance.
 
 For the last saved selection:
 
