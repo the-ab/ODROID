@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-Der private Kandidat `7.3.1-odroidu3-v25` erweitert [v24](../7.3.1-gic-order-v24/README.de.md) um eine lesende Gegenprobe im begrenzten Fehlerbeobachter. Er ist keine vorgeschlagene funktionale Interruptkorrektur. Vollständiger Kernelbau, Paketprüfung und native v25-Abnahme stehen noch aus.
+Der private Kandidat `7.3.1-odroidu3-v25` erweitert [v24](../7.3.1-gic-order-v24/README.de.md) um eine lesende Gegenprobe im begrenzten Fehlerbeobachter. Er ist keine vorgeschlagene funktionale Interruptkorrektur. Vollständiger Kernelbau und Paketprüfung sind bestanden; erster Übergang und ein reiner Warmstart bestanden. Wiederholte Stabilitätsabnahme steht weiter aus.
 
 Eine native Gegenprobe auf gesundem v17 hat den Leser nacheinander an jede der vier CPUs gebunden und in drei Durchgängen alle vier dokumentierten Exynos-GIC-Aliasse gelesen. Alle 48 Datensätze lieferten für INTID90/109 die Prioritätswörter `a0a0a0a0`, Zielwörter `01010101` und Konfigurationswörter `55555555`. Private Zielwörter folgten unabhängig von der lesenden CPU der ausgewählten Bank (`01`, `02`, `04`, `08` je Byte). Beide UART-Marker kamen an; Modul-, Bootsatz-, Timer- und Journalprüfung blieben unauffällig. Der normale Zugriff einer fremden CPU über einen anderen Alias reproduziert die späten v24-Nullwerte somit nicht. Die gesunde Gegenprobe allein belegt weder Registerkorruption im Fehlerfall noch einen Wechsel des Sicherheitszustands oder die angehaltene Instruktion.
 
@@ -19,3 +19,5 @@ Die Prüfung kompiliert den tatsächlichen Aufnahmehelfer mit strikt lesenden Re
 Der Beobachter wurde außerdem ohne Warnung mit den vorhandenen v24-Kbuild-Headern und derselben Konfiguration kompiliert; das Beobachterobjekt verwendet dieselbe Laufzeitkonfiguration. `u3_diag_dump` benötigt laut Compiler mit serialisierten festen Aufnahmebuffern 128 Byte Stack. Diese isolierte Objektprüfung ersetzt keinen vollständigen v25-Kernelbau oder Hardwarestart.
 
 Der vollständige Bau erkennt zusätzlich `CC_CAN_LINK=y` und `ARCH_CC_CAN_LINK=y`, nachdem ARM-Userspace-Entwicklungsheader auf dem Buildhost verfügbar sind. Das gepinnte Profil bildet diese beiden Compiler-Link-Fähigkeitsproben ab. Die übrige Konfiguration bleibt bis auf den Revisionssuffix gleich; die Proben schalten keine zusätzliche Server-Laufzeitfunktion frei.
+
+Native Ergebnisse (05.11.2026): 351 Module/laufende Konfiguration passend; alle vier Timer liefen weiter, Audit ohne Verlust, Journal/Dienste/Taint unauffällig. Initiale Aliasaufnahmen waren bei beiden Starts vollständig und gültig. Die volle Diagnose benötigte 40,289 und 39,906 Sekunden bis zum systemd-Ziel. Ein reiner Warmstart ist kein Stabilitätsnachweis und kein identifizierter Fix. Keine öffentliche Binärpromotion.

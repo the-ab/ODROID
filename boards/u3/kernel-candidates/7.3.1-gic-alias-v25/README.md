@@ -2,7 +2,7 @@
 
 [Deutsch](README.de.md)
 
-Private candidate `7.3.1-odroidu3-v25` extends [v24](../7.3.1-gic-order-v24/README.md). It adds a read-only control to the bounded failure observer; it is not a proposed functional interrupt fix. Full kernel build, package verification and native v25 qualification remain pending.
+Private candidate `7.3.1-odroidu3-v25` extends [v24](../7.3.1-gic-order-v24/README.md). It adds a read-only control to the bounded failure observer; it is not a proposed functional interrupt fix. The full kernel and package checks passed; the transition boot and one pure warmboot passed. Repeated stability qualification remains pending.
 
 A native healthy-v17 control pinned its reader successively to each of four CPUs and read all four documented Exynos GIC aliases, in three rounds. All 48 rows returned shared INTID90/109 priority words `a0a0a0a0`, target words `01010101` and configuration words `55555555`. Private target words followed the selected bank (`01`, `02`, `04`, `08` per byte) independently of the observing CPU. Both UART markers were received, and subsequent module/boot/timer/journal checks remained healthy. Thus normal cross-CPU/cross-alias access did not reproduce v24's late zero priority words. The healthy control alone does not establish failure-time register corruption, security-state changes or the stalled instruction.
 
@@ -19,3 +19,5 @@ The test compiles the actual capture helper with strict read-only stubs and chec
 The observer also compiled without warnings against the existing v24 Kbuild headers/configuration (the observer object uses the same runtime configuration). Reported stack usage of `u3_diag_dump` is 128 bytes with serialized fixed capture buffers. This isolated object check does not link or boot a v25 kernel.
 
 The complete build additionally detects `CC_CAN_LINK=y` and `ARCH_CC_CAN_LINK=y` after ARM userspace development headers became available on the build host. The pinned profile records these two compiler-link capability probes. The remaining configuration is unchanged apart from the revision suffix; these probes do not enable a new runtime server feature.
+
+Native results (2026-11-05): 351 modules/configuration matched; all four timers advanced, audit lost no records, and journal/services/taint checks were clean. Initial alias snapshots were complete and valid on both boots. Full-diagnostic systemd readiness took 40.289 and 39.906 seconds. One pure warmboot is not a stability proof or an identified fix. No public binary promotion.
