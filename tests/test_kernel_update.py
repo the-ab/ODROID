@@ -1,6 +1,7 @@
 from pathlib import Path
 import importlib.machinery,importlib.util,json,hashlib,struct,tempfile,unittest,zlib
 from unittest.mock import patch
+from types import SimpleNamespace
 path=Path(__file__).resolve().parents[1]/'boards/u3/support/odroid-kernel';loader=importlib.machinery.SourceFileLoader('kernel_update',str(path));spec=importlib.util.spec_from_loader(loader.name,loader);m=importlib.util.module_from_spec(spec);loader.exec_module(m)
 def image(data):
  h=struct.pack('>7I4B32s',0x27051956,0,0,len(data),0x40008000,0x40008000,zlib.crc32(data),5,2,2,0,b'test');h=bytearray(h);struct.pack_into('>I',h,4,zlib.crc32(h));return bytes(h)+data
@@ -8,8 +9,31 @@ class KernelUpdate(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name);(self.root/'boot/extlinux').mkdir(parents=True);(self.root/'boot/uImage').write_bytes(b'original');(self.root/'boot/extlinux/extlinux.conf').write_text('DEFAULT ubuntu26\nLABEL ubuntu26\n LINUX /zImage\n FDT /exynos4412-odroidu3.dtb\n APPEND root=PARTUUID=abc-02 ro quiet\n');self.old={n:(self.root/'boot'/n).read_bytes() for n in m.FILES};(self.root/'usr/lib/modules/6.12.114-odroidu3-v1').mkdir(parents=True)
  def tearDown(self):self.tmp.cleanup()
- def payload(self,release):
-  p=self.root/'usr/lib/odroid-u3/kernels'/release;p.mkdir(parents=True);(p/'zImage').write_bytes(release.encode());(p/'exynos4412-odroidu3.dtb').write_bytes(b'dtb');(p/'uImage').write_bytes(image((p/'zImage').read_bytes()+b'dtb'));ko=self.root/'usr/lib/modules'/release/'driver.ko';ko.parent.mkdir(parents=True);ko.write_bytes(b'module');(p/'config').write_bytes(b'config');(p/'System.map').write_bytes(b'map');manifest={'board':'ODROID-U3','architecture':'armhf','kernel_release':release,'files':{n:m.sha(p/n) for n in ['zImage','exynos4412-odroidu3.dtb','uImage','config','System.map']},'modules':{'driver.ko':m.sha(ko)}};(p/'MANIFEST.json').write_text(json.dumps(manifest));return p
+ def payload(self,release,kernel_bytes=None):
+  p=self.root/'usr/lib/odroid-u3/kernels'/release;p.mkdir(parents=True);(p/'zImage').write_bytes(kernel_bytes if kernel_bytes is not None else release.encode());(p/'exynos4412-odroidu3.dtb').write_bytes(b'dtb');(p/'uImage').write_bytes(image((p/'zImage').read_bytes()+b'dtb'));ko=self.root/'usr/lib/modules'/release/'driver.ko';ko.parent.mkdir(parents=True);ko.write_bytes(b'module');(p/'config').write_bytes(b'config');(p/'System.map').write_bytes(b'map');manifest={'board':'ODROID-U3','architecture':'armhf','kernel_release':release,'files':{n:m.sha(p/n) for n in ['zImage','exynos4412-odroidu3.dtb','uImage','config','System.map']},'modules':{'driver.ko':m.sha(ko)}};(p/'MANIFEST.json').write_text(json.dumps(manifest));return p
+ def space(self,boot_bytes,root_bytes=128*1024*1024):
+  return lambda p:SimpleNamespace(f_bavail=boot_bytes if p==self.root/'boot' else root_bytes,f_frsize=1)
+ def assert_no_activation_writes(self,release):
+  self.assertEqual({n:(self.root/'boot'/n).read_bytes() for n in m.FILES},self.old)
+  self.assertFalse((self.root/'var/lib/odroid-kernel').exists())
+  self.assertFalse(any((self.root/'boot'/t.format(release=release)).exists() for t in m.BOOT_NAMES.values()))
+ def test_boot_space_includes_atomic_compatibility_copy_before_writes(self):
+  r='7.3.1-odroidu3-v2';self.payload(r,b'K'*(3*1024*1024))
+  # New versioned files plus the old4MiB allowance fit; staging uImage does not.
+  with patch.object(m.os,'statvfs',side_effect=self.space(11*1024*1024)):
+   with self.assertRaisesRegex(RuntimeError,'Insufficient /boot space'):m.activate(self.root,r,'abc-02','6.12.114-odroidu3-v1')
+  self.assert_no_activation_writes(r)
+ def test_space_reserves_larger_old_image_for_failure_rollback(self):
+  r='7.3.1-odroidu3-v2';self.payload(r,b'K'*(1024*1024));(self.root/'boot/uImage').write_bytes(b'O'*(6*1024*1024));self.old['uImage']=(self.root/'boot/uImage').read_bytes()
+  with patch.object(m.os,'statvfs',side_effect=self.space(8*1024*1024)):
+   with self.assertRaisesRegex(RuntimeError,'Insufficient /boot space'):m.activate(self.root,r,'abc-02','6.12.114-odroidu3-v1')
+  self.assert_no_activation_writes(r)
+ def test_enough_space_allows_real_activation_and_rollback(self):
+  r='7.3.1-odroidu3-v2';self.payload(r,b'K'*(3*1024*1024))
+  with patch.object(m.os,'statvfs',side_effect=self.space(14*1024*1024)):
+   self.assertTrue(m.activate(self.root,r,'abc-02','6.12.114-odroidu3-v1')['changed'])
+   m.rollback(self.root,'abc-02',r)
+  self.assertEqual({n:(self.root/'boot'/n).read_bytes() for n in m.FILES},self.old)
  def test_activate_and_rollback_preserve_bootargs_and_old_data(self):
   r='6.12.115-odroidu3-v1';self.payload(r);result=m.activate(self.root,r,'abc-02','6.12.114-odroidu3-v1');self.assertTrue(result['changed']);self.assertIn('root=PARTUUID=abc-02 ro quiet',(self.root/'boot/extlinux/extlinux.conf').read_text());self.assertTrue((self.root/'boot'/('vmlinuz-'+r)).exists());m.rollback(self.root,'abc-02',r);self.assertEqual({n:(self.root/'boot'/n).read_bytes() for n in m.FILES},self.old)
  def test_second_file_failure_restores_all_files_and_state(self):

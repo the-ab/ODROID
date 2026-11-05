@@ -116,13 +116,19 @@ def activate(root,release,token,running):
         need(not dst.is_symlink(),'Unsafe versioned boot path')
         if dst.exists():need(dst.is_file() and sha(dst)==m['files'][n],'A changed payload needs a new kernel release suffix')
     if old.get('active_release')==release and sha(boot/'uImage')==m['files']['uImage'] and all(dst.is_file() and sha(dst)==m['files'][n] for n,dst in names.items()) and ('  LINUX /vmlinuz-'+release) in (boot/'extlinux/extlinux.conf').read_text():return {'changed':False,'active_release':release,'reboot_required':running!=release}
-    need(os.statvfs(boot).f_bavail*os.statvfs(boot).f_frsize>sum((p/n).stat().st_size for n,dst in names.items() if not dst.exists())+4*1024*1024,'Insufficient /boot space; review old kernel copies')
-    need(os.statvfs(root).f_bavail*os.statvfs(root).f_frsize>(boot/'uImage').stat().st_size+4*1024*1024,'Insufficient root space for rollback backup')
     text=(boot/'extlinux/extlinux.conf').read_text();previous_text=None
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
         previous_data,_=backupdata(root,old['previous_snapshot'],token);previous_text=previous_data['extlinux/extlinux.conf'].decode()
     newconfig=config_for(text,release,previous_text,token)
     need('root=PARTUUID='+token in newconfig.split(),'Boot root identity does not match this medium')
+    # Atomic replacement keeps the old compatibility image until its new copy is
+    # complete. Reserve the larger image so an ordinary failure can roll back.
+    versioned_bytes=sum((p/n).stat().st_size for n,dst in names.items() if not dst.exists())
+    temporary_bytes=max((boot/'uImage').stat().st_size,(p/'uImage').stat().st_size)+max(len(text.encode()),len(newconfig.encode()))
+    boot_space=os.statvfs(boot);root_space=os.statvfs(root)
+    need(boot_space.f_bavail*boot_space.f_frsize>versioned_bytes+temporary_bytes+4*1024*1024,'Insufficient /boot space; review old kernel copies')
+    backup_bytes=sum((boot/n).stat().st_size for n in FILES)
+    need(root_space.f_bavail*root_space.f_frsize>backup_bytes+4*1024*1024,'Insufficient root space for rollback backup')
     saved=snapshot(root,token,running);previous=saved
     if old.get('active_release')!=running and old.get('previous_running')==running and old.get('previous_snapshot'):
         backupdata(root,old['previous_snapshot'],token);previous=old['previous_snapshot']

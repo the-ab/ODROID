@@ -32,6 +32,8 @@ Das Metapaket zieht den versionierten Kernel nach. Die Installation prüft U3/Ex
 
 Alle neuen Dateien werden vor dem Umschalten geprüft. Gewöhnliche Schreib-/Rücklesefehler stellen die bisherigen Auswahldateien wieder her. Boot0/U-Boot/BL1/BL2/TrustZone werden nicht verändert; kein automatischer Neustart. Freien Bootspeicher beachten. Laufender, nächster und gesicherter Rückfallkernel können nicht entfernt werden; versionierte Kernel sind vor Autoremove geschützt. Geänderter Kernelinhalt bekommt immer einen neuen Board-Suffix.
 
+Werkzeugkandidat1.0.3 reserviert zusätzlich Platz für den atomaren Austausch der Kompatibilitätsdatei `uImage`, das gegebenenfalls größere alte Image zur Rücknahme, die Konfigurationskopie und die Sicherung auf Root. Fehlender Platz wird vor dem Erstellen einer Sicherung oder versionierter Bootdateien abgewiesen. Knappplatz- und Aktivierungs-/Rückfalltests sind bestanden; diese Quelländerung bedeutet keine öffentliche APT-Promotion oder native Paketabnahme.
+
 Letzte gesicherte Auswahl wiederherstellen:
 
 ```sh
@@ -54,7 +56,7 @@ Echte signierte APT-Tests bestanden6.12.114→7.3.1-v1→6.12.114→7.3.1-v1, da
 
 ## Bauen und veröffentlichen
 
-Nur committete Rezepte und passende Artefakte verwenden. `scripts/build-kernel-debs.py --kernel ARTEFAKTE --keyring OEFFENTLICHER_SCHLUESSEL --output NEUES_ZIEL --tools-version 1.0.2` baut Pakete; explizite gepinnte Profile verwenden zusätzlich `--profile`, `--release`, `--version`. Bereits veröffentlichte gemeinsame Paketversionen behalten exakt ihre Bytes. Kernel-DEBs enthalten keine Hersteller-Bootfirmware.
+Nur committete Rezepte und passende Artefakte verwenden. `scripts/build-kernel-debs.py --kernel ARTEFAKTE --keyring OEFFENTLICHER_SCHLUESSEL --output NEUES_ZIEL --tools-version 1.0.3` baut Pakete; explizite gepinnte Profile verwenden zusätzlich `--profile`, `--release`, `--version`. Bereits veröffentlichte gemeinsame Paketversionen behalten exakt ihre Bytes. Kernel-DEBs enthalten keine Hersteller-Bootfirmware.
 
 Frische markierte Imagewurzeln verwenden `sudo unshare --mount --pid --fork bash scripts/install-kernel-packages.sh ROOTFS DEBS`; nur dort wird Aktivierung auf die Imageassemblierung verschoben. Diesen Build-Bypass nicht am installierten Gerät verwenden. Vollständige passende Linuxquellen, Patch/Konfiguration, Paketierungsrezepte, Lizenzen und Prüfsummen mitliefern. Freigegebene DEBs in die richtige Komponente kopieren, mit `scripts/build-apt-repository.py` signierte SHA256/SHA512-By-Hash-Indizes erzeugen und Downloads/Signaturen prüfen. Private Signaturschlüssel bleiben außerhalb von Git. Alte Versionen standardmäßig erhalten; Entfernen braucht den ausdrücklichen Nutzerumfang und geprüften Ersatz. Andere Projektkomponenten bleiben unabhängig. Große Quellen/Images gehören in Produkt-Releases; einzelne DEBs sind hier auf95MiB begrenzt, weitere Pages-Grenzen gelten zusätzlich.
 
