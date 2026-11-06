@@ -1,4 +1,4 @@
-# U3-Kandidaten bauen
+# U3-Images und Pakete bauen
 
 [English](BUILD.md)
 
@@ -14,7 +14,7 @@ Im Repository starten und ein **neues** Arbeitsverzeichnis außerhalb von Git ve
 
 ```sh
 repo=$(pwd)
-work=$(realpath -m ../ODROID-build-v1)
+work=$(realpath -m ../ODROID-build-1.0.3)
 mkdir -p "$work/cache"
 touch "$work/.odroid-workspace"
 python3 scripts/fetch-sources.py --cache "$work/cache" \
@@ -24,8 +24,8 @@ python3 scripts/fetch-sources.py --cache "$work/cache" \
 Auch das passende bereits entpackte Referenz-IMG wird angenommen. Davon werden ausschließlich hashgeprüfte BL1-/BL2-/TrustZone-Blöcke gelesen, niemals Betriebssystem, Benutzer oder Schlüssel. Bootblobs liegen nicht in Git; Weitergabebedingungen bleiben eine Releaseanforderung. Alle Upstream-/Base-/Firmwareeingänge stehen mit Prüfsummen in `sources.lock.json`. Das Ubuntu-Base-Archiv wurde gegen das signierte Manifest mit Ubuntu-CD-Image-Schlüssel `843938DF228D22F7B3742BC0D94AA3F0EFE21092` geprüft.
 
 ```sh
-bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v1"
-sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v1" "$work/kernel-v1"
+bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v32"
+sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v32" "$work/kernel-v32"
 
 mkdir "$work/u-boot"
 tar -xzf "$work/cache/u-boot-v2026.10.tar.gz" --strip-components=1 -C "$work/u-boot"
@@ -46,7 +46,7 @@ sudo tar --numeric-owner -xpf "$work/cache/ubuntu-base-26.04.1-base-armhf.tar.gz
 sudo unshare --mount --pid --fork bash "$repo/scripts/prepare-rootfs.sh" "$root" "$variant"
 sudo unshare --mount --pid --fork bash "$repo/scripts/install-kernel-packages.sh" "$root" "$work/kernel-debs"
 sudo python3 "$repo/scripts/assemble-image.py" --root "$root" \
-  --kernel "$work/kernel-v1" --uboot "$work/u-boot/u-boot-dtb.bin" \
+  --kernel "$work/kernel-v32" --uboot "$work/u-boot/u-boot-dtb.bin" \
   --firmware "$work/cache" --output "$out" --variant "$variant"
 sudo unshare --mount --pid --fork bash "$repo/scripts/validate-rootfs.sh" "$root" "$variant" \
   > "$work/qa-$variant.log" 2>&1

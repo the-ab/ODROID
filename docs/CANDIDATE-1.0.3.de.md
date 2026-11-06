@@ -1,20 +1,20 @@
-# Lokale U3-Imagekandidaten 1.0.3
+# U3-Image 1.0.3 – Prüfstand
 
 [English](CANDIDATE-1.0.3.md)
 
-Beide frisch gebauten Ubuntu 26.04.1-armhf-Varianten bestehen die lokalen Prüfungen. Rezept-/Paketquelle: `b8ce206a44451aa64452add634a3e6376b60d6be`. Kernel `7.3.1-odroidu3-v32`, Paket `7.3.1-33`, Aktivierungswerkzeuge `1.0.3`. Lokale Kandidaten, keine neue öffentliche Binär-/APT-/Main-Promotion.
+Ubuntu 26.04.1 armhf; Kernel `7.3.1-odroidu3-v32`, DEB `7.3.1-33`, Aktivierungswerkzeuge `1.0.3`. Ursprüngliches Kompilier-/Paketrezept: `b8ce206a44451aa64452add634a3e6376b60d6be`. Bereinigte Quellen behalten identische kanonische Kernelkonfiguration, wirksamen Patch und paketierte Laufzeitskripte; überholte Versuchsprofile verbleiben nur in der Historie.
 
-| Variante | ZIP-Bytes | ZIP-SHA256 |
-|---|---:|---|
-| minimized | 143727324 | `cdb5ee3e75f01f2c16c2910a26c12c8b76c0935963005572b8938761bcb2e8b2` |
-| minimal | 188176108 | `559f2ee46272ea2af0509600f7c92ce143743780786318927cd65c698ed449ec` |
+| Variante | Genaues IMG-SHA256 |
+|---|---|
+| minimized | `9315325dca3de5de9afa393b259020dedf2ebe2232be250be87680de458e6d0f` |
+| minimal | `98160d764b5e5fa6f022c1d06df63c49893a42f29c152d66494dacb4fa19ee26` |
 
-Native Kernelprüfung auf der bisherigen Ubuntu 1.0.2-Testinstallation: zehn reine Warmstarts und fünf kontrollierte Halt-Kaltstarts mit normalen Parametern, vier wachsenden CPU-Timern, 351 passenden Modulen und aktivem Lockdep. Neun Funktionsfälle (Docker, VPN/Firewall, Dateien, Sicherheit, Module, begrenzte Last, interner Stereo-Loop, normale unprivilegierte io_uring-Aufrufe, echtes Ethernet) und zwei abschließende Gesundheits-/Rücklesefälle bestanden. Ethernet übertrug 16 MiB je Richtung; NFS verwendete im Journal bestätigtes nfsdcld-Tracking. Keine neuen Kernelwarnungen, fehlgeschlagenen Dienste, verlorenen Auditereignisse oder Änderungen der LAN-Firewall. Eigene Testdaten entfernt.
+Das ZIP kann mit aktueller Dokumentation neu gepackt werden, ohne diese IMG-Bytes zu verändern. Maßgeblich ist seine `.sha256`-Datei; frühere ZIP-Prüfsummen sind nicht austauschbar. Vollständige Image-ZIPs bleiben Entwürfe, bis die Weitergabe-/Quellbedingungen der Bootfirmware belegt sind.
 
-Abschlusspakete lokal installiert: geprüfte Kernel-/DTB-/Modulbytes, Bootdateien und Auswahlzustand unverändert, kein Neustart notwendig. V25 bleibt direkter Rückfall, v17 zusätzliche Reserve.
+Dieselben kompilierten Kernel-/DTB-/Modulbytes bestanden zehn reine Warmstarts und fünf kontrollierte Halt-/Kaltstarts auf der vorherigen 1.0.2-Testinstallation. Neun Funktionsfälle (Docker, VPN/Firewall, Dateien, Sicherheit, Module, begrenzte Last, interne Stereoschleife, normales unprivilegiertes io_uring, reales Ethernet) und zwei abschließende Zustands-/Rückleseprüfungen bestanden. Jeder Start bestätigte vier CPU-Timer und alle 351 Module. Lockdep blieb aktiv; keine neuen Kernelwarnungen, fehlgeschlagenen Dienste oder Auditverluste blieben zurück. NFS verwendete per Journal bestätigtes nfsdcld-Tracking. Ethernet prüfte je 16 MiB in beide Richtungen. Eigene Testdateien wurden entfernt.
 
-Jedes frische Image besteht ARM-Login/PAM, passwortgeschütztes sudo, Root-Schlüsselrichtlinie für selbst hinterlegte Schlüssel, einziges menschliches Standardkonto, Abwesenheit von Wartungs-/Hostschlüsseln und geklonter Identität, numerische Rechte ohne Host-ACLs, Systemd-/Netzwerk-/Zeit-/Sicherheitsreihenfolge, signierte APT-Quelle, vollständige Dateisystem-/Partitions-/Bootrückleseprüfung und ZIP-CRC/IMG-Hash-Roundtrip. Standardkonto odroid/odroid; eMMC-Werkzeug/Prefix/ausführliche Anleitungen und einstellbare 35/45/55°C-Lüftersteuerung enthalten.
+Beide frisch gebauten Varianten bestanden ARM-Login/PAM, passwortgeschütztes sudo, Root-Schlüsselrichtlinie, ausschließlich das menschliche Standardkonto, Ausschluss von Wartungs-/Hostschlüsseln und kopierter Identität, numerische Besitzrechte ohne geerbte Host-ACLs, systemd-/Netzwerk-/Zeit-/Sicherheitsreihenfolge, signierte APT-Konfiguration, vollständige Dateisystem-/Partitions-/Boot-Rückleseprüfung und ZIP-CRC-/IMG-Prüfung.
 
-Passende Originalquellen von Linux/U-Boot, geprüfte Konfiguration, Patches, Rezepte und Lizenzen stehen in `odroid-u3-v1.0.3-sources.zip` (SHA256 `c76fca8b28ce2b105d354172aafcbc037bdfb4ac6b08678cc2f35b8aa2c9e3de`). Eingänge sind hashgebunden; bytegleiche Nachbauten gegen später veränderte Ubuntu-Paketquellen werden nicht zugesagt.
+**Physischer Erststart:** Der Besitzer schrieb das genaue Minimal-IMG auf natives eMMC. Vollständige installierte Paketliste, 351 Modul-/Payload-/Boot-/Konfigurationshashes, Rootvergrößerung, Standardzugang, selbst hinterlegter Rootschlüssel, DHCP-Identität, NTP, Lüfter, AppArmor/Audit, CPU-Timer, Journal und Dienste bestanden. Der Besitzer meldete einen erfolgreichen Warmstart. Neue Minimized-/SD-Erststarts bleiben offen. Die neue Installation enthält nur v32; historische Rückfallsicherungen sind kein vorinstallierter Rückfall für frisch beschriebene Medien.
 
-Offen: physische Erststarts genau dieser ZIPs für jede zugesagte Variante/Medienart, genaue BL1-/BL2-/TrustZone-Weitergabe-/Quellbedingungen und ausdrückliche Veröffentlichungsfreigabe. Diese neuen Images wurden noch nicht physisch gebootet. Aktuelle physische HDMI-/Desktop-/Mikrofonabnahme, ungenutzte externe Peripherie und Langzeitzuverlässigkeit werden nicht abgeleitet. Der geprüfte Kernel läuft weiter; keine Firmwareänderung.
+Passende vollständige Linux-/U-Boot-Quellarchive, geprüfte Konfiguration, Patches, Rezepte und Lizenzen begleiten das Kernel-Quellrelease als `odroid-u3-v1.0.3-corresponding-sources.zip`. Das Manifest ordnet den ursprünglichen Paketstand den bereinigten Quellen zu. Identische spätere Ubuntu-Paketbauten werden wegen beweglicher APT-Inhalte nicht zugesagt. Aktuelle physische HDMI-/Desktop-/Mikrofonprüfung, ungenutzte externe Peripherie und Langzeitzuverlässigkeit werden daraus nicht abgeleitet. Siehe [Veröffentlichungsbedingungen](RELEASES.de.md).

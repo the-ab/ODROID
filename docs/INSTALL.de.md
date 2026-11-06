@@ -2,19 +2,21 @@
 
 [English](INSTALL.md)
 
+Vollständige 1.0.3-Image-Downloads bleiben bis zur Klärung der genauen Weitergabe-/Quellbedingungen der Bootfirmware zurückgehalten; siehe [Veröffentlichungsstand](RELEASES.de.md). Die folgenden Schritte gelten für lokal gebaute oder anderweitig berechtigt verfügbare Images; ein öffentlicher 1.0.3-Image-Download wird noch nicht angeboten.
+
 Gewünschtes U3-ZIP und zugehörige `.sha256` unter [Releases](https://github.com/the-ab/ODROID/releases) herunterladen. Ein Kandidat ist kein stabiles Release; Releasehinweise und [Hardwarestand](HARDWARE.de.md) beachten.
 
 ```sh
-sha256sum -c odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.1.zip.sha256
-unzip odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.1.zip
-sha256sum -c odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.1.img.sha256
+sha256sum -c odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.3.zip.sha256
+unzip odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.3.zip
+sha256sum -c odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.3.img.sha256
 ```
 
 Für `minimal` die entsprechenden Dateinamen verwenden. Das **vollständige IMG** über einen Image-Schreiber auf die ausgewählte SD/eMMC mit Adapter schreiben. Dabei werden Partitionstabelle und Installation des Ziels überschrieben. Unter Linux zunächst Ziel feststellen und seine eingehängten Partitionen aushängen. `/dev/sdX` ist hier ein Platzhalter für das geprüfte ganze Medium, keine Partition:
 
 ```sh
 lsblk -p -o NAME,SIZE,MODEL,TYPE,MOUNTPOINTS
-sudo dd if=odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.1.img \
+sudo dd if=odroid-u3-ubuntu-26.04.1-armhf-minimized-v1.0.3.img \
   of=/dev/sdX bs=4M conv=fsync status=progress
 sync
 ```

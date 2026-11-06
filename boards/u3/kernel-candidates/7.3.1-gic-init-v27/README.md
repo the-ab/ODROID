@@ -1,9 +1,0 @@
-# U3 early GIC initialization diagnosis, revision27
-
-[Deutsch](README.de.md)
-
-Extends v26 with read-only, U3-only snapshots of the original GICD_TYPER result and computed IRQ range, plus distributor fields before and after the existing initialization. The seven io_uring fixes remain unchanged. No additional hardware write, IRQ mask or secure/debug unlock is introduced. Enabled only with the existing odroid_u3_gic_defer option. A zero priority read can reflect access restrictions; this candidate does not assume corruption or repair it. Source roundtrip and ARM/server-profile build pass; package validation and the first transition plus three pure warmboots pass. V25 is the primary exact rollback; v17 stays an additional reserve. Not release accepted.
-
-The paired v26 captures show a mismatch already at about 0.936 seconds, before I2C probing: priority words for INTID90 and109 read as zero through all four valid aliases in the failed boot, versus `a0a0a0a0` after cold recovery of the same binary. Private CPU-interface and SGI/PPI attributes match. This localizes the observation; it does not prove register corruption. [ARM IHI0048B.b](https://www.scs.stanford.edu/~zyedidia/docs/arm/gic.pdf), sections 3.5.1 and 4.2.1, documents that security-state restrictions can return zero for Group0 priority accesses.
-
-In all four observed v27 boots, the original type read is `0000fc64` and the configured range is160 IDs. Existing initialization changes the sampled shared priorities from zero to `a0a0a0a0`, with targets `01010101`; the later core snapshot retains them. All351 modules, live config, journal, audit and four CPU timers pass. No v27 failure was captured. Additional reads and early logging can affect timing/ordering, so these healthy tests do not establish a fix or satisfy final release qualification. No cold series, public binary/APT promotion or image build was performed. V25 remains the primary rollback and v17 the additional reserve.

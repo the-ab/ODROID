@@ -1,24 +1,13 @@
-# Releaseanforderungen
+# Veröffentlichungen
 
 [English](RELEASES.md)
 
-Imageversion: SemVer, erster Kandidat `1.0.0`. Kernel: Upstream-Version mit Boardrevision, derzeit `7.3.1-odroidu3-v32`. U3-/XU4-Releases erhalten eigene Hardwarenachweise.
+Das Quell- und Kernelrelease zum Imagerezept **1.0.3** verwendet `7.3.1-odroidu3-v32`, DEB-Version `7.3.1-33` und Aktivierungswerkzeuge `1.0.3`. [Kernelrelease](https://github.com/the-ab/ODROID/releases/tag/u3-kernel-7.3.1-33) · [APT-Pakete](https://the-ab.github.io/deb/) · [Prüfstand](CANDIDATE-1.0.3.de.md).
 
-Ein Release benennt Quellcommit, Paketmanifest, IMG-/ZIP-Prüfsummen, Kernel/Module/DTB und boot0-Präfix. ZIP-CRC und vollständige entpackte IMG-Prüfsumme werden geprüft. Passende Kernel-/U-Boot-Quellen, Konfiguration, lokale Patches und Baubefehle begleiten Binärdateien; Paket- und Firmwarelizenzen bleiben verfügbar.
+**Vollständige Image-ZIPs bleiben in einem Entwurf und sind keine öffentlichen Downloads.** Die aus dem Referenzimage übernommenen BL1-/BL2-/TrustZone-Bytes haben feste Hashes; ihre genauen Weitergabe- und Quellbedingungen sind weiterhin ungeklärt. Ein Herkunftshash ist keine Lizenzfreigabe. Die getrennten Kernel-DEBs und passenden Quellarchive enthalten keine Hersteller-Bootblobs. Ein firmwarefreier Bausatz zur lokalen Zusammensetzung wäre ein anderes, separat zu prüfendes Ergebnis; er ersetzt die geprüften Images nicht stillschweigend.
 
-Vor stabiler Veröffentlichung:
+Veröffentlichte Pakete benennen Rezept-/Quellcommit, Konfiguration, Patch, Prüfsummen und das genau passende Linux-Quellarchiv. Vollständige Imagereleases benötigen zusätzlich Paketlisten, IMG-/ZIP-Hashes, Dateisystem-/Partitions-/Boot-Rückleseprüfung, vollständige ZIP-Prüfung, Ausschluss privater Zugangsschlüssel und Identitäten sowie belegte Firmwarebedingungen. Hardwarebelege müssen Variante und Bootmedium unterscheiden. Siehe [Hardwarestand](HARDWARE.de.md).
 
-1. Frische minimized-/minimal-Builds bestehen ARM-Login/PAM, sudo, SSH, Netplan und die gesamte systemd-Startreihenfolge.
-2. Nur Defaultkonto als menschlicher Benutzer, keine Authorized-/Hostschlüssel, kopierte Maschinenidentität oder geerbten Host-Workspace-ACLs. odroid erhält ohne sudo keine Schreibrechte auf Root-Konfiguration.
-3. Partitionen zurücklesen, Bootoffsets/CRCs, Dateisysteme, Kernel-/Modulversionen und ZIP-Roundtrip prüfen.
-4. Neue Images auf dem vorgesehenen Medium real starten; SD, natives eMMC, Root-Vergrößerung, DHCP-Identität, SSH/sudo, Journal, Lüfter und Desktopprüfungen getrennt dokumentieren.
-5. Genaue Binär-Weitergabe-/Quellbedingungen von BL1/BL2/TrustZone belegen. Ein hashgebundenes Referenzimage als Baueingang ersetzt keine Firmware-Lizenzaussage. Hersteller-Bootblobs werden nicht in Git eingecheckt.
-6. Quellprüfung und ausdrückliche Releasefreigabe erfolgen vor Tag/Veröffentlichung. Baurezepte veröffentlichen nicht automatisch.
+Der kompilierte v32-Kernel bestand die dokumentierte native Boot-/Serverqualifikation. Frisches Minimal 1.0.3 bestand die native eMMC-Basisprüfung; Minimized-/SD-Erststarts, aktuelle physische Grafik-/Mikrofonprüfung und ungenutzte Peripherie bleiben offen. Bauprüfungen ersetzen keinen physischen Start.
 
-Die Xorg-/Weston-Ausgabe am angeschlossenen HDMI des Prototyps wurde gesondert abgenommen. Minimal v1 bestand anschließend nativen eMMC-Erststart und Basisprüfung; minimized/SD, zusätzliche zugesagte Prüfumfänge und Firmware-Herkunft bleiben offen. Downloads weisen verbliebene Grenzen zutreffend aus.
-
-Imagekandidat 1.0.1 ergänzt selbst hinterlegte Root-SSH-Schlüssel und lokal installierte APT-Kernelpakete. Minimal 1.0.1 hat native eMMC-Basisprüfungen einschließlich eigenem Root-Key-Login, installierten Kernelpaketen und APT-Quelle/Signatur bestanden. Der anschließende7.3.1-APT-Wechsel mit Rückfall/Rückkehr bestand; minimized/SD bleiben offen.
-
-Frische1.0.2-Kandidaten minimal/minimized bestanden lokale ARM-Login/PAM/sudo/SSH-, Systemd-, Dateisystem-, vollständige Partitions-/Boot-/Paket- und ZIP-Roundtrip-Prüfungen. Enthalten: Serverkernel 7.3.1-odroidu3-v3, Paket 7.3.1-4 mit geprüftem Purge-Hook. Native Serverkernel-Diensttests bestanden auf dem installierten1.0.1-Testsystem; der native eMMC-Erststart des frischen Minimal-Images1.0.2 ist inzwischen abgenommen. Minimized/SD und die übrigen Releasegates bleiben offen.
-
-Die lokale 1.0.3-Vorbereitung wählt den nativ geprüften v32: zehn reine Warmstarts und fünf kontrollierte Halt-Kaltstarts, vier CPU-Timer und 351 passende Module; genannte Servertests, normale unprivilegierte io_uring-Aufrufe,16 MiB-Ethernet-Rücktransfer und interner Stereo-Codec-Loop bestanden mit aktivem Lockdep und ohne neue Warnungen. Frische Image-/ZIP-Gates und Erststarts bleiben getrennt. Genaue Hersteller-Bootfirmware-Weitergabebedingungen und ausdrückliche öffentliche Promotion sind weiter offen.
+Imageversionen verwenden SemVer; Kernel behalten Upstream-Version und Boardrevision. Veränderte kompilierte Bytes benötigen einen neuen Boardsuffix. Neu verpackte Dokumentation kann den ZIP-Hash ändern, während der IMG-Hash gleich bleibt; maßgeblich ist die jeweilige Archivprüfsumme. Bestehende Releases und passende Quellhistorie bleiben erhalten. Veröffentlichung erfolgt bewusst und nie automatisch durch ein Bauskript.

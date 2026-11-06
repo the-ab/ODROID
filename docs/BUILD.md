@@ -1,4 +1,4 @@
-# Build U3 candidates
+# Build U3 images and packages
 
 [Deutsch](BUILD.de.md)
 
@@ -14,7 +14,7 @@ Start in this repository. Use a **new** work directory outside Git; scripts refu
 
 ```sh
 repo=$(pwd)
-work=$(realpath -m ../ODROID-build-v1)
+work=$(realpath -m ../ODROID-build-1.0.3)
 mkdir -p "$work/cache"
 touch "$work/.odroid-workspace"
 python3 scripts/fetch-sources.py --cache "$work/cache" \
@@ -24,8 +24,8 @@ python3 scripts/fetch-sources.py --cache "$work/cache" \
 The matching extracted reference IMG is also accepted. The reference is used only for hash-checked BL1/BL2/TrustZone blocks; its OS, users and access keys are never copied. Vendor boot blobs are not in Git, and binary redistribution coverage remains a release requirement. All upstream source/base/firmware downloads are pinned in `sources.lock.json`. The Ubuntu Base input was checked against its signed manifest using Ubuntu CD Image key `843938DF228D22F7B3742BC0D94AA3F0EFE21092`.
 
 ```sh
-bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v1"
-sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v1" "$work/kernel-v1"
+bash scripts/build-kernel.sh "$work/cache/linux-7.3.1.tar.xz" "$work/linux-v32"
+sudo bash scripts/prepare-kernel-artifacts.sh "$work/linux-v32" "$work/kernel-v32"
 
 mkdir "$work/u-boot"
 tar -xzf "$work/cache/u-boot-v2026.10.tar.gz" --strip-components=1 -C "$work/u-boot"
@@ -46,7 +46,7 @@ sudo tar --numeric-owner -xpf "$work/cache/ubuntu-base-26.04.1-base-armhf.tar.gz
 sudo unshare --mount --pid --fork bash "$repo/scripts/prepare-rootfs.sh" "$root" "$variant"
 sudo unshare --mount --pid --fork bash "$repo/scripts/install-kernel-packages.sh" "$root" "$work/kernel-debs"
 sudo python3 "$repo/scripts/assemble-image.py" --root "$root" \
-  --kernel "$work/kernel-v1" --uboot "$work/u-boot/u-boot-dtb.bin" \
+  --kernel "$work/kernel-v32" --uboot "$work/u-boot/u-boot-dtb.bin" \
   --firmware "$work/cache" --output "$out" --variant "$variant"
 sudo unshare --mount --pid --fork bash "$repo/scripts/validate-rootfs.sh" "$root" "$variant" \
   > "$work/qa-$variant.log" 2>&1

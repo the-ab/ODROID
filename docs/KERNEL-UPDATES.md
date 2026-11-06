@@ -2,11 +2,11 @@
 
 [Deutsch](KERNEL-UPDATES.de.md)
 
-The signed repository is [the-ab/deb](https://the-ab.github.io/deb/), with shared `main` and board-specific `u3` components. The currently published server kernel is **7.3.1-odroidu3-v3**, package **7.3.1-4**, with activation tools **1.0.2**. Earlier kernel/metapackage versions were retired from the current APT pool at the owner's request after testing their replacement. Installed fallback kernels and local backups remain available; they are not automatically removed. Historical sources/Git history are preserved. [Package manifest](https://github.com/the-ab/deb/blob/main/publications/u3-server-2026-10-30.json) · [Complete matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-server-kernel-7.3.1-4).
+The signed repository [the-ab/deb](https://the-ab.github.io/deb/) contains shared `main` and board-specific `u3` components. The current server kernel is **7.3.1-odroidu3-v32**, package **7.3.1-33**, with activation tools **1.0.3**. Previous package 7.3.1-4 and its matching sources remain available. [Publication manifest](https://github.com/the-ab/deb/blob/main/publications/u3-server-2026-11-06.json) · [Complete matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-kernel-7.3.1-33).
 
-Local candidate 1.0.3 selects kernel 7.3.1-odroidu3-v32/package 7.3.1-33 and tools 1.0.3. Its compiled kernel is natively qualified; final package installation and fresh image checks are tracked separately. These versions are not yet promoted to the signed public repository.
+The exact v32 kernel/DTB/module bytes passed native boot and server qualification. Final packages and the fresh minimal 1.0.3 eMMC installation matched these bytes. See [validation and limits](CANDIDATE-1.0.3.md).
 
-Images from1.0.1 include the public key and source below. Image1.0.1 originally shipped6.12.114-v1; fresh1.0.2 uses7.3.1-v3. The image version describes the original installation; use `uname -r` for the running kernel.
+Images from 1.0.1 include the public key and APT source below. Recipe 1.0.3 ships v32. The image version describes the original installation; `uname -r` shows the running kernel.
 
 ```text
 Types: deb
@@ -34,7 +34,7 @@ The tracking metapackage pulls a versioned kernel. Installation verifies U3/Exyn
 
 The tools verify all new files before switching the selectors. Ordinary write/readback failures restore the previous selectors. Boot0/U-Boot/BL1/BL2/TrustZone are never changed and installation never reboots automatically. Keep sufficient boot-partition space. Removal of the running, next-boot or saved rollback kernel is refused; versioned kernels are excluded from autoremove. A changed compiled payload always receives a new board suffix.
 
-Candidate tools 1.0.3 also reserve space for atomic replacement of the compatibility `uImage`, the larger old image needed for rollback, the configuration copy and the root-side backup. Insufficient space is rejected before creating a snapshot or versioned boot files. Low-space and activation/rollback tests pass; this source change is not a claim of public APT promotion or native package acceptance.
+Tools 1.0.3 also reserve space for atomic replacement of the compatibility `uImage`, the larger old image needed for rollback, the configuration copy and the root-side backup. Insufficient space is rejected before creating a snapshot or versioned boot files. Low-space and activation/rollback tests pass; the final tool package was also checked natively.
 
 For the last saved selection:
 
@@ -47,19 +47,19 @@ sudo reboot
 For an already installed specific fallback:
 
 ```sh
-sudo odroid-kernel activate 7.3.1-odroidu3-v2
+sudo odroid-kernel activate 7.3.1-odroidu3-v32
 odroid-kernel status
 # Reboot only after checking the result.
 ```
 
-That example requires v2 to be installed locally; it is not a download promise. Fresh images contain only their shipped kernel, so prepare a tested fallback/backup before a future update. Rollback is a local recovery operation, not an automatic rescue from an unbootable kernel. If SSH/console are unavailable, power off and mount the medium on another Linux system. Read `/var/lib/odroid-kernel/state.json` on root. Its `previous_snapshot` contains `uImage`, `extlinux/extlinux.conf` and `BACKUP.json`; verify hashes and matching root PARTUUID, restore the two named files to boot, sync and unmount. Keep the matching modules. Power-loss/media corruption can still require external recovery.
+That example requires the named version to be installed locally. Fresh images contain only their shipped kernel, so prepare a tested fallback/backup before a future update. Rollback is a local recovery operation, not an automatic rescue from an unbootable kernel. If SSH/console are unavailable, power off and mount the medium on another Linux system. Read `/var/lib/odroid-kernel/state.json` on root. Its `previous_snapshot` contains `uImage`, `extlinux/extlinux.conf` and `BACKUP.json`; verify hashes and matching root PARTUUID, restore the two named files to boot, sync and unmount. Keep the matching modules. Power-loss/media corruption can still require external recovery.
 
 Signed native APT tests passed6.12.114→7.3.1-v1→6.12.114→7.3.1-v1, then the fresh reset baseline→server-v2→server-v3. v2/v3 retained fallback files and modules. v3 passed Docker, VPN, firewall, file-service and security tests; see [scope and limits](SERVER-KERNEL.md). Fresh image first boots are separate acceptance steps.
 
 ## Build and publish
 
-Use committed recipes and matching artifact configuration. Build with `scripts/build-kernel-debs.py --kernel ARTIFACTS --keyring PUBLIC_KEY --output NEW_OUTPUT --tools-version 1.0.3`. Explicit pinned candidate profiles use `--profile`, `--release` and `--version`. Shared packages already published under a version must retain their exact bytes. Kernel DEBs contain no vendor boot firmware.
+Use committed recipes and matching artifact configuration. Build with `scripts/build-kernel-debs.py --kernel ARTIFACTS --keyring PUBLIC_KEY --output NEW_OUTPUT --tools-version 1.0.3`. Shared packages already published under a version must retain their exact bytes. Kernel DEBs contain no vendor boot firmware.
 
-Fresh marked image roots use `sudo unshare --mount --pid --fork bash scripts/install-kernel-packages.sh ROOTFS DEBS`; activation is deferred only during image assembly. Never use that image-build bypass on an installed device. Publish exact complete Linux source, patch/configuration and packaging recipes/licenses/checksums alongside packages. Copy approved DEBs into the correct component, rebuild signed SHA256/SHA512 by-hash indices with `scripts/build-apt-repository.py`, verify downloads/signatures and deploy. Keep private signing material outside Git. Preserve old versions by default; removal needs the owner's explicit scope and a verified replacement. Other projects' components remain independent. Large sources/images belong in product Releases; individual DEBs here are limited to95MiB and overall Pages limits still apply.
+Fresh marked image roots use `sudo unshare --mount --pid --fork bash scripts/install-kernel-packages.sh ROOTFS DEBS`; activation is deferred only during image assembly. Never use that image-build bypass on an installed device. Publish exact complete Linux source, patch/configuration and packaging recipes/licenses/checksums alongside packages. Copy approved DEBs into the correct component, rebuild signed SHA256/SHA512 by-hash indices with `scripts/build-repository.py` in [the central deb repository](https://github.com/the-ab/deb), verify downloads/signatures and deploy. Keep private signing material outside Git. Preserve old versions by default; removal needs the owner's explicit scope and a verified replacement. Other projects' components remain independent. Large sources/images belong in product Releases; individual DEBs here are limited to95MiB and overall Pages limits still apply.
 
 Package7.3.1-4 adds the missing removal hook without changing the compiled kernel. Purge removes generated module indices and hash-matching boot copies, prunes inactive matching menu entries and preserves running/selected/rollback kernels, modified files, shared references and unknown modules. A real inactive-package apt-purge test on the U3 passed. Existing residue from older packages needs one controlled cleanup because their old scripts cannot retroactively gain the hook.

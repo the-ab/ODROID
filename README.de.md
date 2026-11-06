@@ -2,32 +2,29 @@
 
 [English](README.md)
 
-Community-Ubuntu-Images, Baurezepte und Board-Unterstützung für ODROID-Systeme. Erstes Ziel ist **ODROID-U3 / Exynos4412** mit Ubuntu **26.04.1 armhf**, Linux **7.3.1-odroidu3-v32** und U-Boot **2026.10**. XU4 wird gesondert vorbereitet.
+Community-Images, Kernelpakete und Baurezepte für **ODROID-U3 / Exynos4412**. Das aktuelle Rezept verwendet **Ubuntu 26.04.1 armhf, Image 1.0.3**, **Linux 7.3.1-odroidu3-v32** (Paket `7.3.1-33`) und U-Boot 2026.10. XU4-Unterstützung ist separat geplant.
 
-**Releasevorbereitung:** Neue Images bleiben bis zur Erststart-Abnahme und den Releaseprüfungen Kandidaten. Veröffentlichte Downloads stehen unter [Releases](https://github.com/the-ab/ODROID/releases); der [Hardwarestand](docs/HARDWARE.de.md) beschreibt tatsächlich erfolgte Prüfungen.
+[Kernelpakete und passende Quellen](https://github.com/the-ab/ODROID/releases/tag/u3-kernel-7.3.1-33) · [Signiertes APT-Repository](https://the-ab.github.io/deb/) · [Installation](docs/INSTALL.de.md)
+
+**Image-Downloads:** Die vollständigen 1.0.3-Image-ZIPs bleiben unveröffentlicht, solange die genauen Weitergabe- und Quellbedingungen für Samsung-/Hardkernel-BL1, BL2 und TrustZone ungeklärt sind. Die separat angebotenen Kernelpakete enthalten diese Bootblobs nicht. Siehe [Veröffentlichungsstand](docs/RELEASES.de.md).
 
 | Variante | Inhalt |
 |---|---|
-| `minimized` | Reduzierte Ubuntu-Base-Basis mit SSH, sudo, Netzwerk und Board-Unterstützung; Dokumentation bleibt minimiert. Das tatsächliche Kommando `unminimize` ist enthalten. |
-| `minimal` | `ubuntu-minimal`, `ubuntu-standard`, übliche Administrationsprogramme, wiederhergestellte Dokumentation/Manpages und Shell-Vervollständigung. |
+| `minimized` | Ubuntu Base, SSH, sudo, Netzwerk und Board-Unterstützung; Dokumentation bleibt minimiert. Enthält das offizielle `unminimize`. |
+| `minimal` | Ubuntu-Minimal-/Standard-Metapakete, übliche Administrationswerkzeuge, Dokumentation, Manpages und Shell-Vervollständigung. |
 
-Beide Varianten starten mit Konsole und SSH. Einziges menschliches Konto: **`odroid` / `odroid`**, mit passwortgeschütztem sudo. Das Root-Passwort ist gesperrt; SSH erlaubt ab Image 1.0.1 einen vom Eigentümer in `/root/.ssh/authorized_keys` hinterlegten öffentlichen Schlüssel. Es werden keine Wartungsschlüssel, festen SSH-Hostschlüssel oder geklonten Maschinenidentitäten eingebaut. Nach der ersten Anmeldung mit `passwd` ein eigenes Passwort setzen.
+Beide starten Konsole und SSH. Das menschliche Standardkonto ist **`odroid` / `odroid`**, mit passwortgeschütztem sudo. Nach dem ersten Login das Passwort ändern. Das Rootpasswort ist gesperrt; Besitzer können eigene öffentliche Schlüssel in `/root/.ssh/authorized_keys` hinterlegen. Wartungsschlüssel, feste SSH-Hostschlüssel und kopierte Maschinenidentitäten werden nicht ausgeliefert.
 
-Ethernet verwendet DHCP und eine stabile MAC aus der Hardwareidentität, sofern der Treiber keine permanente Adresse liefert. Beide Varianten aktivieren die automatische Netzwerk-Zeitsynchronisierung. Root wächst beim ersten Start auf die Mediengröße. SD und eMMC-Benutzerbereich verwenden dasselbe Imageformat; für natives eMMC kann die separate boot0-Reparatur erforderlich sein.
+Ethernet verwendet DHCP und bei fehlender permanenter Treiberadresse eine stabile hardwareabgeleitete MAC. Netzwerk-Zeitsynchronisierung ist aktiviert; die Rootpartition wächst beim ersten Start. Natives eMMC kann die getrennte boot0-Reparatur benötigen: Das Schreiben des IMG über einen Leser aktualisiert nur den Benutzerbereich.
 
-- [Installation und erste Anmeldung](docs/INSTALL.de.md)
-- [eMMC-boot0 mit Backup und Wiederherstellung reparieren](docs/EMMC-RECOVERY.de.md)
-- [Lüfter: 35/45/55 °C und Stufen ändern](docs/FAN.de.md)
-- [Grafik, Mesa und Desktopgrenzen](docs/GRAPHICS.de.md)
-- [Bauen aus festgelegten Quellen](docs/BUILD.de.md)
-- [Hardwareprüfung und Releaseanforderungen](docs/HARDWARE.de.md)
+- [Installation und Root-Schlüsselzugang](docs/INSTALL.de.md)
+- [eMMC-boot0-Reparatur, Sicherung und Wiederherstellung](docs/EMMC-RECOVERY.de.md)
+- [Lüfterstufen 35/45/55 °C einstellen](docs/FAN.de.md)
+- [Kernelinstallation, Updates und Rückfall](docs/KERNEL-UPDATES.de.md)
+- [Hardwareprüfung](docs/HARDWARE.de.md) und [1.0.3-Prüfstand](docs/CANDIDATE-1.0.3.de.md)
+- [Serverfähigkeiten](docs/SERVER-KERNEL.de.md), [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md), [Audio](docs/AUDIO.de.md) und [Grafik](docs/GRAPHICS.de.md)
+- [Bauanleitung](docs/BUILD.de.md) und [Plattformkorrekturen](docs/I2S-USB.de.md)
 
-Kernel und Skripte werden mit Quellen und Lizenzen bereitgestellt. Hersteller-Bootfirmware liegt nicht in diesem Git-Repository; genaue Weitergabe-/Quellbedingungen müssen vor öffentlichen Binärreleases dokumentiert sein. Ubuntu-Pakete und Firmware behalten ihre eigenen Lizenzen. Siehe [Releaseanforderungen](docs/RELEASES.de.md).
+Der v32-Kernel bestand zehn reine Warmstarts, fünf kontrollierte Halt-/Kaltstarts und die dokumentierten Servertests mit aktiviertem Lockdep und ohne neue Kernelwarnungen. Ein frisch geschriebenes Minimal-1.0.3 bestand zusätzlich die native eMMC-Basisprüfung. Minimized-/SD-Erststarts und aktuelle physische Grafik-/Mikrofonabnahme bleiben getrennt offen; diese Prüfungen sind keine Langzeitgarantie.
 
-Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
-
-Das lokale **1.0.3**-Rezept verwendet [Revision 32](boards/u3/kernel-candidates/7.3.1-tun-stats-v32/README.de.md): vollständiges Serverprofil mit 101 Pflichtfähigkeiten, sieben geprüfte io_uring-Sicherheitsfixes, die getestete GIC-Basiswahlkorrektur und Audio-/USB-/TUN-Korrekturen. Native Prüfung bestanden: zehn reine Warmstarts, fünf kontrollierte Halt-Kaltstarts, Docker, VPN, Firewall, Dateidienste, Sicherheit, normale unprivilegierte io_uring-Aufrufe und echte Ethernetübertragung; Lockdep blieb aktiv, neue Kernelwarnungen traten nicht auf.
-
-Frische minimal-/minimized-Imageprüfungen und physische Erststarts sind eigene Gates. Dieses Entwurfsrezept veröffentlicht keine neuen APT-Pakete/Binärreleases und führt keine Main-Promotion aus. Siehe [Serverumfang](docs/SERVER-KERNEL.de.md), [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md), [Audio](docs/AUDIO.de.md) und [I2S-/USB-Untersuchung](docs/I2S-USB.de.md).
-
-[Lokale 1.0.3-Images: Prüfsummen und Abnahmegrenzen](docs/CANDIDATE-1.0.3.de.md).
+Linux, U-Boot, Ubuntu-Pakete und Firmware behalten ihre jeweiligen Lizenzen. Passende Kernelquellen, Konfiguration, Patches und Paketrezepte begleiten das Kernelrelease. Überholte Versuchsprofile wurden aus dem aktuellen Baum entfernt; historische Commits und Quellreleases bleiben erhalten.

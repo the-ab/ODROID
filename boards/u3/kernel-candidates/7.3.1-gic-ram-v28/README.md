@@ -1,9 +1,0 @@
-# RAM-only GIC range control, revision28
-
-[Deutsch](README.de.md)
-
-This control retains the seven v26 io_uring fixes. Compared with v27 it removes the extra early MMIO readbacks and early logging. The original single GICD_TYPER result, computed IRQ count and CPU are saved in RAM; the existing core-phase deferred report prints them as U3GICRANGE. The distributor setup and its MMIO calls remain the v26 sequence. No corrective register write, IRQ mask, secure/debug access or new timer is added. This tests whether the early range is wrong in a failing boot while reducing observer perturbation. Source/MMIO-call roundtrip and ARM/server-profile build pass; package validation passes. The first transition and two pure warmboots pass; the third pure warmboot fails and the series stops. V25 remains the direct exact rollback and v17 an additional reserve. Not release accepted.
-
-The failed boot captures the driver's original type result as `00000000` and its computed range as32 IDs. Later, all four validated distributor aliases report `0000fc64`, corresponding to160 IDs, in the initial and all three completed late reports. The same v28 binary after controlled cold recovery records `0000fc64` and160 IDs and reaches clean userspace.
-
-With a configured range of32, the existing SPI setup loops beginning at ID32 execute zero iterations: global target/priority/configuration and disable/deactivate setup is skipped. This accounts for the observed uninitialized shared attributes and narrows the fault to early range discovery. It does not distinguish wrong base selection from an incorrect read through the intended MMIO base. No guessed IRQ masks, forced range or corrective register writes were applied. V25 remains the exact primary rollback; v17 remains the reserve. No release/image acceptance.
