@@ -1,0 +1,13 @@
+[Unit]
+Description=Prepare hardware-derived ODROID-U3 Ethernet identity
+DefaultDependencies=no
+Before=systemd-udevd.service systemd-udev-trigger.service systemd-networkd.service shutdown.target
+Conflicts=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/odroid-network-identity generate
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target

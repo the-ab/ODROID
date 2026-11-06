@@ -1,0 +1,14 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# Select the Mali render device for an individual application or desktop session.
+set -eu
+if [ "$#" -eq 0 ]; then
+    echo 'Usage: odroid-gpu COMMAND [ARGUMENTS...]' >&2
+    exit 2
+fi
+if [ "$(cat /sys/devices/soc0/soc_id)" != EXYNOS4412 ]; then
+    echo 'odroid-gpu: this selector is only for Exynos4412' >&2
+    exit 1
+fi
+export DRI_PRIME=platform-13000000_gpu
+exec "$@"

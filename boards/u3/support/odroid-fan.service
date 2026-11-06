@@ -1,0 +1,11 @@
+[Unit]
+Description=Apply dedicated ODROID-U3 kernel fan-temperature thresholds
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/odroid-fan apply
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
