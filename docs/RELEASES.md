@@ -6,6 +6,8 @@ The source and kernel release for image recipe **1.0.3** uses `7.3.1-odroidu3-v3
 
 **Full image ZIPs are held in a draft, not public downloads.** The reference-derived BL1/BL2/TrustZone bytes have pinned hashes, but their exact redistribution/source coverage remains unresolved. Hash provenance is not a license grant. The separate kernel DEBs and corresponding-source bundle contain no vendor boot blobs. A firmware-free local-assembly kit would be a different deliverable requiring its own validation; it is not silently substituted for the tested images.
 
+Exact boot-firmware origin is now verified against the upstream-linked archive; explicit redistribution terms and the older BL2 source mapping remain unresolved. See the [component review](BOOT-FIRMWARE.md).
+
 Published packages identify the recipe/source commit, configuration, patch, checksums and exact matching Linux source archive. Full image releases additionally require their package manifests, IMG/ZIP hashes, filesystem/partition/boot readback, full ZIP roundtrip, absence of private access keys/identities and documented firmware coverage. Hardware evidence must distinguish each variant and boot medium. See [hardware status](HARDWARE.md).
 
 The compiled v32 kernel passed the documented native boot/server qualification. Fresh minimal 1.0.3 passed native-eMMC basic checks; minimized/SD first boots, current physical graphics/microphone and unexercised peripherals remain open and must not be represented as accepted. Build-time tests do not replace physical boot checks.
