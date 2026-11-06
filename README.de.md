@@ -29,3 +29,5 @@ Kernelpakete und signierte APT-Updates: [Anleitung](docs/KERNEL-UPDATES.de.md).
 Das lokale **1.0.3**-Rezept verwendet [Revision 32](boards/u3/kernel-candidates/7.3.1-tun-stats-v32/README.de.md): vollständiges Serverprofil mit 101 Pflichtfähigkeiten, sieben geprüfte io_uring-Sicherheitsfixes, die getestete GIC-Basiswahlkorrektur und Audio-/USB-/TUN-Korrekturen. Native Prüfung bestanden: zehn reine Warmstarts, fünf kontrollierte Halt-Kaltstarts, Docker, VPN, Firewall, Dateidienste, Sicherheit, normale unprivilegierte io_uring-Aufrufe und echte Ethernetübertragung; Lockdep blieb aktiv, neue Kernelwarnungen traten nicht auf.
 
 Frische minimal-/minimized-Imageprüfungen und physische Erststarts sind eigene Gates. Dieses Entwurfsrezept veröffentlicht keine neuen APT-Pakete/Binärreleases und führt keine Main-Promotion aus. Siehe [Serverumfang](docs/SERVER-KERNEL.de.md), [Sicherheitsprüfung](docs/SECURITY-REVIEW.de.md), [Audio](docs/AUDIO.de.md) und [I2S-/USB-Untersuchung](docs/I2S-USB.de.md).
+
+[Lokale 1.0.3-Images: Prüfsummen und Abnahmegrenzen](docs/CANDIDATE-1.0.3.de.md).

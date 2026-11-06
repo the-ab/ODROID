@@ -29,3 +29,5 @@ Kernel packages and signed APT updates: [guide](docs/KERNEL-UPDATES.md).
 The local **1.0.3** recipe uses [revision 32](boards/u3/kernel-candidates/7.3.1-tun-stats-v32/README.md): the complete 101-capability server profile, seven reviewed io_uring security fixes, the tested GIC base-selection correction and the audio/USB/TUN corrections. Native qualification passed ten pure warmboots, five controlled halt/cold starts, Docker, VPN, firewall, file services, security, ordinary unprivileged io_uring and a real Ethernet transfer, with lockdep enabled and no new kernel warnings.
 
 Fresh minimal/minimized image checks and physical first boots remain separate gates. No new public APT package, binary release or Main promotion is implied by this draft recipe. See [server scope](docs/SERVER-KERNEL.md), [security review](docs/SECURITY-REVIEW.md), [audio](docs/AUDIO.md) and [I2S/USB investigation](docs/I2S-USB.md).
+
+[Local 1.0.3 image checksums and qualification](docs/CANDIDATE-1.0.3.md).
