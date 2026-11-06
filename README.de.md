@@ -6,7 +6,7 @@ Community-Images, Kernelpakete und Baurezepte für **ODROID-U3 / Exynos4412**. D
 
 [Kernelpakete und passende Quellen](https://github.com/the-ab/ODROID/releases/tag/u3-kernel-7.3.1-33) · [Signiertes APT-Repository](https://the-ab.github.io/deb/) · [Installation](docs/INSTALL.de.md)
 
-**Image-Downloads:** Die vollständigen 1.0.3-Image-ZIPs bleiben unveröffentlicht, solange die genauen Weitergabe- und Quellbedingungen für Samsung-/Hardkernel-BL1, BL2 und TrustZone ungeklärt sind. Die separat angebotenen Kernelpakete enthalten diese Bootblobs nicht. Siehe [Veröffentlichungsstand](docs/RELEASES.de.md).
+**Image-Downloads:** Die vollständigen 1.0.3-Image-ZIPs bleiben unveröffentlicht, solange die genauen Weitergabe- und Quellbedingungen für Samsung-/Hardkernel-BL1, BL2 und TrustZone ungeklärt sind. Die separat angebotenen Kernelpakete enthalten diese Bootblobs nicht. Siehe [Veröffentlichungsstand](docs/RELEASES.de.md). Die [Bootfirmware-Prüfung](docs/BOOT-FIRMWARE.de.md) beschreibt das genau passende Archiv und die verbleibenden Nachweise.
 
 | Variante | Inhalt |
 |---|---|

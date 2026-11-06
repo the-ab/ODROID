@@ -6,7 +6,7 @@ Community Ubuntu images, kernel packages and build recipes for **ODROID-U3 / Exy
 
 [Kernel downloads and matching sources](https://github.com/the-ab/ODROID/releases/tag/u3-kernel-7.3.1-33) · [Signed APT repository](https://the-ab.github.io/deb/) · [Installation](docs/INSTALL.md)
 
-**Image downloads:** the full 1.0.3 image ZIPs remain unpublished while the exact Samsung/Hardkernel BL1, BL2 and TrustZone redistribution/source conditions are unresolved. The kernel packages contain none of these boot blobs and are distributed separately. See [release status](docs/RELEASES.md).
+**Image downloads:** the full 1.0.3 image ZIPs remain unpublished while the exact Samsung/Hardkernel BL1, BL2 and TrustZone redistribution/source conditions are unresolved. The kernel packages contain none of these boot blobs and are distributed separately. See [release status](docs/RELEASES.md). The [boot firmware review](docs/BOOT-FIRMWARE.md) records the exact matched archive and remaining evidence.
 
 | Variant | Contents |
 |---|---|
