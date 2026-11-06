@@ -57,7 +57,7 @@
       "subject": "io_uring/io-wq: don't hide a link from cancellations",
       "patch": "05-CVE-2026-99255-7.3.1-backport.patch",
       "patch_sha256": "054289d26cf82f965c62e4b355bec3280cbc8c206f8d75a4cfa8ccf2d92bb67a",
-      "bytes": 4841,
+      "bytes": 4347,
       "canonical": "https://git.kernel.org/stable/c/436d48a2ed13112d2d27085325838e5bce6b4507",
       "retrieved_from": "https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/linux/+/436d48a2ed13112d2d27085325838e5bce6b4507^!/?format=TEXT",
       "original_mainline_patch": "05-CVE-2026-99255.patch",
